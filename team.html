@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Experts - Tim Support</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-blue-800 text-white p-6 text-center">
+    <h1 class="text-3xl font-bold">Meet Our Experts</h1>
+    <p class="mt-2 text-lg">Experts Categorized by Service</p>
+  </header>
+
+  <!-- Experts Container -->
+  <main id="expertsContainer" class="max-w-6xl mx-auto p-6 space-y-12">
+    <!-- JavaScript will inject categories and cards here -->
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-blue-800 text-white text-center p-4 mt-10">
+    <p>&copy; 2025 Tim Support. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const experts = [
+      {
+        service: "Student Mentorship Programs",
+        name: "Timothy Muthee",
+        image: "https://via.placeholder.com/300x200",
+        experience: "Over 10 years mentoring students across East Africa. Author of 'Unlock the Impossible'. Developer of youth programs driving academic and mindset success."
+      },
+      {
+        service: "Career Choice Guidance",
+        name: "Dr. Jane Wambui",
+        image: "https://via.placeholder.com/300x200",
+        experience: "Career counselor with 15+ years helping students find purpose. Former career lead at Kenya Education Board and founder of CareerMap Africa."
+      },
+      {
+        service: "Examiners' Guidance",
+        name: "Mr. John Karanja",
+        image: "https://via.placeholder.com/300x200",
+        experience: "KNEC-certified examiner with 12 years in KCSE/KCPE. Expert in exam strategies and interpretation. Awarded Best Examiner by MoE (2022)."
+      },
+      {
+        service: "Operational Efficiency",
+        name: "Ms. Caroline Nduta",
+        image: "https://via.placeholder.com/300x200",
+        experience: "Operations consultant with 8+ years experience. Specialist in workflow optimization and productivity training for institutions and companies."
+      },
+      {
+        service: "Career Choice Guidance",
+        name: "Mr. Felix Otieno",
+        image: "https://via.placeholder.com/300x200",
+        experience: "Psychologist and career analyst. Helped over 500 students align careers with passion and market demands. Speaker at National Career Week 2023."
+      },
+      {
+        service: "Student Mentorship Programs",
+        name: "Ms. Lydia Njeri",
+        image: "https://via.placeholder.com/300x200",
+        experience: "Youth coach and school mentor. Passionate about personal development, academic planning, and building self-confidence in teens."
+      }
+    ];
+
+    const expertsContainer = document.getElementById('expertsContainer');
+
+    // Group experts by service
+    const groupedExperts = {};
+    experts.forEach(expert => {
+      if (!groupedExperts[expert.service]) {
+        groupedExperts[expert.service] = [];
+      }
+      groupedExperts[expert.service].push(expert);
+    });
+
+    // Render each category and its experts
+    for (const [service, serviceExperts] of Object.entries(groupedExperts)) {
+      const section = document.createElement('section');
+      section.innerHTML = `
+        <h2 class="text-2xl font-bold text-blue-700 mb-4">${service}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          ${serviceExperts.map(expert => `
+            <div class="bg-white p-4 rounded-xl shadow hover:shadow-md transition">
+              <h3 class="text-xl font-semibold text-blue-800">${expert.name}</h3>
+              <p class="text-sm text-gray-600">Service: ${expert.service}</p>
+              <img src="${expert.image}" alt="${expert.name}" class="w-full h-48 object-cover mt-3 rounded-lg">
+              <p class="mt-3 text-sm">${expert.experience}</p>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      expertsContainer.appendChild(section);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Business Investment Support</title>
+  <style>
+    body {font-family: Arial, sans-serif;margin: 0;background: #f4f6f9;}
+    header {display:flex;justify-content:space-between;align-items:center;padding:15px 25px;background:#7c2d12;color:white;position:sticky;top:0;z-index:1000;}
+    .logo{font-size:1.4rem;font-weight:bold;}
+    nav{display:none;flex-direction:column;position:absolute;top:60px;right:25px;background:white;color:black;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+    nav a{padding:10px 15px;text-decoration:none;color:black;display:block;transition:0.3s;}
+    nav a:hover{background:#e5e7eb;}
+    .menu-btn{font-size:1.8rem;cursor:pointer;}
+    .show{display:flex;}
+    .hero{text-align:center;padding:80px 20px;background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('business-bg.jpg') no-repeat center/cover;color:white;}
+    .hero h1{font-size:2rem;margin-bottom:10px;}
+    .programs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:30px;}
+    .program-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);transition:.3s;}
+    .program-card:hover{transform:translateY(-5px);box-shadow:0 8px 16px rgba(0,0,0,0.2);}
+    .program-card h2{font-size:1.2rem;margin-bottom:10px;color:#7c2d12;}
+    .events{padding:40px 20px;background:#f9fafb;text-align:center;}
+    .event-card{max-width:600px;margin:0 auto 20px;background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);text-align:left;}
+    .btn{display:inline-block;margin-top:10px;padding:8px 14px;background:#7c2d12;color:white;border:none;border-radius:6px;cursor:pointer;transition:.3s;}
+    .btn:hover{background:#9a3412;}
+    .team,.testimonials,.contact{padding:50px 20px;text-align:center;}
+    .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;max-width:1000px;margin:auto;}
+    .team-member{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+    .testimonial-box{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);max-width:600px;margin:auto;}
+    footer{background:#7c2d12;color:white;text-align:center;padding:15px;}
+    /* Modal */
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
+    .modal-content{background:white;padding:20px;border-radius:12px;width:90%;max-width:400px;position:relative;}
+    .close{position:absolute;top:10px;right:15px;font-size:1.5rem;cursor:pointer;}
+    .modal-content input,.modal-content textarea{width:100%;margin-bottom:10px;padding:8px;border:1px solid #ccc;border-radius:6px;}
+    @media(min-width:768px){nav{display:flex !important;flex-direction:row;position:static;background:none;box-shadow:none;}
+      nav a{color:white;} .menu-btn{display:none;}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Biz Investment Support</div>
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+  <nav id="navMenu">
+    <a href="#programs">Programs</a>
+    <a href="#events">Events</a>
+    <a href="#team">Advisors</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Welcome to Business Investment Support</h1>
+  <p>Helping entrepreneurs, startups, and investors unlock new opportunities.</p>
+</section>
+
+<section id="programs">
+  <h2 style="text-align:center;color:#7c2d12;">Our Support Programs</h2>
+  <div class="programs-grid" id="programsGrid"></div>
+</section>
+
+<section id="events" class="events">
+  <h2>Upcoming Investment Events</h2>
+  <div class="event-card">
+    <h3>Startup Pitch Day</h3>
+    <p>Present your ideas to investors and receive instant feedback & funding opportunities.</p>
+    <button class="btn" onclick="openModal('Startup Pitch Day')">Request Support</button>
+  </div>
+  <div class="event-card">
+    <h3>Investor Networking Forum</h3>
+    <p>Connect with venture capitalists, angel investors, and business mentors.</p>
+    <button class="btn" onclick="openModal('Investor Networking Forum')">Request Support</button>
+  </div>
+</section>
+
+<section id="team" class="team">
+  <h2 style="color:#7c2d12; text-align:center; margin-bottom:20px;">Our Investment Advisors</h2>
+  
+  <div class="team-grid">
+    <div class="team-member">
+      <img src="assets/advisor1.jpg" alt="Advisor 1" width="100%">
+      <h3>David Kimani</h3>
+      <p class="role">Financial Analyst</p>
+      <p class="bio">10+ years of helping SMEs secure funding and manage investments.</p>
+    </div>
+    <div class="team-member">
+      <img src="assets/advisor2.jpg" alt="Advisor 2" width="100%">
+      <h3>Sophia Wangari</h3>
+      <p class="role">Startup Mentor</p>
+      <p class="bio">Guides entrepreneurs from idea stage to sustainable businesses.</p>
+    </div>
+    <div class="team-member">
+      <img src="assets/advisor3.jpg" alt="Advisor 3" width="100%">
+      <h3>Michael Oduor</h3>
+      <p class="role">Venture Capital Consultant</p>
+      <p class="bio">Expert in connecting startups with investors across Africa.</p>
+    </div>
+  </div>
+</section>
+
+<section id="testimonials" class="testimonials">
+  <h2 style="color:#7c2d12;">What Entrepreneurs Say</h2>
+  <div class="testimonial-box">
+    <p id="testimonial-text" class="italic">Loading...</p>
+    <p id="testimonial-author" style="margin-top:10px;font-weight:bold;color:#7c2d12">—</p>
+    <div style="margin-top:15px;">
+      <button onclick="prevTestimonial()" class="btn">← Prev</button>
+      <button onclick="nextTestimonial()" class="btn">Next →</button>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <h2 style="color:#7c2d12;">Contact & Request Investment Support</h2>
+  <form id="testimonial-form" style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:12px;">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="text" name="business" placeholder="Your Business / Startup">
+    <textarea name="message" placeholder="Your Feedback" required></textarea>
+    <button type="submit" class="btn">Submit Feedback</button>
+    <p id="thank-you" style="color:green;display:none;margin-top:10px;">Thank you for sharing!</p>
+  </form>
+</section>
+
+<!-- Modal -->
+<div id="supportModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3>Request Support</h3>
+
+    <form id="supportForm" 
+          action="https://formsubmit.co/mutheenime@gmail.com" 
+          method="POST" 
+          onsubmit="return handleSubmit(event)">
+      
+      <input type="hidden" id="program" name="program">
+      <input type="text" name="_honey" style="display:none">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="thankyou.html">
+
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <textarea name="message" rows="4" placeholder="Details of Your Investment Needs" required></textarea>
+      
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+  </div>
+</div>
+
+<footer><p>&copy; 2025 Business Investment Support. All Rights Reserved.</p></footer>
+
+<script>
+const programs = [
+  {title:"Startup Support",items:["Business Plan Development","Pitch Deck Preparation","Incubation Programs","Mentorship"]},
+  {title:"SME Growth",items:["Scaling Strategies","Market Expansion","Digital Transformation","Access to Finance"]},
+  {title:"Investor Relations",items:["Investor Matching","Fundraising Guidance","Equity & Valuation Support","Investor Readiness"]},
+  {title:"Financial Literacy",items:["Budgeting & Accounting","Cash Flow Management","Investment Basics","Risk Management"]},
+  {title:"Innovation & Tech",items:["Tech Hubs Access","Product Development","R&D Collaboration","Digital Tools Training"]},
+  {title:"Networking & Exposure",items:["Business Forums","Investment Summits","Trade Fairs","Global Market Access"]}
+];
+const programsGrid=document.getElementById('programsGrid');
+programs.forEach(p=>{
+  const div=document.createElement('div');div.className='program-card';
+  div.innerHTML=`<h2>${p.title}</h2><ul>${p.items.map(i=>`<li>${i}</li>`).join('')}</ul><button class="btn" onclick="openModal('${p.title}')">Request Support</button>`;
+  programsGrid.appendChild(div);
+});
+
+// Testimonials
+let testimonials=[{text:"I secured seed funding thanks to the pitch mentorship program!",author:"— Peter, Startup Founder"},{text:"The networking event connected me with investors who believed in my vision.",author:"— Linda, Entrepreneur"},{text:"Their financial literacy sessions helped me restructure my SME.",author:"— Joseph, Small Business Owner"}];
+let currentIndex=0;function showTestimonial(i){document.getElementById('testimonial-text').textContent=testimonials[i].text;document.getElementById('testimonial-author').textContent=testimonials[i].author;}
+function nextTestimonial(){currentIndex=(currentIndex+1)%testimonials.length;showTestimonial(currentIndex);}
+function prevTestimonial(){currentIndex=(currentIndex-1+testimonials.length)%testimonials.length;showTestimonial(currentIndex);}
+setInterval(nextTestimonial,6000);showTestimonial(currentIndex);
+
+// Submit testimonial
+document.getElementById('testimonial-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  const name=fd.get('name');
+  const biz=fd.get('business');
+  const message=fd.get('message');
+  testimonials.push({text:`"${message}"`,author:`— ${name}${biz? ", "+biz:""}`});
+  currentIndex=testimonials.length-1;
+  showTestimonial(currentIndex);
+  document.getElementById('thank-you').style.display='block';
+  e.target.reset();
+});
+
+// Menu + Modal
+function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
+function openModal(p){document.getElementById('supportModal').style.display='flex';document.getElementById('program').value=p;}
+function closeModal(){document.getElementById('supportModal').style.display='none';}
+window.onclick=e=>{if(e.target==document.getElementById('supportModal'))closeModal();}
+</script>
+</body>
+</html>

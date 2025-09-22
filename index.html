@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tim Support - Empowering Lives</title>
+<style >
+  :root {
+  --bg:#0f172a;          /* slate-900 */
+  --card:#111827;        /* gray-900 */
+  --muted:#94a3b8;       /* slate-400 */
+  --text:#e5e7eb;        /* gray-200 */
+  --primary:#22c55e;     /* green-500 */
+  --accent:#38bdf8;      /* sky-400 */
+  --ring:#22c55e55;
+  --danger:#ef4444;
+}
+
+
+* {margin:0; padding:0; box-sizing:border-box;}
+html,body {
+  background:linear-gradient(180deg,#0b1223 0%,#0f172a 100%);
+  color:var(--text);
+  font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+  scroll-behavior:smooth;
+}
+
+/* Header */
+header {
+  position:sticky; top:0; z-index:50;
+  backdrop-filter: blur(8px);
+  background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(17,24,39,.6));
+  border-bottom:1px solid #1f2937;
+  padding:.75rem 1rem;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.brand {display:flex; align-items:center; gap:.6rem; font-weight:700;}
+.brand h2 {font-size:1.1rem; color:var(--primary);}
+.logo {width:40px; height:40px; border-radius:10px; background:#1f2937; display:grid; place-items:center; font-weight:700; color:var(--primary);}
+.menu-toggle {font-size:28px; cursor:pointer; display:none; color:var(--accent);}
+.dropdown-menu {
+  display:none; flex-direction:column;
+  background:var(--card);
+  position:absolute; top:65px; left:20px;
+  border-radius:12px; padding:15px;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+.dropdown-menu a {
+  color:var(--text); font-weight:500;
+  padding:8px 12px; border-radius:8px;
+  transition:background .3s;
+}
+.dropdown-menu a:hover {background:var(--accent); color:#0f172a;}
+
+
+/* Hero Content wrapped in Card */
+.hero-content {
+  position:relative;
+  z-index:2;
+  max-width:800px;
+  padding:2rem;
+  background:#fff;                 /* Card background */
+  border-radius:16px;              /* Rounded edges */
+  box-shadow:0 6px 20px rgba(0,0,0,0.15); /* Card shadow */
+}
+
+/* Typography */
+.hero-content h1 {
+  font-size:2.9rem;
+  margin-bottom:1rem;
+}
+.hero-content p {
+  font-size:2rem;
+  margin-bottom:2rem;
+  color:var(--muted);
+}
+
+/* Button */
+.hero-content button {
+  background:linear-gradient(180deg,#22c55e,#16a34a);
+  color:#052e18;
+  border:none;
+  padding:.9rem 2rem;
+  font-weight:400;
+  border-radius:12px;
+  cursor:pointer;
+  transition:opacity .3s;
+}
+.hero-content button:hover {opacity:.9;}
+
+
+/* Services Section */
+.services {
+  padding: 60px 20px;
+  text-align: center;
+}
+.services-header h2 {
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 1px;
+}
+.services-header p {
+  color: var(--muted);
+  max-width: 800px;
+  margin: 0 auto 40px;
+}
+.services-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Service Card */
+.service-card {
+background: var(--card);
+  border-radius:16px;              /* Rounded edges */
+  padding: 25px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-decoration: none;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+}
+.service-card .icon {
+  font-size: 2.2rem;
+  color: var(--accent);
+}
+.service-card h3 {
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--primary);
+  margin-bottom: .5rem;
+}
+.service-card > p {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Category sections inside card */
+.category {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  padding: 15px;
+  transition: background 0.3s;
+}
+.category:hover {
+  background: rgba(56,189,248,0.08);
+}
+.category h4 {
+  font-size: 1rem;
+  color: var(--accent);
+  margin-bottom: .6rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.category ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.category ul li {
+  position: relative;
+  padding-left: 1.2rem;
+  margin: .35rem 0;
+  font-size: .92rem;
+  color: var(--text);
+}
+.category ul li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: bold;
+}
+/* Popup overlay */
+.popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.35s ease forwards;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Popup content */
+.popup-content {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin: 5% auto;
+  padding: 2rem;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  position: relative;
+  animation: slideUp 0.4s ease forwards;
+}
+
+/* Heading */
+.popup-content h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* List container */
+.popup-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.9rem;
+  max-height: 55vh;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+/* List items as buttons */
+.popup-content li {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 1rem 1.2rem;
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.popup-content li:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+}
+
+/* List links */
+.popup-content a {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.popup-content li:hover a {
+  color: #fff;
+}
+
+/* Arrow indicator */
+.popup-content li::after {
+  content: "→";
+  font-size: 1.1rem;
+  color: var(--muted);
+  transition: transform 0.3s, color 0.3s;
+}
+
+.popup-content li:hover::after {
+  color: #fff;
+  transform: translateX(6px);
+}
+
+/* Close button */
+.close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--muted);
+  cursor: pointer;
+  transition: transform 0.25s, color 0.25s;
+}
+.close:hover {
+  color: var(--accent);
+  transform: scale(1.15);
+}
+
+/* Custom scrollbar */
+.popup-content ul::-webkit-scrollbar {
+  width: 8px;
+}
+.popup-content ul::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 6px;
+}
+.popup-content ul::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 6px;
+}
+
+
+
+
+/* Animations */
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+@keyframes slideUp {
+  from {transform: translateY(40px); opacity: 0;}
+  to {transform: translateY(0); opacity: 1;}
+}
+/* Footer */
+footer {
+  background:var(--card); color:var(--muted);
+  text-align:center; padding:30px 20px; font-size:.9rem; margin-top:50px;
+}
+.mt-6 {
+  margin-top: 1.5rem; /* same as Tailwind's mt-6 */
+  text-align: center; /* centers the button */
+}
+
+.mt-6 a {
+  display: inline-block;
+  background-color: #25d366; /* WhatsApp green */
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.mt-6 a:hover {
+  background-color: #1ebe57; /* darker green on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mt-6 a:active {
+  transform: translateY(0); /* button presses down */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+.footer-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px; text-align:left; max-width:1000px; margin:0 auto;
+}
+.footer-grid .small {font-size:.85rem; color:#64748b;}
+
+/* Animations & Responsive */
+@keyframes slideUp {
+  from{opacity:0; transform:translateY(40px);}
+  to{opacity:1; transform:translateY(0);}
+}
+@media(max-width:768px){
+  .menu-toggle{display:block;}
+  nav{display:none;}
+  .hero-content h1{font-size:1.6rem;}
+  .hero-content p{font-size:1rem;}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <img src="assets/images/tim-logo.png" class="logo" alt="Tim Support Logo" />
+    <h2>Tim Support</h2>
+  </div>
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+  <div class="dropdown-menu" id="dropdown">
+    <a href="team-member.html">Our Team</a>
+    <a href="bemember.html">Membershipregistration</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="resources.html">Resources</a>
+    <a href="eventsorg.html">Events</a>
+    <a href="Trainings.html">Trainings</a>
+    <a href="request.html">Services request</a>
+      </div>
+</header>
+<!-- Hero Slideshow -->
+<section class="hero-slideshow">
+  <div class="slides">
+    <div class="slide active" style="background-image: url('assets/images/slide1.jpg');"></div>
+    <div class="slide" style="background-image: url('assets/images/slide2.jpg');"></div>
+    <div class="slide" style="background-image: url('assets/images/slide3.jpg');"></div>
+    <div class="slide" style="background-image: url('assets/images/slide4.jpg');"></div>
+  </div>
+
+  <div class="hero-content">
+    <h1>Get all expact based solutions. </h1>
+    <p>Connecting clients with dedicated specialists to meet their needs.</p>
+    <button onclick="openPopup()">RequestSupport</button> 
+      </div>
+
+  <!-- Indicators only -->
+  <div class="indicators"></div>
+</section>
+
+<!-- Services -->
+<section class="services">
+  <div class="services-header">
+    <h2>Our Support.</h2>
+    <p>Explore the range of services we provide to empower individuals, institutions, and communities.</p>  
+  </div>
+
+  <!-- Container for cards -->
+  <div class="services-container">
+
+    <!-- Card 1 -->
+    
+<a href="instSupport.html" class="service-card">
+  <div class="icon">🏫</div>
+  <h3>Institutions Support</h3>
+  <p>Guidance, resources, and partnership programs to strengthen institutional growth.</p>
+<div class="category">
+    <h4>👨‍💼 Employee Development & Capacity Building</h4>
+    <ul>
+      <li>Onboarding & Orientation</li>
+      <li>Continuous Professional Development</li>
+      <li>Leadership Training</li>
+      <li>Talent Development</li>
+      <li>Coaching & Mentoring</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🧘 Organizational Wellness & Support</h4>
+    <ul>
+      <li>Mental Health Programs</li>
+      <li>Work-Life Balance Initiatives</li>
+      <li>Team Building Activities</li>
+      <li>Employee Assistance Programs</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🏢 Institutional Strengthening</h4>
+    <ul>
+      <li>Governance Frameworks</li>
+      <li>Strategic Planning</li>
+      <li>Organizational Audits</li>
+      <li>Change Management</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🌍 Community & Social Impact</h4>
+    <ul>
+      <li>CSR Strategy</li>
+      <li>Community Outreach</li>
+      <li>Youth & Women Empowerment</li>
+      <li>Volunteerism</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>💻 Institutional Digital Transformation</h4>
+    <ul>
+      <li>ICT Integration</li>
+      <li>Learning Management Systems</li>
+      <li>Work Efficiency Tools</li>
+      <li>Data Security Training</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🔬 Research, Innovation & Knowledge Sharing</h4>
+    <ul>
+      <li>Workshops & Conferences</li>
+      <li>Research Collaboration</li>
+      <li>Knowledge Management</li>
+      <li>Innovation Hubs</li>
+    </ul>
+  </div>
+</a>
+<a href="property.html" class="service-card">
+  <div class="icon">🏠</div>
+  <h3>Properties & Assets</h3>
+  <p>Helping you acquire, manage, and grow your properties and assets with ease.</p>
+
+  <div class="category">
+    <h4>🏡 Real Estate</h4>
+    <ul>
+      <li>Property Acquisition</li>
+      <li>Land Development</li>
+      <li>Home Buying & Selling</li>
+      <li>Rental Management</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>💼 Asset Management</h4>
+    <ul>
+      <li>Financial Planning</li>
+      <li>Wealth Preservation</li>
+      <li>Risk Assessment</li>
+      <li>Portfolio Diversification</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🔑 Maintenance & Care</h4>
+    <ul>
+      <li>Repairs & Renovations</li>
+      <li>Facility Management</li>
+      <li>Utility Optimization</li>
+      <li>Property Valuation</li>
+    </ul>
+  </div>
+</a>
+
+<a href="Businesses.html" class="service-card">
+  <div class="icon">💼</div>
+  <h3>Business Investment</h3>
+  <p>Expert guidance in starting, expanding, and managing investments.</p>
+
+  <div class="category">
+    <h4>🚀 Startups</h4>
+    <ul>
+      <li>Business Planning</li>
+      <li>Seed Funding Guidance</li>
+      <li>Market Research</li>
+      <li>Mentorship</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🏭 SMEs & Enterprises</h4>
+    <ul>
+      <li>Scaling Strategies</li>
+      <li>Partnership Building</li>
+      <li>Financial Management</li>
+      <li>Export/Import Consulting</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>📊 Investment Advisory</h4>
+    <ul>
+      <li>Stock Market Basics</li>
+      <li>Real Estate Investment</li>
+      <li>Risk & Return Analysis</li>
+      <li>Retirement Planning</li>
+    </ul>
+  </div>
+</a>
+
+<a href="projectsupport.html" class="service-card">
+  <div class="icon">🛠</div>
+  <h3>Projects Support</h3>
+  <p>Practical support in planning, implementing, and managing diverse projects.</p>
+
+  <div class="category">
+    <h4>🌾 Agriculture</h4>
+    <ul>
+      <li>Crop Farming</li>
+      <li>Animal Rearing</li>
+      <li>Agro-processing</li>
+      <li>Sustainable Practices</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🏗 Construction</h4>
+    <ul>
+      <li>Housing Projects</li>
+      <li>Commercial Buildings</li>
+      <li>Infrastructure Development</li>
+      <li>Site Supervision</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🔧 Maintenance</h4>
+    <ul>
+      <li>Repairs & Renovations</li>
+      <li>Plumbing & Electrical</li>
+      <li>Machinery Servicing</li>
+      <li>Preventive Maintenance</li>
+    </ul>
+  </div>
+</a>
+
+<a href="learnershub.html" class="service-card">
+  <div class="icon">📚</div>
+  <h3>Learners Support</h3>
+  <p>Resources, mentorship, and guidance tailored for learners of all stages.</p>
+
+  <div class="category">
+    <h4>👶 Early Learning</h4>
+    <ul>
+      <li>Foundational Skills</li>
+      <li>Creativity Development</li>
+      <li>Parental Involvement</li>
+      <li>Interactive Resources</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🎓 Students</h4>
+    <ul>
+      <li>Study Materials</li>
+      <li>Career Guidance</li>
+      <li>Scholarship Support</li>
+      <li>Academic Mentorship</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>📖 Lifelong Learners</h4>
+    <ul>
+      <li>Skill Development</li>
+      <li>Online Courses</li>
+      <li>Workshops</li>
+      <li>Research Assistance</li>
+    </ul>
+  </div>
+</a>
+<a href="health.html" class="service-card">
+  <div class="icon">🏥</div>
+  <h3>Healthcare & Wellness Support</h3>
+  <p>Comprehensive health and wellness solutions for individuals, families, and communities.</p>
+
+  <div class="category">
+    <h4>🩺 Medical Care</h4>
+    <ul>
+      <li>Clinic Setup Guidance</li>
+      <li>Pharmacy & Lab Services</li>
+      <li>Mobile Health Programs</li>
+      <li>Health Compliance Support</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>💪 Wellness & Fitness</h4>
+    <ul>
+      <li>Nutrition Coaching</li>
+      <li>Exercise & Fitness Plans</li>
+      <li>Mental Health Support</li>
+      <li>Stress Management Workshops</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🌍 Community Health</h4>
+    <ul>
+      <li>Public Health Campaigns</li>
+      <li>Preventive Healthcare</li>
+      <li>Maternal & Child Care</li>
+      <li>Hygiene & Sanitation Programs</li>
+    </ul>
+  </div>
+</a>
+
+<a href="tech-innovation.html" class="service-card">
+  <div class="icon">💻</div>
+  <h3>Technology & Innovation Support</h3>
+  <p>Empowering growth through technology adoption, innovation, and digital solutions.</p>
+
+  <div class="category">
+    <h4>📱 ICT Solutions</h4>
+    <ul>
+      <li>Digital Skills Training</li>
+      <li>Cyber Café / ICT Hub Setup</li>
+      <li>E-learning Platforms</li>
+      <li>ICT Support & Maintenance</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🚀 Innovation & Startups</h4>
+    <ul>
+      <li>Startup Incubation</li>
+      <li>Tech Entrepreneurship</li>
+      <li>Mobile App Development</li>
+      <li>Innovation Labs</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🌐 Digital Transformation</h4>
+    <ul>
+      <li>E-commerce Platforms</li>
+      <li>Digital Marketing</li>
+      <li>Automation & AI Tools</li>
+      <li>Cloud & Data Solutions</li>
+    </ul>
+  </div>
+</a>
+<a href="environ.html" class="service-card">
+  <div class="icon">🌿</div>
+  <h3>Environment & Energy Support</h3>
+  <p>Promoting sustainability, renewable energy, and environmental conservation for a greener future.</p>
+
+  <div class="category">
+    <h4>🌱 Environmental Conservation</h4>
+    <ul>
+      <li>Tree Planting Campaigns</li>
+      <li>Water Conservation Projects</li>
+      <li>Waste Management Solutions</li>
+      <li>Community Clean-up Programs</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>⚡ Renewable Energy</h4>
+    <ul>
+      <li>Solar Energy Systems</li>
+      <li>Wind & Hydro Projects</li>
+      <li>Biogas Production</li>
+      <li>Energy Efficiency Training</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🌍 Climate Action</h4>
+    <ul>
+      <li>Climate Change Awareness</li>
+      <li>Carbon Footprint Reduction</li>
+      <li>Green Business Models</li>
+      <li>Policy & Advocacy Support</li>
+    </ul>
+  </div>
+</a>
+
+<a href="Logistics.html" class="service-card">
+  <div class="icon">🚚</div>
+  <h3>Transport & Logistics Support</h3>
+  <p>Building reliable systems for transport, distribution, and supply chain management.</p>
+
+  <div class="category">
+    <h4>🚗 Road Transport</h4>
+    <ul>
+      <li>Taxi & Ride-Sharing Business</li>
+      <li>Bus & Shuttle Operations</li>
+      <li>Logistics Vehicle Fleet Management</li>
+      <li>Road Safety Training</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🚢 Shipping & Freight</h4>
+    <ul>
+      <li>Import & Export Logistics</li>
+      <li>Freight Forwarding Services</li>
+      <li>Warehouse & Distribution Setup</li>
+      <li>Customs & Clearance Guidance</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>📦 Supply Chain Solutions</h4>
+    <ul>
+      <li>E-commerce Delivery Systems</li>
+      <li>Cold Chain Logistics</li>
+      <li>Inventory & Stock Management</li>
+      <li>Supply Chain Optimization</li>
+    </ul>
+  </div>
+</a>
+<a href="tourism.html" class="service-card">
+  <div class="icon">🏖️</div>
+  <h3>Tourism & Hospitality Support</h3>
+  <p>Boosting local and global tourism through innovative hospitality, travel, and cultural experiences.</p>
+
+  <div class="category">
+    <h4>🏨 Hospitality Development</h4>
+    <ul>
+      <li>Hotel & Guesthouse Setup</li>
+      <li>Restaurant & Catering Services</li>
+      <li>Resort & Retreat Management</li>
+      <li>Customer Service Training</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>✈️ Travel & Tour Operations</h4>
+    <ul>
+      <li>Tour Agency Establishment</li>
+      <li>Travel Packages & Itineraries</li>
+      <li>Transport & Shuttle Services</li>
+      <li>International Tourism Partnerships</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🌍 Cultural & Eco-Tourism</h4>
+    <ul>
+      <li>Community-Based Tourism</li>
+      <li>Wildlife & Safari Programs</li>
+      <li>Eco-Lodges & Sustainable Travel</li>
+      <li>Heritage & Cultural Festivals</li>
+    </ul>
+  </div>
+</a>
+<a href="insurance-machinery-support.html" class="service-card">
+  <div class="icon">🛡️⚙️</div>
+  <h3>Insurance & Machinery Support</h3>
+  <p>Helping individuals, businesses, and institutions secure the right insurance while ensuring machinery reliability and efficiency.</p>
+
+  <div class="category">
+    <h4>👤 Personal Insurance</h4>
+    <ul>
+      <li>Health Insurance</li>
+      <li>Life Insurance</li>
+      <li>Disability Coverage</li>
+      <li>Retirement & Pension Plans</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🏢 Business Insurance</h4>
+    <ul>
+      <li>Property Insurance</li>
+      <li>Liability Coverage</li>
+      <li>Workers’ Compensation</li>
+      <li>Risk Management Plans</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🚗 Vehicle & Asset Insurance</h4>
+    <ul>
+      <li>Car Insurance</li>
+      <li>Fleet Insurance</li>
+      <li>Farm & Machinery Cover</li>
+      <li>Marine & Cargo Insurance</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🏭 Industrial Machinery</h4>
+    <ul>
+      <li>Installation & Setup</li>
+      <li>Preventive Maintenance</li>
+      <li>Breakdown Repair</li>
+      <li>Upgrades & Automation</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🚜 Agricultural Machinery</h4>
+    <ul>
+      <li>Tractor & Harvester Maintenance</li>
+      <li>Irrigation Systems Support</li>
+      <li>Greenhouse Equipment</li>
+      <li>Spare Parts Supply</li>
+    </ul>
+  </div>
+
+  <div class="category">
+    <h4>🏗 Construction Machinery</h4>
+    <ul>
+      <li>Excavators & Loaders</li>
+      <li>Concrete Mixers & Cranes</li>
+      <li>Heavy-Duty Vehicles</li>
+      <li>Equipment Leasing</li>
+    </ul>
+  </div>
+</a>
+<a href="personal-development.html" class="service-card">
+      <div class="icon">🌱</div>
+      <h3>Comprehensive Growth & Empowerment</h3>
+      <p>Empowering individuals, families, and communities with holistic support and growth opportunities.</p>
+
+      <div class="category">
+        <h4>🌟 Personal Growth</h4>
+        <ul>
+          <li>Confidence Building</li>
+          <li>Emotional Intelligence</li>
+          <li>Time Management</li>
+          <li>Goal Setting</li>
+        </ul>
+      </div>
+
+      <div class="category">
+        <h4>👨‍👩‍👧 Family Development</h4>
+        <ul>
+          <li>Parenting Support</li>
+          <li>Financial Literacy</li>
+          <li>Healthy Communication</li>
+          <li>Family Counseling</li>
+        </ul>
+      </div>
+
+      <div class="category">
+        <h4>🙏 Spiritual Growth</h4>
+        <ul>
+          <li>Faith Guidance</li>
+          <li>Meditation & Mindfulness</li>
+          <li>Purpose-Driven Living</li>
+          <li>Community Fellowship</li>
+        </ul>
+      </div>
+
+      <div class="category">
+        <h4>💡 Youth Empowerment</h4>
+        <ul>
+          <li>Leadership Programs</li>
+          <li>Career Guidance</li>
+          <li>Life Skills Training</li>
+          <li>Mentorship Sessions</li>
+        </ul>
+      </div>
+    </a>
+ </div>
+</section>
+
+<!-- Popup Modal -->
+<div id="servicesPopup" class="popup">
+  <div class="popup-content">
+    <span class="close" onclick="closePopup()">&times;</span>
+    <h2> AllSupport. </h2>
+    <ul>
+      <li><a href="instSupport.html" >All Institutions Support.</a></li>
+      <li><a href="property.html">Properties Buying Support.</a></li>
+      <li><a href="learnershub.html"> Comprehensive Learning Support.</a></li>
+      <li><a href="insurance.html">Insurance Support.</a></li>
+      <li><a href="projectsupport.html"> All Areas Projects Support.</a></li>
+      <li><a href="projectsupport.html"> Technology and innovation support.</a></li>
+      <li><a href="machinerysupport.html">All machines Support.</a></li>
+      <li><a href="talent.html">Talents Support.</a></li>
+      <li><a href="Inventory.html">Inventory Incubation.</a></li>
+      <li><a href="eventsorg.html">Events planning Support.</a></li>
+       <li><a href="health.html">Health Support.</a></li>
+        <li><a href="Logistics.html">Importation -Logistics Support.</a></li>
+      <li><a href="Marketing.html">Marketing support.</a></li>
+      <li><a href="health.html">Health Support.</a></li>
+      <li><a href="environ.html">Environment and fuel power.</a></li>
+      <li><a href="tourism.html">Tourism-procurement.</a></li>
+         <li><a href="professional.html">professional growth Support. </a></li>
+       <li><a href="personal-development.html">All  personalgrowth programmes.</a></li>
+      <li><a href="Parentingplus.html">Family And prenatal Support.</a></li>
+       </ul>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div style="font-weight:700">Tim Support</div>
+      <div class="small">Connecting clients with dedicated specialists to meet their needs.</div>
+    </div>
+    <div>
+      <div style="font-weight:700">Contact</div>
+      <div class="small">Tim-support.org<br/>+254 724615550</div>
+    </div>
+    <div>
+    	<div class="mt-6">
+          <a href="https://wa.me/254724615550" target="_blank" class="inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">
+            Chat on WhatsApp
+          </a>
+            </div>
+      <div style="font-weight:700">Legal</div>
+      <div class="small"><a href="#" style="color:#e5e7eb">Privacy</a> · <a href="#" style="color:#e5e7eb">Terms</a></div>
+    </div>
+  </div>
+  <div style="margin-top:1rem" class="small">© <span id="year"></span> Tim Support. All rights reserved.</div>
+</footer>
+<script>
+  let currentIndex = 0;
+  const slides = document.querySelectorAll('.slide');
+  const indicatorsContainer = document.querySelector('.indicators');
+
+  // Generate indicators dynamically
+  slides.forEach((_, i) => {
+    const dot = document.createElement('span');
+    if (i === 0) dot.classList.add('active');
+    dot.addEventListener('click', () => goToSlide(i));
+    indicatorsContainer.appendChild(dot);
+  });
+
+  const indicators = indicatorsContainer.querySelectorAll('span');
+
+  function showSlide(index) {
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === index);
+      indicators[i].classList.toggle('active', i === index);
+    });
+    currentIndex = index;
+  }
+
+  function nextSlide() {
+    showSlide((currentIndex + 1) % slides.length);
+  }
+
+  function prevSlide() {
+    showSlide((currentIndex - 1 + slides.length) % slides.length);
+  }
+
+  function goToSlide(index) {
+    showSlide(index);
+  }
+
+  // Auto-play every 5s
+  let slideTimer = setInterval(nextSlide, 5000);
+
+  // Pause autoplay on hover (desktop only)
+  const hero = document.querySelector('.hero-slideshow');
+  hero.addEventListener('mouseenter', () => clearInterval(slideTimer));
+  hero.addEventListener('mouseleave', () => slideTimer = setInterval(nextSlide, 5000));
+
+  // Swipe gestures (mobile)
+  let startX = 0;
+  let endX = 0;
+
+  hero.addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+  });
+
+  hero.addEventListener('touchmove', (e) => {
+    endX = e.touches[0].clientX;
+  });
+
+  hero.addEventListener('touchend', () => {
+    if (startX - endX > 50) {
+      nextSlide(); // swipe left
+    } else if (endX - startX > 50) {
+      prevSlide(); // swipe right
+    }
+    startX = 0;
+    endX = 0;
+  });
+</script>
+<script>
+  function toggleMenu() {
+    const dropdown = document.getElementById('dropdown');
+    dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+  }
+  function openPopup() {
+    document.getElementById("servicesPopup").style.display = "block";
+  }
+  function closePopup() {
+    document.getElementById("servicesPopup").style.display = "none";
+  }
+  window.onclick = function(event) {
+    let popup = document.getElementById("servicesPopup");
+    if (event.target == popup) { popup.style.display = "none"; }
+  }
+  document.getElementById("year").innerText = new Date().getFullYear();
+</script>
+</body>
+</html>

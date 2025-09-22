@@ -1,0 +1,49 @@
+{
+  "categories": [
+    {
+      "name": "Business & Entrepreneurship",
+      "resources": [
+        {
+          "title": "Startup Toolkit (PDF)",
+          "file": "resources/startup-toolkit.pdf",
+          "image": "images/startup.jpg"
+        },
+        {
+          "title": "Business Plan Template (DOCX)",
+          "file": "resources/business-plan-template.docx",
+          "image": "images/business-plan.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Agriculture & Food Security",
+      "resources": [
+        {
+          "title": "Sustainable Farming Guide",
+          "file": "resources/sustainable-farming.pdf",
+          "image": "images/farming.jpg"
+        },
+        {
+          "title": "Crop Rotation Handbook",
+          "file": "resources/crop-rotation.pdf",
+          "image": "images/crop.jpg"
+        }
+      ]
+    },
+    {
+      "name": "Technology & Innovation",
+      "resources": [
+        {
+          "title": "Intro to Cloud Computing (Slides)",
+          "file": "resources/cloud-computing.pptx",
+          "image": "images/cloud.jpg"
+        },
+        {
+          "title": "AI Strategy for SMEs",
+          "file": "resources/ai-strategy.pdf",
+          "image": "images/ai.jpg"
+        }
+      ]
+    }
+  ]
+}

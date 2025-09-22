@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transport & Logistics Support</title>
+  <style>
+    body {font-family: Arial, sans-serif;margin: 0;background: #f4f6f9;}
+    header {display:flex;justify-content:space-between;align-items:center;padding:15px 25px;background:#065f46;color:white;position:sticky;top:0;z-index:1000;}
+    .logo{font-size:1.4rem;font-weight:bold;}
+    nav{display:none;flex-direction:column;position:absolute;top:60px;right:25px;background:white;color:black;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+    nav a{padding:10px 15px;text-decoration:none;color:black;display:block;transition:0.3s;}
+    nav a:hover{background:#e5e7eb;}
+    .menu-btn{font-size:1.8rem;cursor:pointer;}
+    .show{display:flex;}
+    .hero{text-align:center;padding:80px 20px;background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('assets/transport-bg.jpg') no-repeat center/cover;color:white;}
+    .hero h1{font-size:2rem;margin-bottom:10px;}
+    .programs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:30px;}
+    .program-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);transition:.3s;}
+    .program-card:hover{transform:translateY(-5px);box-shadow:0 8px 16px rgba(0,0,0,0.2);}
+    .program-card h2{font-size:1.2rem;margin-bottom:10px;color:#065f46;}
+    .category{margin-top:15px;}
+    .category h4{margin-bottom:8px;color:#333;}
+    .category ul{list-style:disc;margin-left:20px;}
+    .btn{display:inline-block;margin-top:10px;padding:8px 14px;background:#065f46;color:white;border:none;border-radius:6px;cursor:pointer;transition:.3s;}
+    .btn:hover{background:#0a8a61;}
+    footer{background:#065f46;color:white;text-align:center;padding:15px;}
+    /* Team Section */
+    .team{padding:50px 20px;text-align:center;}
+    .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;max-width:1000px;margin:auto;}
+    .team-member{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+    .team-member img{width:100%;height:200px;object-fit:cover;border-radius:12px;margin-bottom:15px;}
+    .team-member h3{margin:10px 0;color:#065f46;}
+    .role{font-weight:bold;color:#444;margin-bottom:10px;}
+    .bio{font-size:0.9rem;color:#555;}
+    /* Modal */
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
+    .modal-content{background:white;padding:20px;border-radius:12px;width:90%;max-width:400px;position:relative;}
+    .close{position:absolute;top:10px;right:15px;font-size:1.5rem;cursor:pointer;}
+    .modal-content input,.modal-content textarea{width:100%;margin-bottom:10px;padding:8px;border:1px solid #ccc;border-radius:6px;}
+    @media(min-width:768px){nav{display:flex !important;flex-direction:row;position:static;background:none;box-shadow:none;}
+      nav a{color:white;} .menu-btn{display:none;}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Transport Support</div>
+  <div class="menu-btn" onclick="toggleMenu()"></div>
+  <nav id="navMenu">
+    <a href="#programs">Services</a>
+    <a href="#team">Experts</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Transport & Logistics Support</h1>
+  <p>Building reliable systems for transport, distribution, and supply chain management.</p>
+</section>
+
+<section id="programs">
+  <h2 style="text-align:center;color:#065f46;">Our Transport Solutions</h2>
+  <div class="programs-grid">
+
+    <div class="program-card">
+      <h2> Road Transport</h2>
+      <ul>
+        <li>Taxi & Ride-Sharing Business</li>
+        <li>Bus & Shuttle Operations</li>
+        <li>Logistics Vehicle Fleet Management</li>
+        <li>Road Safety Training</li>
+      </ul>
+      <button class="btn" onclick="openModal('Road Transport')">Request Support</button>
+    </div>
+
+    <div class="program-card">
+      <h2> Shipping & Freight</h2>
+      <ul>
+        <li>Import & Export Logistics</li>
+        <li>Freight Forwarding Services</li>
+        <li>Warehouse & Distribution Setup</li>
+        <li>Customs & Clearance Guidance</li>
+      </ul>
+      <button class="btn" onclick="openModal('Shipping & Freight')">Request Support</button>
+    </div>
+
+    <div class="program-card">
+      <h2> Supply Chain Solutions</h2>
+      <ul>
+        <li>E-commerce Delivery Systems</li>
+        <li>Cold Chain Logistics</li>
+        <li>Inventory & Stock Management</li>
+        <li>Supply Chain Optimization</li>
+      </ul>
+      <button class="btn" onclick="openModal('Supply Chain Solutions')">Request Support</button>
+    </div>
+
+  </div>
+</section>
+
+<section id="team" class="team">
+  <h2 style="color:#065f46; margin-bottom:20px;">Meet Our Logistics Experts</h2>
+  <div class="team-grid">
+    <div class="team-member">
+      <img src="assets/logistics1.jpg" alt="Expert 1">
+      <h3>Samuel Ochieng</h3>
+      <p class="role">Fleet Operations Manager</p>
+      <p class="bio">10+ years in road transport systems, fleet optimization, and safety training programs.</p>
+    </div>
+    <div class="team-member">
+      <img src="assets/logistics2.jpg" alt="Expert 2">
+      <h3>Aisha Hassan</h3>
+      <p class="role">Shipping & Freight Specialist</p>
+      <p class="bio">Expert in international shipping, customs clearance, and freight forwarding solutions.</p>
+    </div>
+    <div class="team-member">
+      <img src="assets/logistics3.jpg" alt="Expert 3">
+      <h3>Michael Kamau</h3>
+      <p class="role">Supply Chain Consultant</p>
+      <p class="bio">Focused on supply chain optimization, e-commerce delivery, and cold chain logistics.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact" style="padding:40px 20px;text-align:center;">
+  <h2 style="color:#065f46;">Get in Touch</h2>
+  <p>Need tailored support in transport & logistics? Reach out to us today.</p>
+  <button class="btn" onclick="openModal('General Inquiry')">Contact Us</button>
+</section>
+
+<!-- Modal -->
+<div id="supportModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3>Request Support</h3>
+    <form id="supportForm" 
+          action="https://formsubmit.co/mutheenime@gmail.com" 
+          method="POST">
+      <input type="hidden" id="program" name="program">
+      <input type="text" name="_honey" style="display:none">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="thankyou.html">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <textarea name="message" rows="4" placeholder="Details of your request" required></textarea>
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+  </div>
+</div>
+
+<footer><p>&copy; 2025 Transport & Logistics Support. All Rights Reserved.</p></footer>
+
+<script>
+function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
+function openModal(p){document.getElementById('supportModal').style.display='flex';document.getElementById('program').value=p;}
+function closeModal(){document.getElementById('supportModal').style.display='none';}
+window.onclick=e=>{if(e.target==document.getElementById('supportModal'))closeModal();}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supported Projects — Guidance & Management</title>
+  <style>
+    body {font-family: Arial, sans-serif;margin: 0;background: #f4f6f9;}
+    header {display:flex;justify-content:space-between;align-items:center;padding:15px 25px;background:#0b5ed7;color:white;position:sticky;top:0;z-index:1000;}
+    .logo{font-size:1.4rem;font-weight:bold;}
+    nav{display:none;flex-direction:column;position:absolute;top:60px;right:25px;background:white;color:black;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+    nav a{padding:10px 15px;text-decoration:none;color:black;display:block;transition:0.3s;}
+    nav a:hover{background:#e5e7eb;}
+    .menu-btn{font-size:1.8rem;cursor:pointer;}
+    .show{display:flex;}
+    .hero{text-align:center;padding:80px 20px;background:linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url('assets/support-hero.jpg') no-repeat center/cover;color:white;}
+    .hero h1{font-size:2rem;margin-bottom:10px;}
+    .programs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:30px;}
+    .program-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);transition:.3s;}
+    .program-card:hover{transform:translateY(-5px);box-shadow:0 8px 16px rgba(0,0,0,0.2);}
+    .program-card h2{font-size:1.2rem;margin-bottom:10px;color:#0b5ed7;}
+    .projects-list{list-style:none;padding-left:0;margin:0;}
+    .projects-list li{padding:6px 0;border-bottom:1px solid #f1f5f9;}
+    .btn{display:inline-block;margin-top:10px;padding:6px 12px;background:#0b5ed7;color:white;border:none;border-radius:6px;cursor:pointer;transition:.3s;font-size:0.9rem;}
+    .btn:hover{background:#0f6fe6;}
+    footer{background:#0b5ed7;color:white;text-align:center;padding:15px;}
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
+    .modal-content{background:white;padding:20px;border-radius:12px;width:90%;max-width:480px;position:relative;}
+    .close{position:absolute;top:10px;right:15px;font-size:1.5rem;cursor:pointer;}
+    .modal-content input,.modal-content textarea{width:100%;margin-bottom:10px;padding:8px;border:1px solid #ccc;border-radius:6px;}
+    @media(min-width:768px){nav{display:flex !important;flex-direction:row;position:static;background:none;box-shadow:none;}
+      nav a{color:white;} .menu-btn{display:none;}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Project Support Hub</div>
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+  <nav id="navMenu">
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Get Guidance for Your Project</h1>
+  <p>Start, manage, and scale your project with expert-backed support across all sectors.</p>
+  <div style="margin-top:20px;">
+    <button class="btn" onclick="document.getElementById('projects').scrollIntoView({behavior:'smooth'})">Explore Projects</button>
+  </div>
+</section>
+
+<section id="projects">
+  <h2 style="text-align:center;color:#0b5ed7;padding-top:30px;">Supported Project Categories</h2>
+  <div class="programs-grid" id="projectsGrid"></div>
+</section>
+
+<section id="contact" class="contact" style="padding:50px 20px;text-align:center;">
+  <h2 style="color:#0b5ed7;">Need Help Starting Your Project?</h2>
+  <form id="contactForm" style="max-width:700px;margin:auto;background:white;padding:20px;border-radius:12px;">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="text" name="project" placeholder="Type of Project (e.g., Poultry, Housing)" required>
+    <input type="email" name="email" placeholder="Your Email" required>
+    <textarea name="message" placeholder="Describe the support you need (startup, management, funding, training...)" required></textarea>
+    <button type="submit" class="btn">Submit</button>
+    <p id="thank-you" style="color:green;display:none;margin-top:10px;">Thank you — our team will contact you shortly.</p>
+  </form>
+</section>
+
+
+<!-- Modal -->
+<div id="supportModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3>Request Support</h3>
+    <form id="supportForm" 
+          action="https://formsubmit.co/mutheenime@gmail.com" 
+          method="POST" 
+          onsubmit="return handleSubmit(event)">
+      <input type="hidden" id="program" name="program">
+      <input type="text" name="_honey" style="display:none">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="thankyou.html">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      	<input type="number" name="number" placeholder="Your number" required>
+      <input type="text" name="location" placeholder="Your  location" required>
+      <textarea name="message" rows="4" placeholder="Details of your request" required></textarea>
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+  </div>
+</div>
+
+<footer><p>&copy; 2025 Project Support Hub. All Rights Reserved.</p></footer>
+
+<script>
+const projects = [
+  {
+    category: "Agriculture",
+    items: [
+      {name:"Poultry Farming", desc:"Learn how to start and manage a profitable poultry business."},
+      {name:"Greenhouse Farming", desc:"Setup, crop selection, and climate control for greenhouses."},
+      {name:"Dairy Farming", desc:"Herd management, feeds, and market access for milk products."},
+      {name:"Beekeeping (Apiculture)", desc:"Honey production, hive management, and by-products."},
+      {name:"Fish Farming (Aquaculture)", desc:"Tilapia, catfish, and ornamental fish farming techniques."},
+      {name:"Goat & Sheep Rearing", desc:"Meat, milk, and hides production management."},
+      {name:"Crop Farming", desc:"Maize, beans, vegetables, and cash crop production."},
+      {name:"Agro-Processing", desc:"Adding value through milling, drying, and packaging crops."}
+    ]
+  },
+  {
+    category: "Construction",
+    items: [
+      {name:"Affordable Housing", desc:"Guidance on building low-cost houses efficiently."},
+      {name:"Road Construction", desc:"Basics of road design, costing, and project management."},
+      {name:"Masonry & Carpentry", desc:"Starting a small-scale construction workshop or service."},
+      {name:"Real Estate Development", desc:"Property development, rental housing, and estate projects."},
+      {name:"Water Supply Projects", desc:"Boreholes, wells, and rural water systems."},
+      {name:"Renovation & Remodeling", desc:"Managing home upgrades and repair businesses."},
+      {name:"Bricks & Blocks Production", desc:"Small-scale construction material production."}
+    ]
+  },
+  {
+    category: "Education",
+    items: [
+      {name:"Private Schools", desc:"Steps to register, manage, and grow an education institution."},
+      {name:"E-learning Platforms", desc:"Building and managing online training programs."},
+      {name:"Vocational Training Centers", desc:"Technical training in trades and practical skills."},
+      {name:"Daycare & Early Childhood Centers", desc:"Starting and managing childcare facilities."},
+      {name:"Tutoring Services", desc:"Private coaching for exams, skills, and online learning."}
+    ]
+  },
+  {
+    category: "Health",
+    items: [
+      {name:"Pharmacy Setup", desc:"How to start and manage a licensed pharmacy."},
+      {name:"Health Clinic", desc:"Community clinic setup, compliance, and management."},
+      {name:"Laboratory Services", desc:"Medical lab setup for diagnostics and testing."},
+      {name:"Dental Practice", desc:"Starting and equipping dental care services."},
+      {name:"Wellness & Fitness Centers", desc:"Gyms, spas, and lifestyle health support."},
+      {name:"Mobile Health Services", desc:"Community outreach and mobile clinic operations."}
+    ]
+  },
+  {
+    category: "ICT & Innovation",
+    items: [
+      {name:"Cyber Café / ICT Hub", desc:"Requirements and setup for digital access centers."},
+      {name:"Startup Incubators", desc:"Supporting innovative tech entrepreneurs."},
+      {name:"Software Development", desc:"Building and scaling digital products and apps."},
+      {name:"Digital Marketing Agencies", desc:"Helping businesses grow online through ads and SEO."},
+      {name:"ICT Training Centers", desc:"Skill development in coding, design, and IT support."},
+      {name:"E-commerce Platforms", desc:"Launching online shops and marketplaces."}
+    ]
+  },
+  {
+    category: "Energy & Environment",
+    items: [
+      {name:"Solar Energy Projects", desc:"Setup and management of solar power businesses."},
+      {name:"Biogas Production", desc:"Using waste for clean household and farm energy."},
+      {name:"Recycling & Waste Management", desc:"Turning waste into useful products and services."},
+      {name:"Water Harvesting", desc:"Rainwater collection and storage solutions."},
+      {name:"Eco-Friendly Farming", desc:"Sustainable agriculture and organic production."}
+    ]
+  },
+  {
+    category: "Transport & Logistics",
+    items: [
+      {name:"Trucking Business", desc:"Starting and managing goods transport services."},
+      {name:"Boda Boda & Taxi Services", desc:"Profitable models for local transport businesses."},
+      {name:"Courier & Delivery", desc:"Last-mile delivery and e-commerce logistics."},
+      {name:"Fleet Management", desc:"Operating and maintaining multiple vehicles for hire."},
+      {name:"Public Transport (Matatu/Bus)", desc:"Managing passenger transport projects."}
+    ]
+  },
+  {
+    category: "Tourism & Hospitality",
+    items: [
+      {name:"Hotel & Lodging", desc:"Starting and managing accommodation services."},
+      {name:"Restaurants & Cafés", desc:"Running profitable food and beverage businesses."},
+      {name:"Tour Companies", desc:"Organizing safaris, trips, and cultural tours."},
+      {name:"Event Planning", desc:"Corporate, weddings, and community event projects."},
+      {name:"Airbnb & Vacation Rentals", desc:"Hosting travelers with short-stay rentals."}
+    ]
+  },
+  {
+    category: "Manufacturing & Trade",
+    items: [
+      {name:"Textile & Tailoring", desc:"Garment making, uniforms, and fashion design."},
+      {name:"Soap & Detergent Production", desc:"Small-scale home and industrial cleaning products."},
+      {name:"Food Processing", desc:"Snacks, packaged foods, and local value addition."},
+      {name:"Furniture Making", desc:"Carpentry and large-scale furniture workshops."},
+      {name:"Retail Shops & Wholesale", desc:"Trading and distribution businesses."}
+    ]
+  },
+  {
+    category: "Finance & Services",
+    items: [
+      {name:"Sacco & Cooperative Setup", desc:"How to start and manage cooperative societies."},
+      {name:"Microfinance & Lending", desc:"Community-based savings and loan businesses."},
+      {name:"Insurance Agencies", desc:"Becoming an insurance broker or agent."},
+      {name:"Consulting Firms", desc:"Professional services in business, law, or finance."},
+      {name:"Real Estate Agencies", desc:"Property sales, leasing, and land management."}
+    ]
+  }
+];
+const grid = document.getElementById('projectsGrid');
+projects.forEach(cat=>{
+  const div = document.createElement('div');
+  div.className = 'program-card';
+  div.innerHTML = `<h2>${cat.category}</h2>
+    <ul class="projects-list">
+      ${cat.items.map(it=>`<li>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div style="flex:1;">
+            <strong>${it.name}</strong>
+            <div style="font-size:0.95rem;color:#334155">${it.desc}</div>
+          </div>
+          <div>
+            <button class="btn" onclick="openModal('${it.name}')">Get Support</button>
+          </div>
+        </div>
+      </li>`).join('')}
+    </ul>`;
+  grid.appendChild(div);
+});
+
+function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
+function openModal(p){
+  document.getElementById('supportModal').style.display='flex';
+  document.getElementById('program').value = p;
+  document.getElementById('modalTitle').textContent = `Get Support — ${p}`;
+}
+function closeModal(){document.getElementById('supportModal').style.display='none';}
+function handleSubmit(e){
+  e.preventDefault();
+  alert('Support request submitted. We will reach out soon.');
+  closeModal();
+  return false;
+}
+document.getElementById('contactForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  document.getElementById('thank-you').style.display='block';
+  e.target.reset();
+});
+</script>
+</body>
+</html>

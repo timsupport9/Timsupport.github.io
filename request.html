@@ -1,0 +1,22 @@
+<!-- Modal -->
+<div id="supportModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3>Request Support</h3>
+    <form id="supportForm" 
+          action="https://formsubmit.co/mutheenime@gmail.com" 
+          method="POST" 
+          onsubmit="return handleSubmit(event)">
+      <input type="hidden" id="program" name="program">
+      <input type="text" name="_honey" style="display:none">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="thankyou.html">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      	<input type="number" name="number" placeholder="Your number" required>
+      <input type="text" name="location" placeholder="Your  location" required>
+      <textarea name="message" rows="4" placeholder="Details of your request" required></textarea>
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+  </div>
+</div>

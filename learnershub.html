@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learners Support</title>
+  <style>
+    body {font-family: Arial, sans-serif;margin: 0;background: #f4f6f9;}
+    header {display:flex;justify-content:space-between;align-items:center;padding:15px 25px;background:#047857;color:white;position:sticky;top:0;z-index:1000;}
+    .logo{font-size:1.4rem;font-weight:bold;}
+    nav{display:none;flex-direction:column;position:absolute;top:60px;right:25px;background:white;color:black;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+    nav a{padding:10px 15px;text-decoration:none;color:black;display:block;transition:0.3s;}
+    nav a:hover{background:#e5e7eb;}
+    .menu-btn{font-size:1.8rem;cursor:pointer;}
+    .show{display:flex;}
+    .hero{text-align:center;padding:80px 20px;background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('students-bg.jpg') no-repeat center/cover;color:white;}
+    .hero h1{font-size:2rem;margin-bottom:10px;}
+    .programs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:30px;}
+    .program-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);transition:.3s;}
+    .program-card:hover{transform:translateY(-5px);box-shadow:0 8px 16px rgba(0,0,0,0.2);}
+    .program-card h2{font-size:1.2rem;margin-bottom:10px;color:#047857;}
+    .events{padding:40px 20px;background:#f9fafb;text-align:center;}
+    .event-card{max-width:600px;margin:0 auto 20px;background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);text-align:left;}
+    .btn{display:inline-block;margin-top:10px;padding:8px 14px;background:#047857;color:white;border:none;border-radius:6px;cursor:pointer;transition:.3s;}
+    .btn:hover{background:#059669;}
+    .team,.testimonials,.contact{padding:50px 20px;text-align:center;}
+    .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;max-width:1000px;margin:auto;}
+    .team-member{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+    .testimonial-box{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);max-width:600px;margin:auto;}
+    footer{background:#047857;color:white;text-align:center;padding:15px;}
+    /* Modal */
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
+    .modal-content{background:white;padding:20px;border-radius:12px;width:90%;max-width:400px;position:relative;}
+    .close{position:absolute;top:10px;right:15px;font-size:1.5rem;cursor:pointer;}
+    .modal-content input,.modal-content textarea{width:100%;margin-bottom:10px;padding:8px;border:1px solid #ccc;border-radius:6px;}
+    @media(min-width:768px){nav{display:flex !important;flex-direction:row;position:static;background:none;box-shadow:none;}
+      nav a{color:white;} .menu-btn{display:none;}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Learners Support</div>
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+  <nav id="navMenu">
+    <a href="E-School.html">E-school</a>
+    <a href="Career centre.Html">career</a>
+    <a href="pathway-guidance.html">pathways</a>
+    <a href="resources.html">Resources</a>
+    <a href="contact.html">Contact</a>
+    <a href="personality-interest-alignment.html">personality test</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Welcome to Learners Support</h1>
+  <p>Empowering students with resources, mentorship, and growth opportunities.</p>
+</section>
+
+<section id="programs">
+  <h2 style="text-align:center;color:#047857;">Our Learning Programs</h2>
+  <div class="programs-grid" id="programsGrid"></div>
+</section>
+
+<section id="events" class="events">
+  <h2>Upcoming Learning Events</h2>
+  <div class="event-card">
+    <h3>Holiday Online Bootcamp</h3>
+    <p>Interactive sessions to boost academic performance during the holiday break.</p>
+    <button class="btn" onclick="openModal('Holiday Online Bootcamp')">Request Support</button>
+  </div>
+  <div class="event-card">
+    <h3>Exam Preparation Week</h3>
+    <p>Get guidance and practice tests to excel in your upcoming exams.</p>
+    <button class="btn" onclick="openModal('Exam Preparation Week')">Request Support</button>
+  </div>
+</section>
+
+<section id="testimonials" class="testimonials">
+  <h2 style="color:#047857;">What Students Say</h2>
+  <div class="testimonial-box">
+    <p id="testimonial-text" class="italic">Loading...</p>
+    <p id="testimonial-author" style="margin-top:10px;font-weight:bold;color:#065f46">—</p>
+    <div style="margin-top:15px;">
+      <button onclick="prevTestimonial()" class="btn">← Prev</button>
+      <button onclick="nextTestimonial()" class="btn">Next →</button>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact">
+  <h2 style="color:#047857;">Contact & Share Your Experience</h2>
+  <form id="testimonial-form" style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:12px;">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="text" name="class" placeholder="Your Class / Level">
+    <textarea name="message" placeholder="Your Feedback" required></textarea>
+    <button type="submit" class="btn">Submit Feedback</button>
+    <p id="thank-you" style="color:green;display:none;margin-top:10px;">Thank you for sharing!</p>
+  </form>
+</section>
+
+<!-- Modal -->
+<div id="supportModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3>Request Support</h3>
+
+    <form id="supportForm" 
+          action="https://formsubmit.co/mutheenime@gmail.com" 
+          method="POST" 
+          onsubmit="return handleSubmit(event)">
+      
+      <input type="hidden" id="program" name="program">
+      <input type="text" name="_honey" style="display:none">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="thankyou.html">
+
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <textarea name="message" rows="4" placeholder="Details of Support Needed" required></textarea>
+      
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+  </div>
+</div>
+
+<footer><p>&copy; 2025 Learners Support. All Rights Reserved.</p></footer>
+
+<script>
+const programs = [
+  {title:"Academic Tutoring",items:["Math & Science Help","Language Support","Revision Techniques","Assignments Assistance"]},
+  {title:"Skills Development",items:["Public Speaking","Digital Skills","Problem Solving","Creative Writing"]},
+  {title:"Exam Preparation",items:["Mock Exams","Past Papers Review","Time Management","Exam Strategies"]},
+  {title:"Career Guidance",items:["Mentorship Programs","Career Talks","University Prep","Scholarship Guidance"]},
+  {title:"Wellbeing & Growth",items:["Counseling","Peer Support Groups","Confidence Building","Life Skills"]},
+  {title:"Clubs & Activities",items:["STEM Clubs","Debate & Drama","Community Service","Sports & Arts"]}
+];
+const programsGrid=document.getElementById('programsGrid');
+programs.forEach(p=>{
+  const div=document.createElement('div');div.className='program-card';
+  div.innerHTML=`<h2>${p.title}</h2><ul>${p.items.map(i=>`<li>${i}</li>`).join('')}</ul><button class="btn" onclick="openModal('${p.title}')">Request Support</button>`;
+  programsGrid.appendChild(div);
+});
+
+// Testimonials
+let testimonials=[{text:"The math tutoring helped me score an A in my finals!",author:"— Kevin, Form 4"},{text:"The exam prep week boosted my confidence before KCSE.",author:"— Grace, Candidate"},{text:"I enjoyed the mentorship sessions; they guided my career choices.",author:"— Daniel, Student"}];
+let currentIndex=0;function showTestimonial(i){document.getElementById('testimonial-text').textContent=testimonials[i].text;document.getElementById('testimonial-author').textContent=testimonials[i].author;}
+function nextTestimonial(){currentIndex=(currentIndex+1)%testimonials.length;showTestimonial(currentIndex);}
+function prevTestimonial(){currentIndex=(currentIndex-1+testimonials.length)%testimonials.length;showTestimonial(currentIndex);}
+setInterval(nextTestimonial,6000);showTestimonial(currentIndex);
+
+// Submit testimonial
+document.getElementById('testimonial-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  const name=fd.get('name');
+  const cls=fd.get('class');
+  const message=fd.get('message');
+  testimonials.push({text:`"${message}"`,author:`— ${name}${cls? ", "+cls:""}`});
+  currentIndex=testimonials.length-1;
+  showTestimonial(currentIndex);
+  document.getElementById('thank-you').style.display='block';
+  e.target.reset();
+});
+
+// Menu + Modal
+function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
+function openModal(p){document.getElementById('supportModal').style.display='flex';document.getElementById('program').value=p;}
+function closeModal(){document.getElementById('supportModal').style.display='none';}
+window.onclick=e=>{if(e.target==document.getElementById('supportModal'))closeModal();}
+</script>
+</body>
+</html>

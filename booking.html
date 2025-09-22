@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support Request - Tim’s Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <div class="max-w-2xl mx-auto my-10 px-4">
+    <div class="bg-white rounded-2xl shadow-lg p-6 md:p-10">
+      <h2 class="text-3xl font-bold text-center text-indigo-700 mb-2">Request Support</h2>
+      <p class="text-center text-gray-600 mb-6">Fill out the form below and our support team will respond promptly.</p>
+
+      <form 
+        action="https://formsubmit.co/mutheenime@gmail.com" 
+        method="POST" 
+        onsubmit="return handleSubmit(event)"
+        class="space-y-5"
+      >
+        <!-- Hidden FormSubmit Inputs -->
+        <input type="hidden" name="_subject" value="New Support Request from Tim's Center">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://yourdomain.com/thank-you.html">
+
+        <!-- Name + Email in grid for larger screens -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="font-semibold block">Full Name</label>
+            <input type="text" name="name" required class="w-full mt-1 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500" />
+          </div>
+          <div>
+            <label class="font-semibold block">Email Address</label>
+            <input type="email" name="email" required class="w-full mt-1 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="font-semibold block">Select Service</label>
+          <select name="service" required class="w-full mt-1 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+            <option value="">-- Choose a Service --</option>
+            <option>Consultation</option>
+            <option>Training Session</option>
+            <option>Coaching</option>
+            <option>Mentorship</option>
+            <option>Technical Support</option>
+            <option>Project Assistance</option>
+          </select>
+        </div>
+
+        <!-- Date + Time -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="font-semibold block">Preferred Date</label>
+            <input type="date" name="date" required class="w-full mt-1 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500" />
+          </div>
+          <div>
+            <label class="font-semibold block">Preferred Time Slot</label>
+            <select name="time" required class="w-full mt-1 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500">
+              <option value="">-- Choose Time Slot --</option>
+              <option>9:00 AM - 10:00 AM</option>
+              <option>10:30 AM - 11:30 AM</option>
+              <option>2:00 PM - 3:00 PM</option>
+              <option>4:00 PM - 5:00 PM</option>
+              <option>Evening (6:00 PM - 8:00 PM)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-semibold block">Additional Notes</label>
+          <textarea name="message" rows="4" class="w-full mt-1 p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500" placeholder="Write a note or special request..."></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full bg-indigo-700 text-white py-3 rounded-md font-semibold hover:bg-indigo-800 transition duration-300">
+          Submit Request
+        </button>
+
+        <!-- Success Message -->
+        <div id="successMsg" class="hidden text-green-600 text-center font-semibold mt-4">
+          ✅ Your support request was submitted successfully! We’ll contact you soon.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function handleSubmit(e) {
+      const msg = document.getElementById('successMsg');
+      msg.classList.remove('hidden');
+      msg.scrollIntoView({ behavior: 'smooth' });
+      return true; // allow formsubmit.co submission
+    }
+  </script>
+
+</body>
+</html>

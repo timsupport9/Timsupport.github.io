@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tim Support - E-School</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f0f4f8;
+      color: #111827;
+    }
+
+    /* Sections */
+    section { padding: 40px 20px; }
+    .content {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 10px;
+    }
+    h2 { color: #1e3a8a; }
+
+    /* Buttons */
+    .btn, .cta-btn, .support-btn {
+      background: #2563eb;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s ease;
+      margin-top: 10px;
+    }
+    .btn:hover, .cta-btn:hover, .support-btn:hover {
+      background: #1e40af;
+      transform: scale(1.05);
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+      text-align: center;
+      background: #f9fbff;
+      border-radius: 12px;
+      max-width: 900px;
+      margin: 40px auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 50px 20px;
+    }
+    .welcome-section ul {
+      list-style: none; padding: 0; margin: 0 auto 30px;
+      max-width: 400px; text-align: left;
+    }
+    .welcome-section li {
+      margin: 10px 0;
+      font-size: 1rem;
+      padding-left: 28px;
+      position: relative;
+    }
+    .welcome-section li::before {
+      content: "✔";
+      position: absolute; left: 0;
+      color: #2563eb; font-weight: bold;
+    }
+
+    /* Why Choose Us */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+    }
+    .feature-card:hover { transform: translateY(-5px); }
+
+    /* Programs & Events */
+    .program-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .program-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .program-card:hover { transform: scale(1.03); }
+    .program-card .info { padding: 15px; flex: 1; }
+    .program-card h3 { margin: 0; color: #1e3a8a; }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 600px;
+    }
+    .modal-content form { display: grid; gap: 15px; }
+    .modal-content input, .modal-content select, .modal-content textarea {
+      width: 100%; padding: 10px;
+      border: 1px solid #ddd; border-radius: 6px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 24px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Welcome Section -->
+  <section class="welcome-section">
+    <h2>Welcome to Our Online Holiday School</h2>
+    <p>
+      Unlock your potential with our flexible and interactive holiday learning programs. 
+      Whether you’re catching up, staying ahead, or exploring new skills, we provide 
+      engaging lessons tailored to every learner’s level.
+    </p>
+    <ul>
+      <li>Primary School</li>
+      <li>Junior Secondary</li>
+      <li>Senior Secondary</li>
+      <li>Secondary</li>
+    </ul>
+    <button class="btn" onclick="openModal()">start learning</button>
+  </section>
+
+  <!-- Why Choose Us -->
+  <section>
+    <h2 style="text-align:center">🌟 Why Choose Us?</h2>
+    <p style="text-align:center; max-width:600px; margin:0 auto 30px">
+      We are more than just a learning platform — we are your partners in growth, success, and lifelong learning.
+    </p>
+    <div class="features">
+      <div class="feature-card"><h3>📘 Examiners’ Guidance</h3><p>Get expert support from qualified examiners to help you prepare, practice, and excel.</p></div>
+      <div class="feature-card"><h3>🚀 Career Pathways</h3><p>Explore tailored career guidance that helps you choose and build the right future path.</p></div>
+      <div class="feature-card"><h3>🛠 Skills Learning</h3><p>Gain practical, in-demand skills designed to give you a competitive advantage in real life.</p></div>
+      <div class="feature-card"><h3>🤝 Mentorship</h3><p>Connect with experienced mentors who guide, inspire, and walk with you on your journey.</p></div>
+    </div>
+    <div style="text-align:center; margin-top:30px">
+      <button class="btn" onclick="openModal()">✨ Enroll Now</button>
+    </div>
+  </section>
+
+  <!-- Programs -->
+  <section>
+    <h2 style="text-align:center">Programs & Events</h2>
+    <div id="programList" class="program-list"></div>
+  </section>
+
+  <!-- Modal -->
+  <div id="enrollModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Enrollment Form</h2>
+      <form>
+        <input type="text" name="fullname" placeholder="Full Name" required />
+        <input type="email" name="email" placeholder="Email Address" required />
+        <input type="tel" name="phone" placeholder="Phone Number" required />
+        <select name="level" required>
+          <option value="">--Select Level--</option>
+          <option>Primary School</option>
+          <option>Junior Secondary</option>
+          <option>Senior Secondary</option>
+          <option>Secondary School</option>
+        </select>
+        <textarea name="subjects" rows="3" placeholder="Subjects to Study" required></textarea>
+        <select name="schedule" required>
+          <option value="">--Select Schedule--</option>
+          <option>Morning (8am - 11am)</option>
+          <option>Afternoon (1pm - 4pm)</option>
+          <option>Evening (6pm - 9pm)</option>
+        </select>
+        <button type="submit" class="btn">Submit Enrollment</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Modal
+    function openModal() { document.getElementById('enrollModal').style.display = 'block'; }
+    function closeModal() { document.getElementById('enrollModal').style.display = 'none'; }
+
+    // Programs data (images removed)
+    const programs = [
+      { title: "Examiners Guidance", description: "Insights from experienced examiners to prepare effectively for exams." },
+      { title: "Career Pathways", description: "Explore career options and get guidance on choosing your future path." },
+      { title: "Skills Learning", description: "Hands-on workshops to learn practical life and academic skills." },
+      { title: "Holiday Bootcamps", description: "Intensive study camps designed to boost knowledge quickly." }
+    ];
+    const programList = document.getElementById('programList');
+    programs.forEach(program => {
+      const card = document.createElement('div');
+      card.className = 'program-card';
+      card.innerHTML = `
+        <div class="info">
+          <h3>${program.title}</h3>
+          <p>${program.description}</p>
+          <button class="btn" onclick="openModal()">Request Support</button>
+        </div>
+      `;
+      programList.appendChild(card);
+    });
+  </script>
+</body>
+</html>

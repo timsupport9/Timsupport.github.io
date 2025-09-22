@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketing Centre – Programs & Services</title>
+  <style>
+    body {font-family: Arial, sans-serif; margin: 0; background: #f4f6f9; color: #333;}
+    header {background: #0b5ed7; padding: 1rem 2rem; color: #fff; text-align: center;}
+    header h1 {margin: 0; font-size: 1.8rem;}
+    nav {margin-top: 10px;}
+    nav a {color: #fff; margin: 0 10px; text-decoration: none; font-weight: bold;}
+    nav a:hover {text-decoration: underline;}
+
+    section.programs {padding: 50px 20px;}
+    section.programs h2 {text-align: center; margin-bottom: 10px;}
+    section.programs p {text-align: center;}
+
+    .event-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .event-card:hover {transform: translateY(-4px);}
+    .event-card h3 {margin-top: 0; color: #0b5ed7;}
+    .btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      background: #0b5ed7;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn:hover {background: #084298;}
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      position: relative;
+    }
+    .modal-content h3 {margin-top: 0; color: #0b5ed7;}
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
+    }
+    form input, form textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    form button {
+      background: #0b5ed7;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    form button:hover {background: #084298;}
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Marketing Centre</h1>
+    <nav>
+      <a href="#programs">Programs</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Programs & Services Section -->
+  <section id="programs" class="programs" style="background:#fff;">
+    <h2 style="color:#0b5ed7;">Marketing Programs & Services</h2>
+    <p style="max-width:720px;margin:10px auto 30px;">
+      Explore our full suite of marketing programs and services designed to help you grow smarter and faster.
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:1100px;margin:auto;">
+      
+      <div class="event-card">
+        <h3>Digital Marketing</h3>
+        <p>SEO, SEM, content marketing, email campaigns, and social media strategies.</p>
+        <button class="btn" onclick="openModal('Digital Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Social Media Marketing</h3>
+        <p>Building brands and communities through Facebook, Instagram, TikTok, X, and LinkedIn.</p>
+        <button class="btn" onclick="openModal('Social Media Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Content Marketing</h3>
+        <p>Storytelling, blogs, video, and podcasts that engage and convert audiences.</p>
+        <button class="btn" onclick="openModal('Content Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Influencer Marketing</h3>
+        <p>Leveraging trusted voices to authentically connect with targeted audiences.</p>
+        <button class="btn" onclick="openModal('Influencer Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Affiliate & Partnership Marketing</h3>
+        <p>Performance-based collaborations driving measurable ROI.</p>
+        <button class="btn" onclick="openModal('Affiliate & Partnership Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Email & CRM Marketing</h3>
+        <p>Personalized campaigns that nurture leads and boost retention.</p>
+        <button class="btn" onclick="openModal('Email & CRM Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Event & Experiential Marketing</h3>
+        <p>Live activations, trade shows, and immersive brand experiences.</p>
+        <button class="btn" onclick="openModal('Event & Experiential Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>B2B & Account-Based Marketing</h3>
+        <p>Targeted strategies for enterprise clients and high-value accounts.</p>
+        <button class="btn" onclick="openModal('B2B & Account-Based Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Traditional Marketing</h3>
+        <p>Print, broadcast, direct mail, and outdoor advertising that still works.</p>
+        <button class="btn" onclick="openModal('Traditional Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Product & Brand Marketing</h3>
+        <p>Positioning, launches, and messaging that define customer perception.</p>
+        <button class="btn" onclick="openModal('Product & Brand Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Market Research & Analytics</h3>
+        <p>Consumer insights, trend analysis, and data-driven decision-making.</p>
+        <button class="btn" onclick="openModal('Market Research & Analytics Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Public Relations (PR)</h3>
+        <p>Managing reputation, media coverage, and brand storytelling.</p>
+        <button class="btn" onclick="openModal('Public Relations Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Video & Multimedia Marketing</h3>
+        <p>High-impact video ads, explainers, animations, and visual storytelling.</p>
+        <button class="btn" onclick="openModal('Video & Multimedia Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Mobile Marketing</h3>
+        <p>App promotion, SMS campaigns, and mobile-first advertising strategies.</p>
+        <button class="btn" onclick="openModal('Mobile Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>E-commerce Marketing</h3>
+        <p>Shop optimization, sales funnels, retargeting ads, and marketplace growth.</p>
+        <button class="btn" onclick="openModal('E-commerce Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Guerrilla & Creative Marketing</h3>
+        <p>Unconventional campaigns that surprise, engage, and go viral.</p>
+        <button class="btn" onclick="openModal('Guerrilla Marketing Program')">Request Promotion</button>
+      </div>
+
+      <div class="event-card">
+        <h3>Sustainability & Cause Marketing</h3>
+        <p>Brand storytelling around sustainability, CSR, and social impact.</p>
+        <button class="btn" onclick="openModal('Sustainability & Cause Marketing Program')">Request Promotion</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Modal Form -->
+  <div id="promoModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3 id="modalTitle">Request Promotion</h3>
+      <form id="promoForm">
+        <input type="hidden" id="programInput" name="program">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <textarea name="details" rows="4" placeholder="Tell us about your promotion needs..." required></textarea>
+        <button type="submit">Submit Request</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openModal(programName) {
+      document.getElementById("promoModal").style.display = "flex";
+      document.getElementById("modalTitle").innerText = "Request " + programName;
+      document.getElementById("programInput").value = programName;
+    }
+    function closeModal() {
+      document.getElementById("promoModal").style.display = "none";
+    }
+    window.onclick = function(event) {
+      if (event.target === document.getElementById("promoModal")) {
+        closeModal();
+      }
+    }
+    document.getElementById("promoForm").onsubmit = function(e) {
+      e.preventDefault();
+      alert("✅ Your promotion request has been submitted successfully!");
+      closeModal();
+    }
+  </script>
+
+</body>
+</html>

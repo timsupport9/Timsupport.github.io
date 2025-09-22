@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Career Pathway Guidance - Tim Support</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f7f9fc;
+    }
+    header {
+      background-color: #1e3a8a;
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    .section {
+      margin-bottom: 40px;
+    }
+    .section h2 {
+      color: #1e3a8a;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+    .section p {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    ul li {
+      margin-bottom: 10px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background-color: #1e3a8a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+    .btn:hover {
+      background-color: #2d4eb7;
+    }
+    select, input[type="checkbox"] {
+      padding: 8px;
+      font-size: 16px;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 400px;
+    }
+    .results {
+      margin-top: 20px;
+      background: #f1f5f9;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .results ul {
+      padding-left: 20px;
+    }
+    footer {
+      text-align: center;
+      background-color: #e2e8f0;
+      padding: 20px;
+      font-size: 14px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Career Pathway Guidance</h1>
+    <p>Helping You Choose, Plan, and Thrive in the Right Career</p>
+  </header>
+
+  <div class="container">
+
+    <div class="section">
+      <h2>Interactive Career Interest Assessment</h2>
+      <p>Select the areas that interest you most, and we'll suggest possible career directions.</p>
+      <form id="interestForm">
+        <label><input type="checkbox" name="interest" value="Technology"> Working with computers or coding</label><br>
+        <label><input type="checkbox" name="interest" value="Health"> Helping people feel better</label><br>
+        <label><input type="checkbox" name="interest" value="Business"> Running a business or selling products</label><br>
+        <label><input type="checkbox" name="interest" value="Art"> Drawing, designing, or performing</label><br>
+        <label><input type="checkbox" name="interest" value="Environment"> Protecting the environment</label><br>
+        <label><input type="checkbox" name="interest" value="Education"> Teaching and working with children</label><br>
+        <button class="btn" type="button" onclick="showSuggestions()">See Career Suggestions</button>
+      </form>
+      <div class="results" id="suggestions" style="display:none;"></div>
+    </div>
+
+    <div class="section">
+      <h2>Explore Career Clusters</h2>
+      <p>Choose a field to explore matching career paths:</p>
+      <select id="careerCluster" onchange="filterCareers()">
+        <option value="">-- Select a Career Cluster --</option>
+        <option value="Technology">Information Technology</option>
+        <option value="Health">Health & Medical</option>
+        <option value="Business">Business & Finance</option>
+        <option value="Art">Creative Arts</option>
+        <option value="Education">Education & Training</option>
+      </select>
+      <div class="results" id="careerResults" style="display:none;"></div>
+    </div>
+
+    <div class="section">
+      <h2>Get Personalized Support</h2>
+      <p>Want to go deeper? Book a 1-on-1 session with our career mentors to map out your personal journey.</p>
+      <a href="booking.html" class="btn">Book Career Session</a>
+    </div>
+
+  </div>
+
+  <footer>
+    &copy; 2025 Tim Support | Guiding the Future with Purpose
+  </footer>
+
+  <script>
+    const suggestionsMap = {
+      Technology: ["Software Developer", "Web Designer", "IT Support", "AI Engineer"],
+      Health: ["Nurse", "Doctor", "Therapist", "Pharmacist"],
+      Business: ["Entrepreneur", "Marketing Manager", "Sales Agent", "Financial Analyst"],
+      Art: ["Graphic Designer", "Musician", "Photographer", "Animator"],
+      Environment: ["Environmental Scientist", "Park Ranger", "Sustainability Officer"],
+      Education: ["Teacher", "Counselor", "Trainer", "Education Coordinator"]
+    };
+
+    function showSuggestions() {
+      const checkboxes = document.querySelectorAll('input[name="interest"]:checked');
+      const selected = Array.from(checkboxes).map(cb => cb.value);
+      const container = document.getElementById("suggestions");
+
+      if (selected.length === 0) {
+        container.innerHTML = "<strong>Please select at least one interest area.</strong>";
+        container.style.display = "block";
+        return;
+      }
+
+      let resultHTML = "<h3>Suggested Careers:</h3><ul>";
+      selected.forEach(area => {
+        suggestionsMap[area].forEach(career => {
+          resultHTML += `<li>${career}</li>`;
+        });
+      });
+      resultHTML += "</ul>";
+
+      container.innerHTML = resultHTML;
+      container.style.display = "block";
+    }
+
+    function filterCareers() {
+      const value = document.getElementById("careerCluster").value;
+      const container = document.getElementById("careerResults");
+
+      if (!value) {
+        container.style.display = "none";
+        return;
+      }
+
+      const careers = suggestionsMap[value];
+      let html = `<h3>${value} Careers:</h3><ul>`;
+      careers.forEach(career => html += `<li>${career}</li>`);
+      html += "</ul>";
+      container.innerHTML = html;
+      container.style.display = "block";
+    }
+  </script>
+
+</body>
+</html>

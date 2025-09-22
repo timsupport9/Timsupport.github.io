@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Tim Support — Resource Hub</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --card:#111827;
+      --muted:#94a3b8;
+      --text:#e5e7eb;
+      --primary:#22c55e;
+      --accent:#38bdf8;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:#0f172a;color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto}
+    header{position:sticky;top:0;background:#111827cc;backdrop-filter:blur(8px);padding:.8rem 1rem;display:flex;align-items:center;gap:.75rem;border-bottom:1px solid #1f2937}
+    .logo{width:40px;height:40px;border-radius:10px;background:#1f2937;display:grid;place-items:center;font-weight:700;color:var(--primary)}
+    .brand{font-weight:700;font-size:1.1rem}
+    .wrap{max-width:1024px;margin:1.2rem auto;padding:0 1rem 3rem}
+    .hero{background:radial-gradient(800px at 80% -20%,rgba(56,189,248,.15),transparent),var(--card);padding:1.25rem;border-radius:18px;margin-bottom:1rem}
+    .hero h1{margin:.2rem 0;font-size:1.6rem}
+    .muted{color:var(--muted);font-size:.9rem}
+
+    /* Search & Filter */
+    .controls{display:flex;flex-wrap:wrap;gap:.8rem;margin-bottom:1.5rem}
+    .controls input,.controls select{
+      flex:1;min-width:180px;padding:.6rem .8rem;
+      border-radius:10px;border:1px solid #1f2937;background:#0a1220;color:var(--text)
+    }
+
+    .categories{display:grid;gap:2rem}
+    .category h2{margin:0 0 .8rem;color:#cbd5e1}
+    .resources{display:grid;gap:1rem}
+    @media(min-width:700px){.resources{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:1000px){.resources{grid-template-columns:repeat(3,1fr)}}
+
+    .resource-card{background:#0a1220;border:1px solid #1f2937;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:.2s}
+    .resource-card:hover{transform:translateY(-3px);border-color:var(--accent)}
+    .thumb{height:150px;background:#1f2937;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .thumb img{width:100%;height:100%;object-fit:cover}
+    .info{padding:.9rem;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+    .info h3{margin:0 0 .5rem;font-size:1rem}
+    .download-btn{margin-top:auto;align-self:flex-start;background:linear-gradient(180deg,#22c55e,#16a34a);color:#052e16;font-weight:600;padding:.5rem .8rem;border:none;border-radius:10px;cursor:pointer;text-decoration:none;font-size:.9rem}
+    footer{margin-top:2rem;color:var(--muted);font-size:.85rem;text-align:center}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">TS</div>
+    <div>
+      <div class="brand">Tim Support</div>
+      <div class="muted" style="font-size:.8rem">Resource Hub</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>Resource Hub</h1>
+      <p class="muted">Browse and download materials shared by Tim Support. Use the search and filters to find what you need quickly.</p>
+    </section>
+
+    <!-- Search & Filter Bar -->
+    <div class="controls">
+      <input type="text" id="search" placeholder="Search resources...">
+      <select id="filter">
+        <option value="all">All Categories</option>
+      </select>
+    </div>
+
+    <section id="categories" class="categories"></section>
+
+    <footer>
+      © <span id="year"></span> Tim Support. All rights reserved.
+    </footer>
+  </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    let allData = [];
+
+    // Render resources dynamically
+    function renderResources(data, searchTerm = "", categoryFilter = "all") {
+      const container = document.getElementById('categories');
+      container.innerHTML = "";
+
+      const term = searchTerm.toLowerCase();
+
+      data.categories.forEach(cat => {
+        if(categoryFilter !== "all" && categoryFilter !== cat.name) return;
+
+        const filtered = cat.resources.filter(r =>
+          r.title.toLowerCase().includes(term)
+        );
+
+        if(filtered.length === 0) return;
+
+        const catDiv = document.createElement('div');
+        catDiv.classList.add('category');
+        catDiv.innerHTML = `<h2>${cat.name}</h2>`;
+
+        const resDiv = document.createElement('div');
+        resDiv.classList.add('resources');
+
+        filtered.forEach(r => {
+          const card = document.createElement('div');
+          card.classList.add('resource-card');
+          card.innerHTML = `
+            <div class="thumb"><img src="${r.image}" alt="${r.title}"></div>
+            <div class="info">
+              <h3>${r.title}</h3>
+              <a class="download-btn" href="${r.file}" download>Download</a>
+            </div>
+          `;
+          resDiv.appendChild(card);
+        });
+
+        catDiv.appendChild(resDiv);
+        container.appendChild(catDiv);
+      });
+    }
+
+    // Fetch resources JSON
+    fetch('resources.json')
+      .then(res => res.json())
+      .then(data => {
+        allData = data;
+
+        // Populate category filter
+        const filter = document.getElementById('filter');
+        data.categories.forEach(cat => {
+          const opt = document.createElement('option');
+          opt.value = cat.name;
+          opt.textContent = cat.name;
+          filter.appendChild(opt);
+        });
+
+        renderResources(allData);
+
+        // Add search & filter listeners
+        document.getElementById('search').addEventListener('input', e => {
+          renderResources(allData, e.target.value, filter.value);
+        });
+        filter.addEventListener('change', e => {
+          renderResources(allData, document.getElementById('search').value, e.target.value);
+        });
+      })
+      .catch(err => {
+        document.getElementById('categories').innerHTML = "<p class='muted'>⚠️ Unable to load resources. Please check resources.json</p>";
+        console.error(err);
+      });
+  </script>
+</body>
+</html>

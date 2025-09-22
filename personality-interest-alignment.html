@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Integrated Career Guidance - Tim Support</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; margin: 0; }
+    header { background: #1e3a8a; color: white; padding: 30px; text-align: center; }
+    .container { max-width: 1000px; margin: 30px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h2 { color: #1e3a8a; }
+    label { display: block; margin: 8px 0; }
+    select, input[type="checkbox"], textarea, input[type="text"], input[type="email"] {
+      padding: 8px; font-size: 16px; margin-top: 5px; width: 100%; max-width: 500px;
+    }
+    .btn { margin-top: 15px; padding: 10px 20px; background: #1e3a8a; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #2a4eb0; }
+    .results { background: #f1f5f9; padding: 15px; margin-top: 20px; border-radius: 8px; }
+    .results ul { padding-left: 20px; }
+    textarea { resize: vertical; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Tim Support Career Guidance Portal</h1>
+  <p>Combining personality and interest for smart career direction</p>
+</header>
+
+<div class="container">
+
+  <h2>Step 1: Choose Your Interests</h2>
+  <form id="careerForm">
+    <label><input type="checkbox" name="interest" value="Technology"> Technology & Computers</label>
+    <label><input type="checkbox" name="interest" value="Health"> Health & Wellness</label>
+    <label><input type="checkbox" name="interest" value="Business"> Business & Leadership</label>
+    <label><input type="checkbox" name="interest" value="Art"> Art & Design</label>
+    <label><input type="checkbox" name="interest" value="Education"> Education & Helping</label>
+
+    <h2>Step 2: Select Your Personality Type</h2>
+    <select id="personalityType">
+      <option value="">-- Select Type --</option>
+      <option value="Realistic">Realistic (Doers)</option>
+      <option value="Investigative">Investigative (Thinkers)</option>
+      <option value="Artistic">Artistic (Creators)</option>
+      <option value="Social">Social (Helpers)</option>
+      <option value="Enterprising">Enterprising (Persuaders)</option>
+      <option value="Conventional">Conventional (Organizers)</option>
+    </select>
+
+    <button class="btn" type="button" onclick="generateReport()">Generate Guidance Report</button>
+
+    <div id="results" class="results" style="display:none;"></div>
+
+    <h2>Step 3: Submit Your Report to a Career Coach</h2>
+    <label>Full Name</label>
+    <input type="text" id="name" required />
+    <label>Email Address</label>
+    <input type="email" id="email" required />
+    <label>Message to Career Coach</label>
+    <textarea id="message" rows="4">I have completed the assessment. Please review and advise.</textarea>
+
+    <button class="btn" type="button" onclick="submitToCoach()">Submit to Coach</button>
+    <button class="btn" type="button" onclick="downloadReport()">Export as Text</button>
+  </form>
+
+</div>
+
+<script>
+  const suggestions = {
+    Technology: ["Web Developer", "IT Support", "Cybersecurity Analyst"],
+    Health: ["Nurse", "Physiotherapist", "Health Coach"],
+    Business: ["Marketing Manager", "Entrepreneur", "Financial Analyst"],
+    Art: ["Graphic Designer", "Animator", "Architect"],
+    Education: ["Teacher", "Trainer", "Career Coach"]
+  };
+
+  const personalityMap = {
+    Realistic: ["Mechanic", "Construction Worker", "Engineer"],
+    Investigative: ["Scientist", "Doctor", "Data Analyst"],
+    Artistic: ["Musician", "Writer", "Visual Designer"],
+    Social: ["Teacher", "Nurse", "Community Officer"],
+    Enterprising: ["Business Owner", "Lawyer", "Sales Manager"],
+    Conventional: ["Accountant", "Bank Clerk", "Office Administrator"]
+  };
+
+  const courseLinks = {
+    Technology: "https://www.coursera.org/browse/computer-science",
+    Health: "https://www.futurelearn.com/subjects/healthcare-medicine-courses",
+    Business: "https://www.edx.org/learn/business",
+    Art: "https://www.skillshare.com/browse/graphic-design",
+    Education: "https://www.alison.com/tag/teaching"
+  };
+
+  function generateReport() {
+    const interests = Array.from(document.querySelectorAll('input[name="interest"]:checked')).map(cb => cb.value);
+    const personality = document.getElementById("personalityType").value;
+    const resultBox = document.getElementById("results");
+
+    if (!interests.length || !personality) {
+      alert("Please select both interests and a personality type.");
+      return;
+    }
+
+    let report = `<h3>Based on Your Interests:</h3><ul>`;
+    interests.forEach(area => {
+      suggestions[area].forEach(career => {
+        report += `<li>${career}</li>`;
+      });
+    });
+    report += `</ul><h3>Based on Your Personality Type (${personality}):</h3><ul>`;
+    personalityMap[personality].forEach(career => {
+      report += `<li>${career}</li>`;
+    });
+    report += `</ul><h3>Recommended Courses & Resources:</h3><ul>`;
+    interests.forEach(area => {
+      report += `<li><a href="${courseLinks[area]}" target="_blank">${area} Courses</a></li>`;
+    });
+    report += `</ul>`;
+
+    resultBox.innerHTML = report;
+    resultBox.style.display = "block";
+  }
+
+  function submitToCoach() {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const message = document.getElementById("message").value.trim();
+    const result = document.getElementById("results").innerText;
+
+    if (!name || !email || !result) {
+      alert("Please fill in all fields and generate your report first.");
+      return;
+    }
+
+    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}\n\nAssessment Result:\n${result}`);
+    window.open(`mailto:coach@timsupport.org?subject=Career Guidance Report from ${name}&body=${body}`);
+  }
+
+  function downloadReport() {
+    const result = document.getElementById("results").innerText;
+    if (!result) {
+      alert("Please generate the report first.");
+      return;
+    }
+    const blob = new Blob([result], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Career-Guidance-Report.txt";
+    link.click();
+  }
+</script>
+
+</body>
+</html>

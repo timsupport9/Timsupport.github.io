@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tim Support — Specialist Membership Application</title>
+  <meta name="description" content="Apply to join Tim Support as a Specialist (Experts & Professionals).">
+  <style>
+    :root{
+      --bg:#0f172a;          /* slate-900 */
+      --card:#111827;        /* gray-900 */
+      --muted:#94a3b8;       /* slate-400 */
+      --text:#e5e7eb;        /* gray-200 */
+      --primary:#22c55e;     /* green-500 */
+      --accent:#38bdf8;      /* sky-400 */
+      --ring:#22c55e55;
+      --danger:#ef4444;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:linear-gradient(180deg,#0b1223 0%,#0f172a 100%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+    a{color:var(--accent);text-decoration:none}
+    header{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter: blur(8px);
+      background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(17,24,39,.6));
+      border-bottom:1px solid #1f2937; padding:.75rem 1rem;
+      display:flex; align-items:center; gap:.75rem
+    }
+    .logo{width:40px;height:40px;border-radius:10px;background:#1f2937;display:grid;place-items:center;font-weight:700;color:var(--primary)}
+    .brand{font-size:1.05rem;font-weight:700;letter-spacing:.3px}
+    .wrap{max-width:1024px;margin:1.2rem auto;padding:0 1rem 4rem}
+    .hero{
+      border:1px solid #1f2937;border-radius:18px;padding:1.25rem 1rem;background:radial-gradient(1200px 400px at 80% -10%,rgba(56,189,248,.15),transparent 60%), var(--card);
+      display:grid;gap:.5rem;margin-bottom:1rem
+    }
+    .hero h1{margin:.2rem 0;font-size:1.5rem}
+    .badge{display:inline-flex;gap:.4rem;align-items:center;border:1px solid #1f2937;padding:.25rem .55rem;border-radius:999px;color:var(--muted);font-size:.8rem}
+    .grid{display:grid;gap:1rem}
+    @media(min-width:840px){ .grid{grid-template-columns:1fr 1fr} }
+    fieldset{
+      border:1px solid #1f2937;background:#0b1220;border-radius:16px; padding:1rem
+    }
+    legend{padding:0 .5rem;color:#cbd5e1;font-weight:700}
+    label{display:block;margin:.6rem 0 .25rem;color:#cbd5e1;font-size:.95rem}
+    input[type="text"],input[type="email"],input[type="tel"],input[type="date"],input[type="number"],textarea,select{
+      width:100%;background:#0a1220;border:1px solid #1f2937;border-radius:12px;color:var(--text);
+      padding:.7rem .8rem; outline:none; transition: all .2s ease
+    }
+    textarea{min-height:110px;resize:vertical}
+    input:focus,textarea:focus,select:focus{border-color:var(--primary); box-shadow:0 0 0 4px var(--ring)}
+    .row{display:grid;gap:.75rem}
+    @media(min-width:680px){ .row{grid-template-columns:repeat(2,1fr)} }
+    .checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.4rem}
+    .check, .radio{
+      display:flex;align-items:center;gap:.55rem;border:1px solid #1f2937;border-radius:12px;padding:.55rem .7rem;background:#0a1220
+    }
+    .muted{color:var(--muted);font-size:.9rem}
+    .hint{font-size:.8rem;color:#93c5fd;margin-top:.15rem}
+    .note{font-size:.85rem;color:#cbd5e1;background:#0a1220;border:1px dashed #1f2937;border-radius:12px;padding:.6rem .8rem}
+    .actions{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:flex-end;margin-top:1rem}
+    button{
+      border:none;border-radius:12px;padding:.8rem 1rem;font-weight:700;cursor:pointer
+    }
+    .btn-primary{background:linear-gradient(180deg,#22c55e,#16a34a);color:#052e16}
+    .btn-secondary{background:#0a1220;border:1px solid #1f2937;color:#cbd5e1}
+    .danger{color:#fecaca}
+    .required:after{content:" *"; color:#60a5fa}
+    footer{margin-top:2rem;color:var(--muted);font-size:.9rem;text-align:center}
+    .error{border-color:var(--danger)!important}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" aria-label="Tim Support logo">TS</div>
+    <div>
+      <div class="brand">Tim Support</div>
+      <div class="muted" style="font-size:.85rem">Specialist Membership Application</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" aria-label="intro">
+      <span class="badge">For Experts & Professionals</span>
+      <h1>Apply to Join Tim Support as a Specialist</h1>
+      <p class="muted">Complete the form below and attach your supporting documents. Only shortlisted candidates will be contacted.</p>
+      <p class="note">Tip: You can save your progress locally (no server) by clicking <em>Save Draft</em> at the bottom.</p>
+    </section>
+
+    <form id="membershipForm" novalidate>
+      <!-- SECTION 1: PERSONAL INFORMATION -->
+      <fieldset>
+        <legend>Section 1 — Personal Information</legend>
+        <div class="row">
+          <div>
+            <label class="required" for="fullName">Full Name</label>
+            <input id="fullName" name="fullName" type="text" autocomplete="name" required />
+          </div>
+          <div>
+            <label class="required" for="dob">Date of Birth</label>
+            <input id="dob" name="dob" type="date" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label class="required">Gender</label>
+            <div class="checks">
+              <label class="radio"><input type="radio" name="gender" value="Male" required /> Male</label>
+              <label class="radio"><input type="radio" name="gender" value="Female" /> Female</label>
+              <label class="radio"><input type="radio" name="gender" value="Other" /> Other</label>
+            </div>
+          </div>
+          <div>
+            <label class="required" for="nationality">Nationality</label>
+            <input id="nationality" name="nationality" type="text" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label class="required" for="idNumber">ID/Passport Number</label>
+            <input id="idNumber" name="idNumber" type="text" required />
+          </div>
+          <div>
+            <label class="required" for="phone">Phone Number</label>
+            <input id="phone" name="phone" type="tel" inputmode="tel" placeholder="+254 700 000 000" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label class="required" for="email">Email Address</label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div>
+            <label for="address">Residential Address</label>
+            <input id="address" name="address" type="text" autocomplete="street-address" />
+          </div>
+        </div>
+
+        <label for="linkedin">LinkedIn Profile (optional)</label>
+        <input id="linkedin" name="linkedin" type="text" placeholder="https://linkedin.com/in/username" />
+      </fieldset>
+
+      <!-- SECTION 2: SPECIALIZATION AREA -->
+      <fieldset>
+        <legend>Section 2 — Specialization Area</legend>
+        <p class="muted" style="margin-top:0">Select all that apply and specify your niche.</p>
+        <div class="checks">
+          <label class="check"><input type="checkbox" name="specialization" value="Business Consultation & Advisory" /> Business Consultation & Advisory</label>
+          <label class="check"><input type="checkbox" name="specialization" value="Agricultural Investment Advisory" /> Agricultural Investment Advisory</label>
+          <label class="check"><input type="checkbox" name="specialization" value="Technology Consultation" /> Technology Consultation</label>
+          <label class="check"><input type="checkbox" name="specialization" value="Construction & Real Estate Advisory" /> Construction & Real Estate Advisory</label>
+          <label class="check"><input type="checkbox" name="specialization" value="Education & Career Development" /> Education & Career Development</label>
+          <label class="check"><input type="checkbox" name="specialization" value="Import & Export Trade Advisory" /> Import & Export Trade Advisory</label>
+          <label class="check"><input type="checkbox" name="specialization" value="Social Services & Family Advisory" /> Social Services & Family Advisory</label>
+          <label class="check"><input type="checkbox" name="specialization" value="Events, Programs & Community Outreach" /> Events, Programs & Community Outreach</label>
+          <label class="check"><input type="checkbox" name="specialization" value="Financial Literacy & Wealth Creation Programs" /> Financial Literacy & Wealth Creation Programs</label>
+          <label class="check"><input type="checkbox" name="specialization" value="Innovation & Business Scaling Strategies" /> Innovation & Business Scaling Strategies</label>
+        </div>
+        <label for="niche">Specify your area of expertise within the chosen category</label>
+        <textarea id="niche" name="niche" placeholder="e.g., SME turnaround, precision agriculture, AI strategy, etc."></textarea>
+      </fieldset>
+
+      <!-- SECTION 3: PROFESSIONAL QUALIFICATIONS & EXPERIENCE -->
+      <fieldset>
+        <legend>Section 3 — Professional Qualifications & Experience</legend>
+        <div class="row">
+          <div>
+            <label class="required" for="highestQualification">Highest Academic Qualification</label>
+            <input id="highestQualification" name="highestQualification" type="text" required />
+          </div>
+          <div>
+            <label class="required" for="institution">Institution Name</label>
+            <input id="institution" name="institution" type="text" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label class="required" for="graduationYear">Year of Graduation</label>
+            <input id="graduationYear" name="graduationYear" type="number" min="1950" max="2100" required />
+          </div>
+          <div>
+            <label for="certifications">Relevant Professional Certifications</label>
+            <textarea id="certifications" name="certifications" placeholder="List certifications..."></textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label class="required" for="experienceYears">Years of Experience in Chosen Field</label>
+            <input id="experienceYears" name="experienceYears" type="number" min="0" step="0.5" required />
+          </div>
+          <div>
+            <label for="currentEmployer">Current Employer (if applicable)</label>
+            <input id="currentEmployer" name="currentEmployer" type="text" />
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label for="job1">Previous Work Experience — #1</label>
+            <input id="job1" name="job1" type="text" placeholder="Job Title — Company — Years" />
+          </div>
+          <div>
+            <label for="job2">Previous Work Experience — #2</label>
+            <input id="job2" name="job2" type="text" placeholder="Job Title — Company — Years" />
+          </div>
+          <div>
+            <label for="job3">Previous Work Experience — #3</label>
+            <input id="job3" name="job3" type="text" placeholder="Job Title — Company — Years" />
+          </div>
+        </div>
+
+        <label for="achievements">Key Achievements in Your Field</label>
+        <textarea id="achievements" name="achievements" placeholder="Bullet your top outcomes, awards, projects..."></textarea>
+      </fieldset>
+
+      <!-- SECTION 4: SKILLS & COMPETENCIES -->
+      <fieldset>
+        <legend>Section 4 — Skills & Competencies</legend>
+        <label for="skills">List key skills relevant to your field of expertise</label>
+        <textarea id="skills" name="skills" placeholder="e.g., Strategic planning; Data analysis; Coaching; Grant writing;"></textarea>
+
+        <div class="row">
+          <div>
+            <label class="required">Have you provided professional consultancy before?</label>
+            <div class="checks">
+              <label class="radio"><input type="radio" name="consultedBefore" value="Yes" required /> Yes</label>
+              <label class="radio"><input type="radio" name="consultedBefore" value="No" /> No</label>
+            </div>
+          </div>
+          <div>
+            <label for="clients">If Yes, list the organizations/clients you have worked with</label>
+            <textarea id="clients" name="clients" placeholder="Organization — Role/Scope — Year(s)"></textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label class="required">Do you have experience in mentorship, coaching, or training?</label>
+            <div class="checks">
+              <label class="radio"><input type="radio" name="mentorship" value="Yes" required /> Yes</label>
+              <label class="radio"><input type="radio" name="mentorship" value="No" /> No</label>
+            </div>
+          </div>
+          <div>
+            <label for="mentorshipDesc">If Yes, describe</label>
+            <textarea id="mentorshipDesc" name="mentorshipDesc"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- SECTION 5: ADDITIONAL INFORMATION -->
+      <fieldset>
+        <legend>Section 5 — Additional Information</legend>
+        <label for="whyJoin">Why do you want to join Tim Support as a specialist?</label>
+        <textarea id="whyJoin" name="whyJoin"></textarea>
+
+        <label for="valueBring">What value will you bring to Tim Support?</label>
+        <textarea id="valueBring" name="valueBring"></textarea>
+
+        <div class="row">
+          <div>
+            <label class="required">Are you willing to conduct trainings, workshops, and mentorship sessions?</label>
+            <div class="checks">
+              <label class="radio"><input type="radio" name="willing" value="Yes" required /> Yes</label>
+              <label class="radio"><input type="radio" name="willing" value="No" /> No</label>
+            </div>
+          </div>
+          <div>
+            <label class="required">Availability</label>
+            <div class="checks">
+              <label class="check"><input type="checkbox" name="availability" value="Full-time" /> Full-time</label>
+              <label class="check"><input type="checkbox" name="availability" value="Part-time" /> Part-time</label>
+              <label class="check"><input type="checkbox" name="availability" value="Project-based" /> Project-based</label>
+              <label class="check"><input type="checkbox" name="availability" value="Consultancy-only" /> Consultancy-only</label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- SECTION 6: ATTACHMENTS -->
+      <fieldset>
+        <legend>Section 6 — Attachments</legend>
+        <div class="row">
+          <div>
+            <label for="cv" class="required">Updated CV (PDF/DOC)</label>
+            <input id="cv" name="cv" type="file" accept=".pdf,.doc,.docx" required />
+          </div>
+          <div>
+            <label for="certs">Academic & Professional Certificates (PDF, images)</label>
+            <input id="certs" name="certs" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="reco">Recommendation Letters (optional)</label>
+            <input id="reco" name="reco" type="file" accept=".pdf,.png,.jpg,.jpeg" multiple />
+          </div>
+          <div>
+            <label for="portfolio">Portfolio or Work Samples (optional)</label>
+            <input id="portfolio" name="portfolio" type="file" accept=".pdf,.png,.jpg,.jpeg,.zip" multiple />
+          </div>
+        </div>
+        <p class="hint">Attachments are kept client-side until you connect a backend handler.</p>
+      </fieldset>
+
+      <!-- SECTION 7: DECLARATION -->
+      <fieldset>
+        <legend>Section 7 — Declaration</legend>
+        <label class="check">
+          <input id="declare" type="checkbox" required />
+          I declare that the information provided is true and accurate. I understand that false information may result in disqualification.
+        </label>
+
+        <div class="row">
+          <div>
+            <label for="signature" class="required">Applicant’s Signature (type full name)</label>
+            <input id="signature" name="signature" type="text" required />
+          </div>
+          <div>
+            <label for="appDate" class="required">Date</label>
+            <input id="appDate" name="appDate" type="date" required />
+          </div>
+        </div>
+
+        <div class="note">
+          <strong>Submission Details:</strong><br/>
+          Email the completed application to <em>membership@tim-support.org</em> or submit in person at Tim Support HQ. (Update these details as needed.)
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button type="button" class="btn-secondary" id="saveDraft">Save Draft</button>
+        <button type="reset" class="btn-secondary">Reset</button>
+        <button type="submit" class="btn-primary">Submit Application</button>
+      </div>
+    </form>
+
+    <footer>
+      © <span id="year"></span> Tim Support. All rights reserved.
+    </footer>
+  </main>
+
+  <script>
+    // Prefill current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Basic client-side validation highlighting
+    const form = document.getElementById('membershipForm');
+    form.addEventListener('submit', (e) => {
+      const invalid = [...form.querySelectorAll('[required]')].filter(el => {
+        if (el.type === 'radio') {
+          const group = form.querySelectorAll('input[name="' + el.name + '"]');
+          return ![...group].some(r => r.checked);
+        }
+        if (el.type === 'checkbox') return !el.checked;
+        return !el.value?.trim();
+      });
+
+      form.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+      invalid.forEach(el => {
+        if (el.type === 'radio') {
+          form.querySelectorAll('input[name="' + el.name + '"]').forEach(r => r.closest('.radio')?.classList.add('error'));
+        } else if (el.type === 'checkbox') {
+          el.closest('.check')?.classList.add('error');
+        } else {
+          el.classList.add('error');
+        }
+      });
+
+      if (invalid.length) {
+        e.preventDefault();
+        alert('Please complete all required fields (marked with *).');
+        return;
+      }
+
+      e.preventDefault();
+      const data = new FormData(form);
+      const payload = {};
+      data.forEach((v, k) => {
+        if (payload[k]) {
+          if (Array.isArray(payload[k])) payload[k].push(v);
+          else payload[k] = [payload[k], v];
+        } else {
+          payload[k] = v;
+        }
+      });
+
+      // Show a quick confirmation (you can swap this for a real POST later)
+      alert('Application captured. Open the console to view the JSON payload. You can now connect a backend endpoint.');
+      console.log('TIM SUPPORT — Specialist Membership Application:', payload);
+    });
+
+    // Save & restore draft locally (no server)
+    const DRAFT_KEY = 'tim_support_specialist_membership_draft';
+    const saveBtn = document.getElementById('saveDraft');
+
+    saveBtn.addEventListener('click', () => {
+      const data = new FormData(form);
+      const draft = {};
+      data.forEach((v, k) => {
+        // Skip files in draft
+        const input = form.querySelector('[name="'+k+'"]');
+        if (input && input.type === 'file') return;
+        if (draft[k]) {
+          if (Array.isArray(draft[k])) draft[k].push(v);
+          else draft[k] = [draft[k], v];
+        } else {
+          draft[k] = v;
+        }
+      });
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      saveBtn.textContent = 'Draft Saved ✓';
+      setTimeout(()=> saveBtn.textContent = 'Save Draft', 2000);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      try {
+        const draft = JSON.parse(raw);
+        Object.entries(draft).forEach(([k,v]) => {
+          const nodes = form.querySelectorAll('[name="'+k+'"]');
+          if (!nodes.length) return;
+
+          if (nodes[0].type === 'radio' || nodes[0].type === 'checkbox') {
+            nodes.forEach(n => {
+              if (Array.isArray(v)) n.checked = v.includes(n.value);
+              else n.checked = v === n.value;
+            });
+          } else {
+            nodes[0].value = Array.isArray(v) ? v[0] : v;
+          }
+        });
+      } catch(e){}
+    });
+  </script>
+</body>
+</html>

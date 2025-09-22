@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tourism & Hospitality Support</title>
+  <style>
+    body {font-family: Arial, sans-serif;margin: 0;background: #f4f6f9;}
+    header {display:flex;justify-content:space-between;align-items:center;padding:15px 25px;background:#1d4ed8;color:white;position:sticky;top:0;z-index:1000;}
+    .logo{font-size:1.4rem;font-weight:bold;}
+    nav{display:none;flex-direction:column;position:absolute;top:60px;right:25px;background:white;color:black;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+    nav a{padding:10px 15px;text-decoration:none;color:black;display:block;transition:0.3s;}
+    nav a:hover{background:#e5e7eb;}
+    .menu-btn{font-size:1.8rem;cursor:pointer;}
+    .show{display:flex;}
+    .hero{text-align:center;padding:80px 20px;background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('assets/tourism-bg.jpg') no-repeat center/cover;color:white;}
+    .hero h1{font-size:2rem;margin-bottom:10px;}
+    .programs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:30px;}
+    .program-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);transition:.3s;}
+    .program-card:hover{transform:translateY(-5px);box-shadow:0 8px 16px rgba(0,0,0,0.2);}
+    .program-card h2{font-size:1.2rem;margin-bottom:10px;color:#1d4ed8;}
+    .category{margin-top:15px;}
+    .category h4{margin-bottom:8px;color:#333;}
+    .category ul{list-style:disc;margin-left:20px;}
+    .btn{display:inline-block;margin-top:10px;padding:8px 14px;background:#1d4ed8;color:white;border:none;border-radius:6px;cursor:pointer;transition:.3s;}
+    .btn:hover{background:#2563eb;}
+    footer{background:#1d4ed8;color:white;text-align:center;padding:15px;}
+    /* Team Section */
+    .team{padding:50px 20px;text-align:center;}
+    .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;max-width:1000px;margin:auto;}
+    .team-member{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+    .team-member img{width:100%;height:200px;object-fit:cover;border-radius:12px;margin-bottom:15px;}
+    .team-member h3{margin:10px 0;color:#1d4ed8;}
+    .role{font-weight:bold;color:#444;margin-bottom:10px;}
+    .bio{font-size:0.9rem;color:#555;}
+    /* Modal */
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
+    .modal-content{background:white;padding:20px;border-radius:12px;width:90%;max-width:400px;position:relative;}
+    .close{position:absolute;top:10px;right:15px;font-size:1.5rem;cursor:pointer;}
+    .modal-content input,.modal-content textarea{width:100%;margin-bottom:10px;padding:8px;border:1px solid #ccc;border-radius:6px;}
+    @media(min-width:768px){nav{display:flex !important;flex-direction:row;position:static;background:none;box-shadow:none;}
+      nav a{color:white;} .menu-btn{display:none;}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Tourism Support</div>
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+  <nav id="navMenu">
+    <a href="#programs">Services</a>
+    <a href="#team">Experts</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Tourism & Hospitality Support</h1>
+  <p>Boosting local and global tourism through innovative hospitality, travel, and cultural experiences.</p>
+</section>
+
+<section id="programs">
+  <h2 style="text-align:center;color:#1d4ed8;">Our Tourism Solutions</h2>
+  <div class="programs-grid">
+
+    <div class="program-card">
+      <h2>🏨 Hospitality Development</h2>
+      <ul>
+        <li>Hotel & Guesthouse Setup</li>
+        <li>Restaurant & Catering Services</li>
+        <li>Resort & Retreat Management</li>
+        <li>Customer Service Training</li>
+      </ul>
+      <button class="btn" onclick="openModal('Hospitality Development')">Request Support</button>
+    </div>
+
+    <div class="program-card">
+      <h2>✈️ Travel & Tour Operations</h2>
+      <ul>
+        <li>Tour Agency Establishment</li>
+        <li>Travel Packages & Itineraries</li>
+        <li>Transport & Shuttle Services</li>
+        <li>International Tourism Partnerships</li>
+      </ul>
+      <button class="btn" onclick="openModal('Travel & Tour Operations')">Request Support</button>
+    </div>
+
+    <div class="program-card">
+      <h2>🌍 Cultural & Eco-Tourism</h2>
+      <ul>
+        <li>Community-Based Tourism</li>
+        <li>Wildlife & Safari Programs</li>
+        <li>Eco-Lodges & Sustainable Travel</li>
+        <li>Heritage & Cultural Festivals</li>
+      </ul>
+      <button class="btn" onclick="openModal('Cultural & Eco-Tourism')">Request Support</button>
+    </div>
+
+  </div>
+</section>
+
+<section id="team" class="team">
+  <h2 style="color:#1d4ed8; margin-bottom:20px;">Meet Our Tourism Experts</h2>
+  <div class="team-grid">
+    <div class="team-member">
+      <img src="assets/tourism1.jpg" alt="Expert 1">
+      <h3>Grace Mwangi</h3>
+      <p class="role">Hospitality Development Specialist</p>
+      <p class="bio">Expert in hotel management, customer service training, and hospitality entrepreneurship.</p>
+    </div>
+    <div class="team-member">
+      <img src="assets/tourism2.jpg" alt="Expert 2">
+      <h3>James Otieno</h3>
+      <p class="role">Travel & Tours Consultant</p>
+      <p class="bio">Specializes in travel operations, tour packages, and international tourism partnerships.</p>
+    </div>
+    <div class="team-member">
+      <img src="assets/tourism3.jpg" alt="Expert 3">
+      <h3>Linda Hassan</h3>
+      <p class="role">Cultural & Eco-Tourism Expert</p>
+      <p class="bio">Passionate about community-based tourism, wildlife conservation, and cultural heritage.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact" style="padding:40px 20px;text-align:center;">
+  <h2 style="color:#1d4ed8;">Get in Touch</h2>
+  <p>Want to grow your tourism & hospitality business? Reach out to us today.</p>
+  <button class="btn" onclick="openModal('General Inquiry')">Contact Us</button>
+</section>
+
+<!-- Modal -->
+<div id="supportModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3>Request Support</h3>
+    <form id="supportForm" 
+          action="https://formsubmit.co/mutheenime@gmail.com" 
+          method="POST">
+      <input type="hidden" id="program" name="program">
+      <input type="text" name="_honey" style="display:none">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="thankyou.html">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <textarea name="message" rows="4" placeholder="Details of your request" required></textarea>
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+  </div>
+</div>
+
+<footer><p>&copy; 2025 Tourism & Hospitality Support. All Rights Reserved.</p></footer>
+
+<script>
+function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
+function openModal(p){document.getElementById('supportModal').style.display='flex';document.getElementById('program').value=p;}
+function closeModal(){document.getElementById('supportModal').style.display='none';}
+window.onclick=e=>{if(e.target==document.getElementById('supportModal'))closeModal();}
+</script>
+
+</body>
+</html>

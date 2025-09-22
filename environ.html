@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Environment & Energy Support</title>
+  <style>
+    /* --- Theme Variables --- */
+    :root {
+      --bg-color: #f4f6f9;
+      --text-color: #333;
+      --card-bg: #fff;
+      --header-bg: #2e7d32;
+      --accent: #2e7d32;
+      --accent-hover: #388e3c;
+    }
+    body.dark {
+      --bg-color: #121212;
+      --text-color: #eaeaea;
+      --card-bg: #1e1e1e;
+      --header-bg: #1b5e20;
+      --accent: #66bb6a;
+      --accent-hover: #81c784;
+    }
+
+    /* --- Global --- */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 25px;
+      background: var(--header-bg);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .logo {font-size: 1.4rem;font-weight: bold;}
+    .menu-btn {font-size: 1.8rem;cursor: pointer;}
+
+    nav {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 60px;
+      right: 25px;
+      background: var(--card-bg);
+      color: var(--text-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    nav a {
+      padding: 10px 15px;
+      text-decoration: none;
+      color: var(--text-color);
+      display: block;
+      transition: 0.3s;
+    }
+    nav a:hover {background: rgba(0,0,0,0.05);}
+    .show {display: flex;}
+
+    /* Dark Mode Toggle */
+    .theme-toggle {
+      cursor: pointer;
+      background: transparent;
+      border: 2px solid white;
+      border-radius: 6px;
+      padding: 5px 10px;
+      color: white;
+      font-size: 0.9rem;
+      transition: 0.3s;
+    }
+    .theme-toggle:hover {background: rgba(255,255,255,0.2);}
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+      background: linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+        url('assets/environment-bg.jpg') no-repeat center/cover;
+      color: white;
+    }
+    .hero h1 {font-size: 2rem;margin-bottom: 10px;}
+
+    /* Programs Grid */
+    .programs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .program-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform .3s, box-shadow .3s;
+    }
+    .program-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    }
+    .program-card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--accent);
+    }
+    .program-card ul {list-style: disc;margin-left: 20px;}
+
+    .btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 14px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: .3s;
+    }
+    .btn:hover {background: var(--accent-hover);}
+
+    /* Team Section */
+    .team {padding: 50px 20px;text-align: center;}
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .team-member {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform .3s;
+    }
+    .team-member:hover {transform: translateY(-4px);}
+    .team-member img {
+      width: 100%;height: 200px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+    .team-member h3 {margin: 10px 0;color: var(--accent);}
+    .role {font-weight: bold;margin-bottom: 10px;}
+    .bio {font-size: 0.9rem;}
+
+    /* Contact */
+    .contact {padding: 40px 20px;text-align: center;}
+
+    /* Modal */
+    .modal {display: none;position: fixed;top: 0;left: 0;width: 100%;height: 100%;
+      background: rgba(0,0,0,0.6);justify-content: center;align-items: center;}
+    .modal-content {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;max-width: 400px;
+      position: relative;
+      color: var(--text-color);
+    }
+    .close {position: absolute;top: 10px;right: 15px;font-size: 1.5rem;cursor: pointer;}
+    .modal-content input,.modal-content textarea {
+      width: 100%;margin-bottom: 10px;padding: 8px;
+      border: 1px solid #ccc;border-radius: 6px;
+      background: transparent;color: var(--text-color);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--header-bg);
+      color: white;
+      text-align: center;
+      padding: 15px;
+      margin-top: auto;
+    }
+
+    @media(min-width:768px){
+      nav {display: flex !important;flex-direction: row;position: static;background: none;box-shadow: none;}
+      nav a {color: white;}
+      .menu-btn {display: none;}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Enviro-Energy</div>
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+  <nav id="navMenu">
+    <a href="#programs">Solutions</a>
+    <a href="#team">Experts</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
+</header>
+
+<section class="hero">
+  <h1>Environment & Energy Support</h1>
+  <p>Promoting sustainability, renewable energy, and conservation for a greener future.</p>
+</section>
+
+<section id="programs">
+  <h2 style="text-align:center;color:var(--accent);">Our Green Solutions</h2>
+  <div class="programs-grid">
+
+    <!-- Existing Categories -->
+    <div class="program-card">
+      <h2>🌱 Environmental Conservation</h2>
+      <ul>
+        <li>Tree Planting Campaigns</li>
+        <li>Water Conservation Projects</li>
+        <li>Waste Management Solutions</li>
+        <li>Community Clean-up Programs</li>
+      </ul>
+      <button class="btn" onclick="openModal('Environmental Conservation')">Request Support</button>
+    </div>
+
+    <div class="program-card">
+      <h2>⚡ Renewable Energy</h2>
+      <ul>
+        <li>Solar Energy Systems</li>
+        <li>Wind & Hydro Projects</li>
+        <li>Biogas Production</li>
+        <li>Energy Efficiency Training</li>
+      </ul>
+      <button class="btn" onclick="openModal('Renewable Energy')">Request Support</button>
+    </div>
+
+    <div class="program-card">
+      <h2>🌍 Climate Action</h2>
+      <ul>
+        <li>Climate Change Awareness</li>
+        <li>Carbon Footprint Reduction</li>
+        <li>Green Business Models</li>
+        <li>Policy & Advocacy Support</li>
+      </ul>
+      <button class="btn" onclick="openModal('Climate Action')">Request Support</button>
+    </div>
+
+    <!-- New Categories -->
+    <div class="program-card">
+      <h2>🌊 Water & Sanitation</h2>
+      <ul>
+        <li>Clean Water Access Programs</li>
+        <li>Wastewater Treatment Solutions</li>
+        <li>Rainwater Harvesting Systems</li>
+        <li>Hygiene & Sanitation Campaigns</li>
+      </ul>
+      <button class="btn" onclick="openModal('Water & Sanitation')">Request Support</button>
+    </div>
+
+    <div class="program-card">
+      <h2>🏭 Sustainable Industry</h2>
+      <ul>
+        <li>Green Technology Development</li>
+        <li>Eco-Certification Programs</li>
+        <li>Sustainable Supply Chains</li>
+        <li>Carbon Neutral Manufacturing</li>
+      </ul>
+      <button class="btn" onclick="openModal('Sustainable Industry')">Request Support</button>
+    </div>
+
+    <div class="program-card">
+      <h2>🏘️ Community Development</h2>
+      <ul>
+        <li>Green Housing Initiatives</li>
+        <li>Eco-Village Projects</li>
+        <li>Community Empowerment Training</li>
+        <li>Local Sustainable Enterprises</li>
+      </ul>
+      <button class="btn" onclick="openModal('Community Development')">Request Support</button>
+    </div>
+
+    <div class="program-card">
+      <h2>🐝 Biodiversity & Wildlife</h2>
+      <ul>
+        <li>Wildlife Conservation Projects</li>
+        <li>Forest Protection & Reforestation</li>
+        <li>Eco-Tourism Development</li>
+        <li>Anti-Poaching Campaigns</li>
+      </ul>
+      <button class="btn" onclick="openModal('Biodiversity & Wildlife')">Request Support</button>
+    </div>
+
+  </div>
+</section>
+
+
+<section id="contact" class="contact">
+  <h2 style="color:var(--accent);">Get in Touch</h2>
+  <p>Ready to power sustainability and protect the planet? Contact us today.</p>
+  <button class="btn" onclick="openModal('General Inquiry')">Contact Us</button>
+</section>
+
+<!-- Modal -->
+<div id="supportModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3>Request Support</h3>
+    <form id="supportForm" 
+          action="https://formsubmit.co/mutheenime@gmail.com" 
+          method="POST" 
+          onsubmit="return handleSubmit(event)">
+      <input type="hidden" id="program" name="program">
+      <input type="text" name="_honey" style="display:none">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="thankyou.html">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      	<input type="number" name="number" placeholder="Your number" required>
+      <input type="text" name="location" placeholder="Your  location" required>
+      <textarea name="message" rows="4" placeholder="Details of your request" required></textarea>
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+  </div>
+</div>
+
+<footer><p>&copy; 2025 Environment & Energy Support. All Rights Reserved.</p></footer>
+
+<script>
+function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
+function openModal(p){document.getElementById('supportModal').style.display='flex';document.getElementById('program').value=p;}
+function closeModal(){document.getElementById('supportModal').style.display='none';}
+window.onclick=e=>{if(e.target==document.getElementById('supportModal'))closeModal();}
+
+// Dark theme toggle
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+  const btn=document.querySelector('.theme-toggle');
+  if(document.body.classList.contains('dark')){
+    btn.textContent="☀️ Light";
+  } else {
+    btn.textContent="🌙 Dark";
+  }
+}
+</script>
+
+</body>
+</html>

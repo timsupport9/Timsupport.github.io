@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resource Hub — Learning & Growth</title>
+  <style>
+    body {font-family: Arial, sans-serif;margin:0;background:#f4f6f9;}
+    header {display:flex;justify-content:space-between;align-items:center;padding:15px 25px;background:#0b5ed7;color:white;position:sticky;top:0;z-index:1000;}
+    .logo{font-size:1.4rem;font-weight:bold;}
+    nav{display:none;flex-direction:column;position:absolute;top:60px;right:25px;background:white;color:black;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+    nav a{padding:10px 15px;text-decoration:none;color:black;display:block;transition:0.3s;}
+    nav a:hover{background:#e5e7eb;}
+    .menu-btn{font-size:1.8rem;cursor:pointer;}
+    .show{display:flex;}
+    .hero{text-align:center;padding:80px 20px;background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url('assets/resources-hero.jpg') no-repeat center/cover;color:white;}
+    .hero h1{font-size:2rem;margin-bottom:10px;}
+    .filters{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:20px 0;}
+    .filter-btn{padding:8px 14px;border-radius:20px;border:1px solid #ccc;background:white;cursor:pointer;transition:.3s;}
+    .filter-btn.active,.filter-btn:hover{background:#0b5ed7;color:white;border-color:#0b5ed7;}
+    .resources-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:30px;}
+    .resource-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);transition:.3s;}
+    .resource-card:hover{transform:translateY(-5px);box-shadow:0 8px 16px rgba(0,0,0,0.2);}
+    .resource-card h3{margin:0 0 10px;color:#0b5ed7;}
+    .tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;}
+    .tag{font-size:.85rem;background:#e5e7eb;padding:4px 10px;border-radius:12px;text-decoration:none;color:#0b5ed7;transition:.3s;}
+    .tag:hover{background:#0b5ed7;color:white;}
+    footer{background:#0b5ed7;color:white;text-align:center;padding:15px;margin-top:40px;}
+    @media(min-width:768px){nav{display:flex !important;flex-direction:row;position:static;background:none;box-shadow:none;}nav a{color:white;} .menu-btn{display:none;}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Resource Hub</div>
+  <div class="menu-btn" onclick="toggleMenu()"></div>
+  <nav id="navMenu">
+    <a href="#resources">Resources</a>
+    <a href="#team">Our Team</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>Find Resources that Empower You</h1>
+  <p>Browse, filter, and access academic papers, teaching aids, and personal growth resources — organized by tags.</p>
+</section>
+
+<section id="resources">
+  <h2 style="text-align:center;color:#0b5ed7;padding-top:30px;">Browse Resources</h2>
+  <div class="filters" id="filters"></div>
+  <div class="resources-grid" id="resourcesGrid"></div>
+</section>
+
+<footer><p>&copy; 2025 Learning Resource Hub. All Rights Reserved.</p></footer>
+
+<script>
+// Resource Data with direct Google Docs links
+const resources = [
+  {
+    title:"Grade 7 CBC Paper 2023",
+    desc:"Past exam for revision.",
+    tags:[
+      {name:"CBC", link:"https://docs.google.com/document/d/xxxx1"},
+      {name:"Grade 7", link:"https://docs.google.com/document/d/xxxx2"},
+      {name:"2023", link:"https://docs.google.com/document/d/xxxx3"}
+    ]
+  },
+  {
+    title:"Teaching Aid — Fractions Kit",
+    desc:"Interactive teaching guide.",
+    tags:[
+      {name:"Teaching Aids", link:"https://docs.google.com/document/d/yyyy1"},
+      {name:"Math", link:"https://docs.google.com/document/d/yyyy2"},
+      {name:"Primary", link:"https://docs.google.com/document/d/yyyy3"}
+      
+    ]
+  },
+  {
+    title:"Personal Growth Workbook",
+    desc:"Exercises for self-awareness.",
+    tags:[
+      {name:"Personal Development", link:"https://docs.google.com/document/d/zzzz1"},
+      {name:"Wellness", link:"https://docs.google.com/document/d/zzzz2"}
+    ]
+  },
+  {
+    title:"Grade 9 Chemistry Notes",
+    desc:"Structured notes for students.",
+    tags:[
+      {name:"CBC", link:"https://docs.google.com/document/d/aaaa1"},
+      {name:"Grade 9", link:"https://docs.google.com/document/d/aaaa2"},
+      {name:"Science", link:"https://docs.google.com/document/d/aaaa3"}
+    ]
+  },
+  {
+    title:"Career Planning Guide",
+    desc:"Steps for high school career prep.",
+    tags:[
+      {name:"Career", link:"https://docs.google.com/document/d/bbbb1"},
+      {name:"Personal Development", link:"https://docs.google.com/document/d/bbbb2"}
+    ]
+  }
+];
+
+const filters = document.getElementById('filters');
+const resourcesGrid = document.getElementById('resourcesGrid');
+let activeTag = "All";
+
+// Render Filters
+function renderFilters(){
+  let allTags = [...new Set(resources.flatMap(r=>r.tags.map(t=>t.name)))];
+  filters.innerHTML = `<button class="filter-btn ${activeTag==="All"?"active":""}" onclick="filterTag('All')">All</button>` +
+    allTags.map(tag=>`<button class="filter-btn ${activeTag===tag?"active":""}" onclick="filterTag('${tag}')">${tag}</button>`).join('');
+}
+
+// Render Resources
+function renderResources(){
+  resourcesGrid.innerHTML = "";
+  resources.filter(r=>activeTag==="All" || r.tags.some(t=>t.name===activeTag)).forEach(res=>{
+    const div = document.createElement('div');
+    div.className="resource-card";
+    div.innerHTML=`
+      <h3>${res.title}</h3>
+      <p>${res.desc}</p>
+      <div class="tags">
+        ${res.tags.map(t=>`<a href="${t.link}" target="_blank" class="tag">${t.name}</a>`).join('')}
+      </div>
+    `;
+    resourcesGrid.appendChild(div);
+  });
+}
+
+function filterTag(tag){activeTag=tag;renderFilters();renderResources();}
+function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
+
+// Init
+renderFilters();renderResources();
+</script>
+</body>
+</html>
