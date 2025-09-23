@@ -5,127 +5,155 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Training, Seminars & Meetings</title>
   <style>
-    body {font-family: Arial, sans-serif; margin: 0; background: #f4f6f9;}
-    header {display:flex; justify-content:space-between; align-items:center; background:#2c3e50; padding:15px 30px; color:#fff;}
-    header h1 {margin:0; font-size:20px;}
-    .container {padding: 40px; max-width:1200px; margin:auto;}
-    h2 {color:#2c3e50; margin-bottom:20px;}
-    .service-card {background:#fff; border-radius:12px; padding:20px; margin:20px 0; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-decoration:none; color:#333; display:block;}
-    .service-card:hover {transform: translateY(-5px); transition:0.3s;}
-    .icon {font-size:30px; margin-bottom:10px;}
-    h3 {margin:10px 0; color:#2c3e50;}
-    p {margin-bottom:15px; color:#555;}
-    .category {margin-top:20px;}
-    .category h4 {margin-bottom:10px; color:#34495e;}
-    .category ul {list-style: none; padding:0; margin:0;}
-    .category ul li {background:#ecf0f1; margin:6px 0; padding:10px; border-radius:8px;}
+    body {font-family: Arial, sans-serif;margin: 0;background: #f4f6f9;}
+    header {display:flex;justify-content:space-between;align-items:center;padding:15px 25px;background:#0b5ed7;color:white;position:sticky;top:0;z-index:1000;}
+    .logo{font-size:1.4rem;font-weight:bold;}
+    nav{display:none;flex-direction:column;position:absolute;top:60px;right:25px;background:white;color:black;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+    nav a{padding:10px 15px;text-decoration:none;color:black;display:block;transition:0.3s;}
+    nav a:hover{background:#e5e7eb;}
+    .menu-btn{font-size:1.8rem;cursor:pointer;}
+    .show{display:flex;}
+    .hero{text-align:center;padding:80px 20px;background:linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),url('assets/training-hero.jpg') no-repeat center/cover;color:white;}
+    .hero h1{font-size:2rem;margin-bottom:10px;}
+    .programs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:30px;}
+    .program-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);transition:.3s;}
+    .program-card:hover{transform:translateY(-5px);box-shadow:0 8px 16px rgba(0,0,0,0.2);}
+    .program-card h2{font-size:1.2rem;margin-bottom:10px;color:#0b5ed7;}
+    .projects-list{list-style:none;padding-left:0;margin:0;}
+    .projects-list li{padding:6px 0;border-bottom:1px solid #f1f5f9;}
+    .btn{display:inline-block;margin-top:10px;padding:6px 12px;background:#0b5ed7;color:white;border:none;border-radius:6px;cursor:pointer;transition:.3s;font-size:0.9rem;}
+    .btn:hover{background:#0f6fe6;}
+    footer{background:#0b5ed7;color:white;text-align:center;padding:15px;}
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
+    .modal-content{background:white;padding:20px;border-radius:12px;width:90%;max-width:480px;position:relative;}
+    .close{position:absolute;top:10px;right:15px;font-size:1.5rem;cursor:pointer;}
+    .modal-content input,.modal-content textarea{width:100%;margin-bottom:10px;padding:8px;border:1px solid #ccc;border-radius:6px;}
+    @media(min-width:768px){nav{display:flex !important;flex-direction:row;position:static;background:none;box-shadow:none;}
+      nav a{color:white;} .menu-btn{display:none;}}
   </style>
 </head>
 <body>
-  <header>
-    <h1>Training, Seminars & Meetings</h1>
-  </header>
 
-  <div class="container">
+<header>
+  <div class="logo">Training Hub</div>
+  <div class="menu-btn" onclick="toggleMenu()">☰</div>
+  <nav id="navMenu">
+    <a href="#programs">Programs</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
 
-    <a href="#" class="service-card">
-      <div class="icon">🎓</div>
-      <h3>Professional Training</h3>
-      <p>Skill-based training programs designed to enhance knowledge, performance, and career growth.</p>
-
-      <div class="category">
-        <h4>📘 Corporate Training</h4>
-        <ul>
-          <li>Leadership & Management Skills</li>
-          <li>Communication & Teamwork</li>
-          <li>Customer Service Excellence</li>
-          <li>Technical & Digital Skills</li>
-        </ul>
-      </div>
-
-      <div class="category">
-        <h4>⚙️ Technical Training</h4>
-        <ul>
-          <li>Engineering & IT Skills</li>
-          <li>Healthcare Professional Development</li>
-          <li>Project Management</li>
-          <li>Safety & Compliance Training</li>
-        </ul>
-      </div>
-
-      <div class="category">
-        <h4>🌱 Personal Development</h4>
-        <ul>
-          <li>Emotional Intelligence</li>
-          <li>Time & Stress Management</li>
-          <li>Confidence & Public Speaking</li>
-          <li>Work-Life Balance</li>
-        </ul>
-      </div>
-    </a>
-
-    <a href="#" class="service-card">
-      <div class="icon">📢</div>
-      <h3>Seminars & Conferences</h3>
-      <p>Interactive knowledge-sharing platforms that bring together professionals, leaders, and innovators.</p>
-
-      <div class="category">
-        <h4>🌍 Industry Seminars</h4>
-        <ul>
-          <li>Business & Entrepreneurship Forums</li>
-          <li>Healthcare & Wellness Seminars</li>
-          <li>Technology & Innovation Summits</li>
-          <li>Education & Research Conferences</li>
-        </ul>
-      </div>
-
-      <div class="category">
-        <h4>🤝 Networking Events</h4>
-        <ul>
-          <li>Professional Networking Mixers</li>
-          <li>Partnership & Collaboration Meetings</li>
-          <li>Investor & Startup Linkages</li>
-          <li>Community Engagement Events</li>
-        </ul>
-      </div>
-    </a>
-
-    <a href="#" class="service-card">
-      <div class="icon">📝</div>
-      <h3>Meetings & Workshops</h3>
-      <p>Well-organized and productive gatherings tailored to decision-making, planning, and knowledge building.</p>
-
-      <div class="category">
-        <h4>🏢 Corporate Meetings</h4>
-        <ul>
-          <li>Board & Strategy Meetings</li>
-          <li>Team Building Sessions</li>
-          <li>Stakeholder Consultations</li>
-          <li>Performance Reviews</li>
-        </ul>
-      </div>
-
-      <div class="category">
-        <h4>🎯 Workshops</h4>
-        <ul>
-          <li>Skill Enhancement Workshops</li>
-          <li>Problem-Solving Sessions</li>
-          <li>Community Training Workshops</li>
-          <li>Hands-on Learning Programs</li>
-        </ul>
-      </div>
-
-      <div class="category">
-        <h4>💡 Strategic Retreats</h4>
-        <ul>
-          <li>Leadership Retreats</li>
-          <li>Organizational Vision Planning</li>
-          <li>Innovation Brainstorming</li>
-          <li>Goal-Setting Retreats</li>
-        </ul>
-      </div>
-    </a>
-
+<section class="hero">
+  <h1>Training, Seminars & Meetings</h1>
+  <p>Enhance your skills, network with professionals, and grow your career.</p>
+  <div style="margin-top:20px;">
+    <button class="btn" onclick="document.getElementById('programs').scrollIntoView({behavior:'smooth'})">Explore Programs</button>
   </div>
+</section>
+
+<section id="programs">
+  <h2 style="text-align:center;color:#0b5ed7;padding-top:30px;">Available Programs</h2>
+  <div class="programs-grid" id="programsGrid"></div>
+</section>
+
+<section id="contact" class="contact" style="padding:50px 20px;text-align:center;">
+  <h2 style="color:#0b5ed7;">Need More Info?</h2>
+  <form id="contactForm" style="max-width:700px;margin:auto;background:white;padding:20px;border-radius:12px;">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="email" name="email" placeholder="Your Email" required>
+    <textarea name="message" placeholder="Type your message..." required></textarea>
+    <button type="submit" class="btn">Submit</button>
+    <p id="thank-you" style="color:green;display:none;margin-top:10px;">Thank you — we will contact you soon.</p>
+  </form>
+</section>
+
+<!-- Modal -->
+<div id="supportModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3 id="modalTitle">Register</h3>
+    <form id="supportForm" 
+          action="https://formsubmit.co/mutheenime@gmail.com" 
+          method="POST">
+      <input type="hidden" id="program" name="program">
+      <input type="text" name="_honey" style="display:none">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="thankyou.html">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <input type="number" name="number" placeholder="Your Number" required>
+      <input type="text" name="location" placeholder="Your Location" required>
+      <textarea name="message" rows="4" placeholder="Details of your request" required></textarea>
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+  </div>
+</div>
+
+<footer><p>&copy; 2025 Training Hub. All Rights Reserved.</p></footer>
+
+<script>
+const programs = [
+  {
+    category: "Professional Training",
+    items: [
+      {name:"Leadership & Management Skills", desc:"Develop effective leadership and management expertise."},
+      {name:"Communication & Teamwork", desc:"Enhance collaboration and workplace communication."},
+      {name:"Customer Service Excellence", desc:"Boost service delivery and client satisfaction."},
+      {name:"Technical & Digital Skills", desc:"Upgrade your IT and technical know-how."}
+    ]
+  },
+  {
+    category: "Seminars & Conferences",
+    items: [
+      {name:"Business & Entrepreneurship Forums", desc:"Engage with innovators and business leaders."},
+      {name:"Healthcare & Wellness Seminars", desc:"Stay informed on health and wellness trends."},
+      {name:"Technology & Innovation Summits", desc:"Discover the latest in tech and innovation."},
+      {name:"Education & Research Conferences", desc:"Connect with academics and researchers."}
+    ]
+  },
+  {
+    category: "Meetings & Workshops",
+    items: [
+      {name:"Board & Strategy Meetings", desc:"Drive organizational decisions effectively."},
+      {name:"Skill Enhancement Workshops", desc:"Hands-on sessions for practical learning."},
+      {name:"Leadership Retreats", desc:"Strategic retreats for leaders and managers."},
+      {name:"Community Engagement Events", desc:"Participate in impactful community sessions."}
+    ]
+  }
+];
+const grid = document.getElementById('programsGrid');
+programs.forEach(cat=>{
+  const div = document.createElement('div');
+  div.className = 'program-card';
+  div.innerHTML = `<h2>${cat.category}</h2>
+    <ul class="projects-list">
+      ${cat.items.map(it=>`<li>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <div style="flex:1;">
+            <strong>${it.name}</strong>
+            <div style="font-size:0.95rem;color:#334155">${it.desc}</div>
+          </div>
+          <div>
+            <button class="btn" onclick="openModal('${it.name}')">Register</button>
+          </div>
+        </div>
+      </li>`).join('')}
+    </ul>`;
+  grid.appendChild(div);
+});
+
+function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
+function openModal(p){
+  document.getElementById('supportModal').style.display='flex';
+  document.getElementById('program').value = p;
+  document.getElementById('modalTitle').textContent = `Register — ${p}`;
+}
+function closeModal(){document.getElementById('supportModal').style.display='none';}
+document.getElementById('contactForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  document.getElementById('thank-you').style.display='block';
+  e.target.reset();
+});
+</script>
 </body>
 </html>
