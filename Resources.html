@@ -1,3 +1,25 @@
+<?php
+session_start();
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// DB connection
+$conn = new mysqli("localhost","root","","resourcehub");
+$res = $conn->query("SELECT * FROM resources ORDER BY id DESC");
+
+// Fetch resources into PHP array
+$resources = [];
+while($row = $res->fetch_assoc()){
+    $resources[] = [
+        "title" => $row['title'],
+        "desc" => $row['description'],
+        "tags" => array_map('trim', explode(",", $row['tags'])),
+        "link" => $row['link']
+    ];
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
