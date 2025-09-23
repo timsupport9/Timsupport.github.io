@@ -1,25 +1,3 @@
-<?php
-session_start();
-if (!isset($_SESSION['user'])) {
-    header("Location: login.php");
-    exit;
-}
-
-// DB connection
-$conn = new mysqli("localhost","root","","resourcehub");
-$res = $conn->query("SELECT * FROM resources ORDER BY id DESC");
-
-// Fetch resources into PHP array
-$resources = [];
-while($row = $res->fetch_assoc()){
-    $resources[] = [
-        "title" => $row['title'],
-        "desc" => $row['description'],
-        "tags" => array_map('trim', explode(",", $row['tags'])),
-        "link" => $row['link']
-    ];
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,13 +26,18 @@ while($row = $res->fetch_assoc()){
     .tag{font-size:.85rem;background:#e5e7eb;padding:4px 10px;border-radius:12px;text-decoration:none;color:#0b5ed7;transition:.3s;}
     .tag:hover{background:#0b5ed7;color:white;}
     footer{background:#0b5ed7;color:white;text-align:center;padding:15px;margin-top:40px;}
-    @media(min-width:768px){nav{display:flex !important;flex-direction:row;position:static;background:none;box-shadow:none;}nav a{color:white;} .menu-btn{display:none;}}
+    @media(min-width:768px){
+      nav{display:flex !important;flex-direction:row;position:static;background:none;box-shadow:none;}
+      nav a{color:white;}
+      .menu-btn{display:none;}
+    }
   </style>
 </head>
 <body>
 
 <header>
   <div class="logo">Resource Hub</div>
+  <!-- replaced bad character with hamburger  -->
   <div class="menu-btn" onclick="toggleMenu()"></div>
   <nav id="navMenu">
     <a href="#resources">Resources</a>
@@ -74,10 +57,11 @@ while($row = $res->fetch_assoc()){
   <div class="resources-grid" id="resourcesGrid"></div>
 </section>
 
-<footer><p>&copy; 2025 Learning Resource Hub. All Rights Reserved.</p></footer>
+<footer>
+  <p>&copy; 2025 Learning Resource Hub. All Rights Reserved.</p>
+</footer>
 
 <script>
-// Resource Data with direct Google Docs links
 const resources = [
   {
     title:"Grade 7 CBC Paper 2023",
@@ -95,7 +79,6 @@ const resources = [
       {name:"Teaching Aids", link:"https://docs.google.com/document/d/yyyy1"},
       {name:"Math", link:"https://docs.google.com/document/d/yyyy2"},
       {name:"Primary", link:"https://docs.google.com/document/d/yyyy3"}
-      
     ]
   },
   {
@@ -129,35 +112,42 @@ const filters = document.getElementById('filters');
 const resourcesGrid = document.getElementById('resourcesGrid');
 let activeTag = "All";
 
-// Render Filters
 function renderFilters(){
   let allTags = [...new Set(resources.flatMap(r=>r.tags.map(t=>t.name)))];
   filters.innerHTML = `<button class="filter-btn ${activeTag==="All"?"active":""}" onclick="filterTag('All')">All</button>` +
     allTags.map(tag=>`<button class="filter-btn ${activeTag===tag?"active":""}" onclick="filterTag('${tag}')">${tag}</button>`).join('');
 }
 
-// Render Resources
 function renderResources(){
   resourcesGrid.innerHTML = "";
-  resources.filter(r=>activeTag==="All" || r.tags.some(t=>t.name===activeTag)).forEach(res=>{
-    const div = document.createElement('div');
-    div.className="resource-card";
-    div.innerHTML=`
-      <h3>${res.title}</h3>
-      <p>${res.desc}</p>
-      <div class="tags">
-        ${res.tags.map(t=>`<a href="${t.link}" target="_blank" class="tag">${t.name}</a>`).join('')}
-      </div>
-    `;
-    resourcesGrid.appendChild(div);
-  });
+  resources
+    .filter(r=>activeTag==="All" || r.tags.some(t=>t.name===activeTag))
+    .forEach(res=>{
+      const div = document.createElement('div');
+      div.className="resource-card";
+      div.innerHTML=`
+        <h3>${res.title}</h3>
+        <p>${res.desc}</p>
+        <div class="tags">
+          ${res.tags.map(t=>`<a href="${t.link}" target="_blank" class="tag">${t.name}</a>`).join('')}
+        </div>
+      `;
+      resourcesGrid.appendChild(div);
+    });
 }
 
-function filterTag(tag){activeTag=tag;renderFilters();renderResources();}
-function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
+function filterTag(tag){
+  activeTag=tag;
+  renderFilters();
+  renderResources();
+}
 
-// Init
-renderFilters();renderResources();
+function toggleMenu(){
+  document.getElementById("navMenu").classList.toggle("show");
+}
+
+renderFilters();
+renderResources();
 </script>
 </body>
 </html>
