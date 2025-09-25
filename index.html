@@ -69,11 +69,13 @@ header {
   font-size:2.9rem;
   margin-bottom:1rem;
 }
+
 .hero-content p {
   font-size:2rem;
   margin-bottom:2rem;
   color:var(--muted);
 }
+
 
 /* Button */
 .hero-content button {
@@ -89,73 +91,143 @@ header {
 .hero-content button:hover {opacity:.9;}
 
 
-/* Services Section */
+/* ===========================
+   Services Section
+=========================== */
 .services {
   padding: 60px 20px;
   text-align: center;
 }
+
 .services-header h2 {
   font-size: 2rem;
   color: var(--primary);
-  margin-bottom: 1px;
+  margin-bottom: 8px;
 }
+
 .services-header p {
   color: var(--muted);
-  max-width: 800px;
+  max-width: 500px;
   margin: 0 auto 40px;
+  line-height: 1.8;
 }
+
 .services-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
+  gap: 20px;
   max-width: 1100px;
   margin: 0 auto;
 }
 
-/* Service Card */
+/* ===========================
+   Service Card
+=========================== */
 .service-card {
-background: var(--card);
-  border-radius:16px;              /* Rounded edges */
-  padding: 25px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
-  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  display: block;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 420px;
   text-decoration: none;
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-}
-.service-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-}
-.service-card .icon {
-  font-size: 2.2rem;
-  color: var(--accent);
-}
-.service-card h3 {
-  font-size: 1.8rem;
-  font-weight: 400;
-  color: var(--primary);
-  margin-bottom: .5rem;
-}
-.service-card > p {
-  font-size: 1.0rem;
-  color: var(--muted);
-  line-height: 1.5;
+  color: white;
+  background: var(--card);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transform: translateY(30px) scale(0.98);
+  animation: fadeUp 0.8s ease forwards;
 }
 
-/* Category sections inside card */
+.service-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+}
+
+/* Card background image */
+.card-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-image .overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* Card content */
+.card-content {
+  position: relative;
+  z-index: 1;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.service-card .icon {
+  font-size: 2.4rem;
+  color: var(--accent);
+}
+
+.card-content h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.card-content p {
+  font-size: 1rem;
+  color: #f9fafb;
+  line-height: 1.6;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* ===========================
+   Categories
+=========================== */
+.categories-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
 .category {
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid #1f2937;
   border-radius: 12px;
   padding: 15px;
-  transition: background 0.3s;
+  margin-bottom: 15px;
+  transition: background 0.3s, transform 0.2s ease, box-shadow 0.2s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.7s ease forwards;
+  animation-delay: 0.3s;
 }
-.category:hover {
-  background: rgba(56,189,248,0.08);
+
+.categories-link:hover .category {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.4);
 }
+
 .category h4 {
   font-size: 1rem;
   color: var(--accent);
@@ -163,26 +235,43 @@ background: var(--card);
   display: flex;
   align-items: center;
   gap: .4rem;
+  font-weight: 600;
 }
+
 .category ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
+
 .category ul li {
   position: relative;
   padding-left: 1.2rem;
   margin: .35rem 0;
   font-size: .92rem;
   color: var(--text);
+  line-height: 1.4;
 }
+
 .category ul li::before {
   content: "•";
   position: absolute;
   left: 0;
   color: var(--primary);
   font-weight: bold;
+  font-size: 1rem;
 }
+
+/* ===========================
+   Animations
+=========================== */
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* Popup overlay */
 .popup {
   display: none;
@@ -395,14 +484,6 @@ footer {
     <button onclick="openPopup()">RequestSupport</button> 
       </div>
 </header>
-<!-- Hero Slideshow -->
-<section class="hero-slideshow">
-  <div class="slides">
-    <div class="slide active" style="background-image: url('assets/images/slide1.jpg');"></div>
-    <div class="slide" style="background-image: url('assets/images/slide2.jpg');"></div>
-    <div class="slide" style="background-image: url('assets/images/slide3.jpg');"></div>
-    <div class="slide" style="background-image: url('assets/images/slide4.jpg');"></div>
-  </div>
 
   <div class="hero-content">
     <h1>Get All Expertise Based Solutions. </h1>
@@ -410,9 +491,7 @@ footer {
     <button onclick="openPopup()">RequestSupport Here.</button> 
       </div>
 
-  <!-- Indicators only -->
-  <div class="indicators"></div>
-</section>
+  
 
 <!-- Services -->
 <section class="services">
@@ -425,11 +504,21 @@ footer {
   <div class="services-container">
 
     <!-- Card 1 -->
-    
+    <a href="instSupport.html" class="service-card">
+  <!-- Background Image -->
+  <div class="card-image">
+    <img src="assets/images/institution-support.jpg " alt="Institutions Support" />
+    <div class="overlay"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="card-content">
+    <div class="icon">🏫</div>
+    <h3>Institutions Support</h3>
+    <p>Guidance, resources, and partnership programs to strengthen institutional growth.</p>
+  </div>
+</a>
 <a href="instSupport.html" class="service-card">
-  <div class="icon">🏫</div>
-  <h3>Institutions Support</h3>
-  <p>Guidance, resources, and partnership programs to strengthen institutional growth.</p>
 <div class="category">
     <h4>👨‍💼 Employee Development & Capacity Building</h4>
     <ul>
@@ -490,12 +579,23 @@ footer {
       <li>Innovation Hubs</li>
     </ul>
   </div>
-</a>
-<a href="property.html" class="service-card">
-  <div class="icon">🏠</div>
-  <h3>Properties & Assets</h3>
-  <p>Helping you acquire, manage, and grow your properties and assets with ease.</p>
+  <a href="property.html" class="service-card all-link">
+  <!-- Background Image -->
+  <div class="card-image">
+    <img src="assets/images/properties.jpg" alt="Properties & Assets" />
+    <div class="overlay"></div>
+  </div>
 
+  <!-- Main Content -->
+  	
+  <div class="card-content">
+    <div class="icon">🏠</div>
+    <h3>Properties & Assets</h3>
+    <p>Helping you acquire, manage, and grow your properties and assets with ease.</p>
+  </div>
+  </a>
+ <!-- Categories -->
+ 	<a href="property.html" class="service-card">
   <div class="category">
     <h4>🏡 Real Estate</h4>
     <ul>
@@ -526,12 +626,22 @@ footer {
     </ul>
   </div>
 </a>
-
-<a href="Businesses.html" class="service-card">
+  <a href="Businesses.html" class="service-card all-link">
+	<!-- Background Image -->
+<div class="card-image">
+    <img src="assets/images/business.jpg" alt="Properties & Assets" />
+    <div class="overlay"></div>
+  </div>
+  
+  <!-- Main Content -->
+  <div class="card-content">
   <div class="icon">💼</div>
   <h3>Business Investment</h3>
   <p>Expert guidance in starting, expanding, and managing investments.</p>
-
+</div>
+</a>
+ <!-- Categories -->
+ <a href="Businesses.html" class="service-card">
   <div class="category">
     <h4>🚀 Startups</h4>
     <ul>
@@ -564,10 +674,20 @@ footer {
 </a>
 
 <a href="projectsupport.html" class="service-card">
+<!-- Background Image -->
+<div class="card-image">
+    <img src="assets/images/projects.jpg" alt="Properties & Assets" />
+    <div class="overlay"></div>
+  </div>
+  <!-- Main Content -->
+  	<div class="card-content">
   <div class="icon">🛠</div>
   <h3>Projects Support</h3>
   <p>Practical support in planning, implementing, and managing diverse projects.</p>
-
+</div>
+</a>
+<!-- Categories -->
+	<a href="projectsupport.html" class="service-card">
   <div class="category">
     <h4>🌾 Agriculture</h4>
     <ul>
@@ -600,10 +720,19 @@ footer {
 </a>
 
 <a href="learnershub.html" class="service-card">
+	<!-- Background Image -->
+<div class="card-image">
+    <img src="assets/images/learners.jpg" alt="Properties & Assets" />
+    <div class="overlay"></div>
+  </div>
+<!-- Main Content -->
+	<div class="card-content">
   <div class="icon">📚</div>
   <h3>Learners Support</h3>
   <p>Resources, mentorship, and guidance tailored for learners of all stages.</p>
-
+</div>
+</a>
+<!-- Categories -->
   <div class="category">
     <h4>👶 Early Learning</h4>
     <ul>
@@ -635,10 +764,19 @@ footer {
   </div>
 </a>
 <a href="health.html" class="service-card">
+	<!-- Background Image -->
+<div class="card-image">
+    <img src="assets/images/health.jpg" alt="Properties & Assets" />
+    <div class="overlay"></div>
+  </div>
+<!-- Main Content -->
+	<div class="card-content">
   <div class="icon">🏥</div>
   <h3>Healthcare & Wellness Support</h3>
   <p>Comprehensive health and wellness solutions for individuals, families, and communities.</p>
-
+</div>
+</a>
+<!-- Categories -->
   <div class="category">
     <h4>🩺 Medical Care</h4>
     <ul>
@@ -671,10 +809,19 @@ footer {
 </a>
 
 <a href="tech-innovation.html" class="service-card">
-  <div class="icon">💻</div>
+ <!-- Background Image -->
+<div class="card-image">
+    <img src="assets/images/tech.jpg" alt="Properties & Assets" />
+    <div class="overlay"></div>
+  </div>
+<!-- Main Content -->
+	<div class="card-content">
+ <div class="icon">💻</div>
   <h3>Technology & Innovation Support</h3>
   <p>Empowering growth through technology adoption, innovation, and digital solutions.</p>
-
+</div>
+</a>
+<!-- Categories -->
   <div class="category">
     <h4>📱 ICT Solutions</h4>
     <ul>
@@ -706,10 +853,19 @@ footer {
   </div>
 </a>
 <a href="environ.html" class="service-card">
+<!-- Background Image -->
+<div class="card-image">
+    <img src="assets/images/environment.jpg" alt="Properties & Assets" />
+    <div class="overlay"></div>
+  </div>
+<!-- Main Content -->
+	<div class="card-content">
   <div class="icon">🌿</div>
   <h3>Environment & Energy Support</h3>
   <p>Promoting sustainability, renewable energy, and environmental conservation for a greener future.</p>
-
+</div>
+</a>
+<!-- Categories -->
   <div class="category">
     <h4>🌱 Environmental Conservation</h4>
     <ul>
@@ -742,10 +898,19 @@ footer {
 </a>
 
 <a href="Logistics.html" class="service-card">
+<!-- Background Image -->
+<div class="card-image">
+    <img src="assets/images/Logistics.jpg" alt="Properties & Assets" />
+    <div class="overlay"></div>
+  </div>
+<!-- Main Content -->
+	<div class="card-content">
   <div class="icon">🚚</div>
   <h3>Transport & Logistics Support</h3>
   <p>Building reliable systems for transport, distribution, and supply chain management.</p>
-
+</div>
+</a>
+<!-- Categories -->
   <div class="category">
     <h4>🚗 Road Transport</h4>
     <ul>
@@ -777,10 +942,19 @@ footer {
   </div>
 </a>
 <a href="tourism.html" class="service-card">
-  <div class="icon">🏖️</div>
+<!-- Background Image -->
+<div class="card-image">
+    <img src="assets/images/tourism.jpg" alt="Properties & Assets" />
+    <div class="overlay"></div>
+  </div>
+  <!-- Main Content -->
+  	<div class="card-content">
+<div class="icon">🏖️</div>
   <h3>Tourism & Hospitality Support</h3>
   <p>Boosting local and global tourism through innovative hospitality, travel, and cultural experiences.</p>
-
+</div>
+</a>
+<!-- Categories -->
   <div class="category">
     <h4>🏨 Hospitality Development</h4>
     <ul>
@@ -812,10 +986,19 @@ footer {
   </div>
 </a>
 <a href="insurance-machinery-support.html" class="service-card">
-  <div class="icon">🛡️⚙️</div>
+  <!-- Background Image -->
+<div class="card-image">
+    <img src="assets/images/machines.jpg" alt="Properties & Assets" />
+    <div class="overlay"></div>
+  </div>
+<!-- Main Content -->
+	<div class="card-content">
+<div class="icon">🛡️⚙️</div>
   <h3>Insurance & Machinery Support</h3>
   <p>Helping individuals, businesses, and institutions secure the right insurance while ensuring machinery reliability and efficiency.</p>
-
+</div>
+</a>
+<!-- Categories -->
   <div class="category">
     <h4>👤 Personal Insurance</h4>
     <ul>
@@ -877,11 +1060,20 @@ footer {
   </div>
 </a>
 <a href="personal-development.html" class="service-card">
-      <div class="icon">🌱</div>
+     <!-- Background Image -->
+<div class="card-image">
+    <img src="assets/images/Development.jpg" alt="Properties & Assets" />
+    <div class="overlay"></div>
+  </div>
+<!-- Main Content -->
+	<div class="card-content">
+ <div class="icon">🌱</div>
       <h3>Comprehensive Growth & Empowerment</h3>
       <p>Empowering individuals, families, and communities with holistic support and growth opportunities.</p>
-
-      <div class="category">
+</div>
+</a>
+<!-- Categories -->
+	   <div class="category">
         <h4>🌟 Personal Growth</h4>
         <ul>
           <li>Confidence Building</li>
@@ -930,14 +1122,14 @@ footer {
     <span class="close" onclick="closePopup()">&times;</span>
     <h2> AllSupport. </h2>
     <ul>
-      <li><a href="instSupport.html" >All Institutions Support.</a></li>
+      <li><a href="instSupport.html" >Institutions Support.</a></li>
       <li><a href="property.html">Properties Buying Support.</a></li>
       <li><a href="learnershub.html"> Comprehensive Learning Support.</a></li>
       <li><a href="insurance.html">Insurance Support.</a></li>
       <li><a href="projectsupport.html"> All Areas Projects Support.</a></li>
       <li><a href="projectsupport.html"> Technology and innovation support.</a></li>
       <li><a href="machinerysupport.html">All machines Support.</a></li>
-      <li><a href="talent.html">Talents Support.</a></li>
+      <li><a href="talent.html">Talents Development.</a></li>
       <li><a href="Inventory.html">Inventory Incubation.</a></li>
       <li><a href="eventsorg.html">Events planning Support.</a></li>
        <li><a href="health.html">Health Support.</a></li>
