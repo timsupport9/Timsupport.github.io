@@ -3,27 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Environment & Energy Support</title>
+  <title>Technology Support</title>
   <style>
     /* --- Theme Variables --- */
     :root {
       --bg-color: #f4f6f9;
       --text-color: #333;
       --card-bg: #fff;
-      --header-bg: #2e7d32;
-      --accent: #2e7d32;
-      --accent-hover: #388e3c;
+      --header-bg: #1565c0;
+      --accent: #1565c0;
+      --accent-hover: #1976d2;
     }
     body.dark {
       --bg-color: #121212;
       --text-color: #eaeaea;
       --card-bg: #1e1e1e;
-      --header-bg: #1b5e20;
-      --accent: #66bb6a;
-      --accent-hover: #81c784;
+      --header-bg: #0d47a1;
+      --accent: #42a5f5;
+      --accent-hover: #64b5f6;
     }
 
-    /* --- Global --- */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -69,7 +68,6 @@
     nav a:hover {background: rgba(0,0,0,0.05);}
     .show {display: flex;}
 
-    /* Dark Mode Toggle */
     .theme-toggle {
       cursor: pointer;
       background: transparent;
@@ -82,17 +80,15 @@
     }
     .theme-toggle:hover {background: rgba(255,255,255,0.2);}
 
-    /* Hero */
     .hero {
       text-align: center;
       padding: 80px 20px;
       background: linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
-        url('environment.jpg') no-repeat center/cover;
+        url('tech.jpg') no-repeat center/cover;
       color: white;
     }
     .hero h1 {font-size: 2rem;margin-bottom: 10px;}
 
-    /* Programs Grid */
     .programs-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -132,37 +128,8 @@
     }
     .btn:hover {background: var(--accent-hover);}
 
-    /* Team Section */
-    .team {padding: 50px 20px;text-align: center;}
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    .team-member {
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      transition: transform .3s;
-    }
-    .team-member:hover {transform: translateY(-4px);}
-    .team-member img {
-      width: 100%;height: 200px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin-bottom: 15px;
-    }
-    .team-member h3 {margin: 10px 0;color: var(--accent);}
-    .role {font-weight: bold;margin-bottom: 10px;}
-    .bio {font-size: 0.9rem;}
-
-    /* Contact */
     .contact {padding: 40px 20px;text-align: center;}
 
-    /* Modal */
     .modal {display: none;position: fixed;top: 0;left: 0;width: 100%;height: 100%;
       background: rgba(0,0,0,0.6);justify-content: center;align-items: center;}
     .modal-content {
@@ -180,7 +147,6 @@
       background: transparent;color: var(--text-color);
     }
 
-    /* Footer */
     footer {
       background: var(--header-bg);
       color: white;
@@ -199,111 +165,96 @@
 <body>
 
 <header>
-  <div class="logo">Enviro-Energy</div>
+  <div class="logo">Tech-Support</div>
   <div class="menu-btn" onclick="toggleMenu()">☰</div>
   <nav id="navMenu">
-    <a href="#programs">Solutions</a>
-    <a href="#team">Experts</a>
+    <a href="#programs">Services</a>
     <a href="#contact">Contact</a>
   </nav>
   <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
 </header>
 
 <section class="hero">
-  <h1>Environment & Energy Support</h1>
-  <p>Promoting sustainability, renewable energy, and conservation for a greener future.</p>
+  <h1>Technology Support</h1>
+  <p>Empowering you with IT solutions, troubleshooting, and innovation for success.</p>
 </section>
 
 <section id="programs">
-  <h2 style="text-align:center;color:var(--accent);">Our Green Solutions</h2>
+  <h2 style="text-align:center;color:var(--accent);">Our Tech Solutions</h2>
   <div class="programs-grid">
 
-    <!-- Existing Categories -->
     <div class="program-card">
-      <h2>🌱 Environmental Conservation</h2>
+      <h2>💻 IT Support & Troubleshooting</h2>
       <ul>
-        <li>Tree Planting Campaigns</li>
-        <li>Water Conservation Projects</li>
-        <li>Waste Management Solutions</li>
-        <li>Community Clean-up Programs</li>
+        <li>Computer & Network Setup</li>
+        <li>Hardware Diagnostics</li>
+        <li>Software Installation & Updates</li>
+        <li>Remote Tech Assistance</li>
       </ul>
-      <button class="btn" onclick="openModal('Environmental Conservation')">Request Support</button>
+      <button class="btn" onclick="openModal('IT Support & Troubleshooting')">Request Support</button>
     </div>
 
     <div class="program-card">
-      <h2>⚡ Renewable Energy</h2>
+      <h2>☁️ Cloud Solutions</h2>
       <ul>
-        <li>Solar Energy Systems</li>
-        <li>Wind & Hydro Projects</li>
-        <li>Biogas Production</li>
-        <li>Energy Efficiency Training</li>
+        <li>Cloud Migration</li>
+        <li>Data Backup & Recovery</li>
+        <li>Cloud Security Management</li>
+        <li>Collaboration Tools Setup</li>
       </ul>
-      <button class="btn" onclick="openModal('Renewable Energy')">Request Support</button>
+      <button class="btn" onclick="openModal('Cloud Solutions')">Request Support</button>
     </div>
 
     <div class="program-card">
-      <h2>🌍 Climate Action</h2>
+      <h2>🔐 Cybersecurity</h2>
       <ul>
-        <li>Climate Change Awareness</li>
-        <li>Carbon Footprint Reduction</li>
-        <li>Green Business Models</li>
-        <li>Policy & Advocacy Support</li>
+        <li>Threat Detection & Prevention</li>
+        <li>Firewall & VPN Setup</li>
+        <li>Penetration Testing</li>
+        <li>Security Awareness Training</li>
       </ul>
-      <button class="btn" onclick="openModal('Climate Action')">Request Support</button>
-    </div>
-
-    <!-- New Categories -->
-    <div class="program-card">
-      <h2>🌊 Water & Sanitation</h2>
-      <ul>
-        <li>Clean Water Access Programs</li>
-        <li>Wastewater Treatment Solutions</li>
-        <li>Rainwater Harvesting Systems</li>
-        <li>Hygiene & Sanitation Campaigns</li>
-      </ul>
-      <button class="btn" onclick="openModal('Water & Sanitation')">Request Support</button>
+      <button class="btn" onclick="openModal('Cybersecurity')">Request Support</button>
     </div>
 
     <div class="program-card">
-      <h2>🏭 Sustainable Industry</h2>
+      <h2>📊 Data & Analytics</h2>
       <ul>
-        <li>Green Technology Development</li>
-        <li>Eco-Certification Programs</li>
-        <li>Sustainable Supply Chains</li>
-        <li>Carbon Neutral Manufacturing</li>
+        <li>Business Intelligence Dashboards</li>
+        <li>Data Visualization</li>
+        <li>Predictive Analytics</li>
+        <li>Database Optimization</li>
       </ul>
-      <button class="btn" onclick="openModal('Sustainable Industry')">Request Support</button>
+      <button class="btn" onclick="openModal('Data & Analytics')">Request Support</button>
     </div>
 
     <div class="program-card">
-      <h2>🏘️ Community Development</h2>
+      <h2>🌐 Web & App Development</h2>
       <ul>
-        <li>Green Housing Initiatives</li>
-        <li>Eco-Village Projects</li>
-        <li>Community Empowerment Training</li>
-        <li>Local Sustainable Enterprises</li>
+        <li>Custom Websites</li>
+        <li>Mobile App Development</li>
+        <li>E-commerce Platforms</li>
+        <li>API Integration</li>
       </ul>
-      <button class="btn" onclick="openModal('Community Development')">Request Support</button>
+      <button class="btn" onclick="openModal('Web & App Development')">Request Support</button>
     </div>
 
     <div class="program-card">
-      <h2>🐝 Biodiversity & Wildlife</h2>
+      <h2>🤝 Managed IT Services</h2>
       <ul>
-        <li>Wildlife Conservation Projects</li>
-        <li>Forest Protection & Reforestation</li>
-        <li>Eco-Tourism Development</li>
-        <li>Anti-Poaching Campaigns</li>
+        <li>24/7 System Monitoring</li>
+        <li>Proactive Maintenance</li>
+        <li>IT Infrastructure Management</li>
+        <li>Dedicated Tech Support Teams</li>
       </ul>
-      <button class="btn" onclick="openModal('Biodiversity & Wildlife')">Request Support</button>
+      <button class="btn" onclick="openModal('Managed IT Services')">Request Support</button>
     </div>
 
   </div>
 </section>
 
-
 <section id="contact" class="contact">
   <h2 style="color:var(--accent);">Get in Touch</h2>
-  <p>Ready to power sustainability and protect the planet? Contact us today.</p>
+  <p>Need reliable technology support? Reach out and let’s solve it together.</p>
   <button class="btn" onclick="openModal('General Inquiry')">Contact Us</button>
 </section>
 
@@ -322,15 +273,15 @@
       <input type="hidden" name="_next" value="thankyou.html">
       <input type="text" name="name" placeholder="Your Name" required>
       <input type="email" name="email" placeholder="Your Email" required>
-      	<input type="number" name="number" placeholder="Your number" required>
-      <input type="text" name="location" placeholder="Your  location" required>
+      <input type="number" name="number" placeholder="Your Number" required>
+      <input type="text" name="company" placeholder="Your Company/Organization">
       <textarea name="message" rows="4" placeholder="Details of your request" required></textarea>
       <button type="submit" class="btn">Submit Request</button>
     </form>
   </div>
 </div>
 
-<footer><p>&copy; 2025 Environment & Energy Support. All Rights Reserved.</p></footer>
+<footer><p>&copy; 2025 Technology Support. All Rights Reserved.</p></footer>
 
 <script>
 function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
@@ -338,7 +289,6 @@ function openModal(p){document.getElementById('supportModal').style.display='fle
 function closeModal(){document.getElementById('supportModal').style.display='none';}
 window.onclick=e=>{if(e.target==document.getElementById('supportModal'))closeModal();}
 
-// Dark theme toggle
 function toggleTheme(){
   document.body.classList.toggle('dark');
   const btn=document.querySelector('.theme-toggle');

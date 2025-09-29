@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Center</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background: #0f766e;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: 30px auto;
+    }
+    .job-card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+    }
+    .job-card h3 {
+      margin: 0 0 10px;
+      color: #0f766e;
+    }
+    .apply-btn {
+      background: #0f766e;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 15px;
+    }
+    .apply-btn:hover {
+      background: #115e59;
+    }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      position: relative;
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: #0f766e;
+    }
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #444;
+    }
+    form input, form textarea, form select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    form button {
+      background: #0f766e;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      font-size: 16px;
+    }
+    form button:hover {
+      background: #115e59;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Job Center</h1>
+    <p>Request job opportunities in your professional field</p>
+  </header>
+
+  <div class="container">
+    <div class="job-card">
+      <h3>Information Technology</h3>
+      <p>Request opportunities in Software Development, Networking, Cybersecurity, Data Science, and more.</p>
+      <button class="apply-btn" data-field="Information Technology">Request Job</button>
+    </div>
+
+    <div class="job-card">
+      <h3>Healthcare</h3>
+      <p>Request opportunities as a Nurse, Doctor, Pharmacist, Lab Technician, and other healthcare professions.</p>
+      <button class="apply-btn" data-field="Healthcare">Request Job</button>
+    </div>
+
+    <div class="job-card">
+      <h3>Marketing & Business</h3>
+      <p>Request opportunities in Marketing, Business Development, Sales, PR, and related fields.</p>
+      <button class="apply-btn" data-field="Marketing & Business">Request Job</button>
+    </div>
+
+    <div class="job-card">
+      <h3>Education</h3>
+      <p>Request opportunities as a Teacher, Lecturer, Trainer, or Education Consultant.</p>
+      <button class="apply-btn" data-field="Education">Request Job</button>
+    </div>
+
+    <div class="job-card">
+      <h3>Creative & Design</h3>
+      <p>Request opportunities in Graphic Design, Content Creation, Animation, Video Editing, and more.</p>
+      <button class="apply-btn" data-field="Creative & Design">Request Job</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="applicationModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="jobTitle">Request a Job</h2>
+      <form id="supportForm" 
+            action="https://formsubmit.co/mutheenime@gmail.com" 
+            method="POST" 
+            onsubmit="return handleSubmit(event)">
+        
+        <!-- Hidden to pass job field -->
+        <input type="hidden" name="Professional Field" id="fieldInput">
+
+        <input type="text" name="Full Name" placeholder="Full Name" required>
+        <input type="email" name="Email Address" placeholder="Email Address" required>
+        <input type="tel" name="Phone Number" placeholder="Phone Number" required>
+        
+        <select name="Preferred Job Type" required>
+          <option value="">Select Preferred Job Type</option>
+          <option>Full-time</option>
+          <option>Part-time</option>
+          <option>Internship</option>
+          <option>Remote</option>
+        </select>
+
+        <input type="text" name="Preferred Location" placeholder="Preferred Location (e.g., Nairobi, Remote)" required>
+        <input type="text" name="Expected Salary" placeholder="Expected Salary (Optional)">
+        <input type="url" name="LinkedIn" placeholder="LinkedIn Profile URL (Optional)">
+        
+        <input type="file" name="CV/Resume" required>
+        <textarea name="Skills & Experience" rows="4" placeholder="Describe your skills and experience" required></textarea>
+        
+        <button type="submit">Submit Request</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById("applicationModal");
+    const closeBtn = document.querySelector(".close");
+    const jobTitle = document.getElementById("jobTitle");
+    const fieldInput = document.getElementById("fieldInput");
+
+    document.querySelectorAll(".apply-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        jobTitle.textContent = "Request Job in " + btn.dataset.field;
+        fieldInput.value = btn.dataset.field;
+        modal.style.display = "flex";
+      });
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+
+    window.addEventListener("click", (e) => {
+      if (e.target == modal) {
+        modal.style.display = "none";
+      }
+    });
+
+    function handleSubmit(event) {
+      alert("Your job request has been submitted successfully!");
+      return true; // allow submission
+    }
+  </script>
+</body>
+</html>

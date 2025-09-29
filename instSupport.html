@@ -13,8 +13,15 @@
     nav a:hover{background:#e5e7eb;}
     .menu-btn{font-size:1.8rem;cursor:pointer;}
     .show{display:flex;}
-    .hero{text-align:center;padding:80px 20px;background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('hero-bg.jpg') no-repeat center/cover;color:white;}
-    .hero h1{font-size:2rem;margin-bottom:10px;}
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+      background: linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+        url('institution-support.jpg') no-repeat center/cover;
+      color: white;
+    }
+    .hero h1 {font-size: 2rem;margin-bottom: 10px;}
+
     .programs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:30px;}
     .program-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);transition:.3s;}
     .program-card:hover{transform:translateY(-5px);box-shadow:0 8px 16px rgba(0,0,0,0.2);}
@@ -23,18 +30,264 @@
     .event-card{max-width:600px;margin:0 auto 20px;background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);text-align:left;}
     .btn{display:inline-block;margin-top:10px;padding:8px 14px;background:#1e3a8a;color:white;border:none;border-radius:6px;cursor:pointer;transition:.3s;}
     .btn:hover{background:#3748c4;}
-    .team,.testimonials,.contact{padding:50px 20px;text-align:center;}
-    .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;max-width:1000px;margin:auto;}
-    .team-member{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);}
     .testimonial-box{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);max-width:600px;margin:auto;}
     footer{background:#1e3a8a;color:white;text-align:center;padding:15px;}
-    /* Modal */
-    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;}
-    .modal-content{background:white;padding:20px;border-radius:12px;width:90%;max-width:400px;position:relative;}
-    .close{position:absolute;top:10px;right:15px;font-size:1.5rem;cursor:pointer;}
-    .modal-content input,.modal-content textarea{width:100%;margin-bottom:10px;padding:8px;border:1px solid #ccc;border-radius:6px;}
-    @media(min-width:768px){nav{display:flex !important;flex-direction:row;position:static;background:none;box-shadow:none;}
-      nav a{color:white;} .menu-btn{display:none;}}
+  
+  /* Modal */
+   .modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Modal Content */
+.modal-content {
+  background: #fff;
+  padding: 25px 20px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Close Button */
+.close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.close:hover {
+  color: #e63946;
+}
+
+/* Form Inputs */
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.modal-content input:focus,
+.modal-content textarea:focus,
+.modal-content select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
+  outline: none;
+}
+
+/* Responsive Nav (untouched logic, just polished) */
+@media (min-width: 768px) {
+  nav {
+    display: flex !important;
+    flex-direction: row;
+    position: static;
+    background: none;
+    box-shadow: none;
+  }
+  nav a {
+    color: white;
+  }
+  .menu-btn {
+    display: none;
+  }
+}
+
+/* Animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Floating Button */
+.floating-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  display: none; /* Hidden until user scrolls */
+  z-index: 1100;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateX(80px); /* Start off-screen */
+}
+
+.floating-btn.show {
+  display: block;
+  opacity: 1;
+  transform: translateX(0);
+  animation: slideInBounce 0.8s ease-out, pulse 2s infinite 1s;
+}
+
+.floating-btn:hover {
+  background: #1e40af;
+  transform: translateY(-2px) scale(1.05);
+}
+
+/* Slide-in with bounce */
+@keyframes slideInBounce {
+  0% {
+    opacity: 0;
+    transform: translateX(80px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-15px);
+  }
+  80% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6);
+  }
+  70% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 15px rgba(37, 99, 235, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+}
+form {
+    max-width: 700px;
+    margin: auto;
+    padding: 15px;
+    font-family: Arial, sans-serif;
+  }
+  form input, form select, form textarea, form button {
+    width: 100%;
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  form h3 {
+    margin-top: 20px;
+    color: #333;
+  }
+  .btn {
+    background: #0a7;
+    color: white;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .btn:hover {
+    background: #086;
+  }
+  /* Price suggestion card */
+  .price-card {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f0fdf4;
+    border: 1px solid #34d399;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  .price-card h4 {
+    margin: 0 0 8px;
+    color: #065f46;
+  }
+  .price-card p {
+    margin: 0 0 10px;
+    font-size: 15px;
+    color: #064e3b;
+  }
+  .details-btn {
+    background: #34d399;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-top: 5px;
+  }
+  .details-btn:hover {
+    background: #059669;
+  }
+  #detailedPricing {
+    margin-top: 15px;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  #pricingTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+  }
+  #pricingTable th, #pricingTable td {
+    border: 1px solid #a7f3d0;
+    padding: 12px;
+  }
+  #pricingTable th {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  #pricingTable td {
+    background: #ecfdf5;
+    color: #065f46;
+  }
+  #pricingTable td.selectable {
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  #pricingTable td.selectable:hover {
+    background: #bbf7d0;
+  }
+  .hidden {
+    display: none;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(5px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+
   </style>
 </head>
 <body>
@@ -75,37 +328,6 @@
   </div>
 </section>
 
-<section id="team" class="team">
-  <h2 style="color:#1e3a8a; text-align:center; margin-bottom:20px;">Our Team Offering Support</h2>
-  
-  <div class="team-grid">
-    
-    <!-- Team Member 1 -->
-    <div class="team-member">
-      <img src="assets/john-doe.jpg" alt="John Doe">
-      <h3>John Doe</h3>
-      <p class="role">Leadership Development Specialist</p>
-      <p class="bio">15+ years in leadership coaching and organizational transformation.</p>
-    </div>
-    
-    <!-- Team Member 2 -->
-    <div class="team-member">
-      <img src="assets/jane-smith.jpg" alt="Jane Smith">
-      <h3>Jane Smith</h3>
-      <p class="role">Employee Wellness Coordinator</p>
-      <p class="bio">Expert in workplace mental health, employee wellness, and stress management.</p>
-    </div>
-    
-    <!-- Team Member 3 -->
-    <div class="team-member">
-      <img src="assets/sam-brown.jpg" alt="Sam Brown">
-      <h3>Sam Brown</h3>
-      <p class="role">Operational Support Manager</p>
-      <p class="bio">Specialist in optimizing organizational processes and digital transformation.</p>
-    </div>
-    
-  </div>
-</section>
 <section id="testimonials" class="testimonials">
   <h2 style="color:#1e3a8a;">What Our Clients Say</h2>
   <div class="testimonial-box">
@@ -121,46 +343,75 @@
 <section id="contact" class="contact">
   <h2 style="color:#1e3a8a;">Contact & Share Your Experience</h2>
   <form id="testimonial-form" style="max-width:600px;margin:auto;background:white;padding:20px;border-radius:12px;">
+    <label>Name</label>
     <input type="text" name="name" placeholder="Your Name" required>
+    <label>Role</label>
     <input type="text" name="role" placeholder="Your Title / Organization">
+    <label>Testimonial</label>
     <textarea name="message" placeholder="Your Testimonial" required></textarea>
     <button type="submit" class="btn">Submit Testimonial</button>
     <p id="thank-you" style="color:green;display:none;margin-top:10px;">Thank you for your feedback!</p>
   </form>
 </section>
+
 <!-- Modal -->
 <div id="supportModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal()">&times;</span>
     <h3>Request Support</h3>
 
-    <!-- FormSubmit Integration -->
+    <!-- Client Request Form -->
     <form id="supportForm" 
           action="https://formsubmit.co/mutheenime@gmail.com" 
           method="POST" 
           onsubmit="return handleSubmit(event)">
       
-      <!-- Hidden program field (auto-filled when user clicks Request Support) -->
+      <!-- Hidden fields -->
       <input type="hidden" id="program" name="program">
-
-      <!-- Anti-bot honeypot -->
+      <input type="hidden" id="selected_package" name="selected_package">
       <input type="text" name="_honey" style="display:none">
-
-      <!-- Disable captcha -->
       <input type="hidden" name="_captcha" value="false">
-
-      <!-- Redirect after submission -->
       <input type="hidden" name="_next" value="thankyou.html">
 
-      <!-- Form Fields -->
-      <input type="text" name="name" placeholder="Your Name" required>
-      <input type="email" name="email" placeholder="Your Email" required>
-      <textarea name="message" rows="4" placeholder="Details" required></textarea>
-      
+      <h3>Personal Information</h3>
+      <input type="text" name="first_name" placeholder="First Name" required>
+      <input type="text" name="last_name" placeholder="Last Name" required>
+      <input type="email" name="email" placeholder="Email Address" required>
+      <input type="tel" name="phone" placeholder="Phone Number" required>
+
+      <h3>Request Details</h3>
+      <label for="service_type">Select Service Type</label>
+      <select name="service_type" id="service_type" required>
+        <option value="">-- Choose Service --</option>
+        <option value="consulting">Consulting</option>
+        <option value="training">Training</option>
+        <option value="coaching">Coaching</option>
+        <option value="resources">Resources</option>
+        <option value="other">Other</option>
+      </select>
+
+      <!-- Price suggestion card -->
+      <div id="priceSuggestion" class="price-card hidden">
+        <h4>Estimated Price</h4>
+        <p id="priceText"></p>
+        <button type="button" id="toggleDetails" class="details-btn hidden">View Detailed Pricing ▼</button>
+        <div id="detailedPricing" class="hidden">
+          <table id="pricingTable"></table>
+        </div>
+      </div>
+
+      <input type="text" name="preferred_date" placeholder="Preferred Date (DD/MM/YYYY)">
+      <textarea name="details" id="detailsBox" rows="5" placeholder="Please provide full details of your request" required></textarea>
+
       <button type="submit" class="btn">Submit Request</button>
     </form>
   </div>
 </div>
+
+<!-- Floating Support Button -->
+<button id="floatingSupportBtn" class="floating-btn" onclick="openModal('General Support')">
+  💬 Request Support
+</button>
 
 <footer><p>&copy; 2025 Organization Support. All Rights Reserved.</p></footer>
 
@@ -179,19 +430,151 @@ programs.forEach(p=>{
   div.innerHTML=`<h2>${p.title}</h2><ul>${p.items.map(i=>`<li>${i}</li>`).join('')}</ul><button class="btn" onclick="openModal('${p.title}')">Request Support</button>`;
   programsGrid.appendChild(div);
 });
+
 // Testimonials
 let testimonials=[{text:"The leadership training was a turning point for our team.",author:"— Sarah K., CEO"},{text:"Our staff loved the wellness programs!",author:"— Michael O., HR Manager"},{text:"From onboarding to coaching, Org Support has been exceptional.",author:"— Lydia N., Operations Lead"}];
-let currentIndex=0;function showTestimonial(i){document.getElementById('testimonial-text').textContent=testimonials[i].text;document.getElementById('testimonial-author').textContent=testimonials[i].author;}
+let currentIndex=0;
+function showTestimonial(i){document.getElementById('testimonial-text').textContent=testimonials[i].text;document.getElementById('testimonial-author').textContent=testimonials[i].author;}
 function nextTestimonial(){currentIndex=(currentIndex+1)%testimonials.length;showTestimonial(currentIndex);}
 function prevTestimonial(){currentIndex=(currentIndex-1+testimonials.length)%testimonials.length;showTestimonial(currentIndex);}
 setInterval(nextTestimonial,6000);showTestimonial(currentIndex);
+
 // Submit testimonial
-document.getElementById('testimonial-form').addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(e.target);const name=fd.get('name');const role=fd.get('role');const message=fd.get('message');testimonials.push({text:`"${message}"`,author:`— ${name}${role? ", "+role:""}`});currentIndex=testimonials.length-1;showTestimonial(currentIndex);document.getElementById('thank-you').style.display='block';e.target.reset();});
+document.getElementById('testimonial-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const fd=new FormData(e.target);
+  const name=fd.get('name');
+  const role=fd.get('role');
+  const message=fd.get('message');
+  testimonials.push({text:`"${message}"`,author:`— ${name}${role? ", "+role:""}`});
+  currentIndex=testimonials.length-1;
+  showTestimonial(currentIndex);
+  document.getElementById('thank-you').style.display='block';
+  e.target.reset();
+});
+
+// Price guide with package tiers
+const priceGuide = {
+  consulting: {
+    summary: "💼 Consulting: $200 – $500 per session",
+    packages: [
+      { tier: "Basic", price: "$200", details: "1 hr session" },
+      { tier: "Standard", price: "$350", details: "2 hr session + follow-up" },
+      { tier: "Premium", price: "$500", details: "Full-day strategy session" }
+    ]
+  },
+  training: {
+    summary: "📚 Training: $500 – $1,200 per workshop",
+    packages: [
+      { tier: "Basic", price: "$500", details: "half-day workshop" },
+      { tier: "Standard", price: "$800", details: "full-day workshop" },
+      { tier: "Premium", price: "$1,200", details: "2-day intensive training" }
+    ]
+  },
+  coaching: {
+    summary: "🎯 Coaching: $100 – $300 per session",
+    packages: [
+      { tier: "Basic", price: "$100", details: "introductory session" },
+      { tier: "Standard", price: "$200", details: "2 sessions + action plan" },
+      { tier: "Premium", price: "$300", details: "4 sessions + personalized strategy" }
+    ]
+  },
+  resources: {
+    summary: "📄 Resources: $20 – $100 depending on package",
+    packages: [
+      { tier: "Basic", price: "$20", details: "single resource" },
+      { tier: "Standard", price: "$50", details: "bundle of 5 resources" },
+      { tier: "Premium", price: "$100", details: "full resource library access" }
+    ]
+  },
+  other: {
+    summary: "💡 Other: Pricing will be discussed after request review",
+    packages: []
+  }
+};
+
+
+const serviceSelect = document.getElementById("service_type");
+const priceCard = document.getElementById("priceSuggestion");
+const priceText = document.getElementById("priceText");
+const toggleBtn = document.getElementById("toggleDetails");
+const detailedDiv = document.getElementById("detailedPricing");
+const pricingTable = document.getElementById("pricingTable");
+const detailsBox = document.getElementById("detailsBox");
+const selectedPackage = document.getElementById("selected_package");
+
+serviceSelect.addEventListener("change", function() {
+  const selected = this.value;
+  if (priceGuide[selected]) {
+    priceText.textContent = priceGuide[selected].summary;
+    priceCard.classList.remove("hidden");
+
+    if (priceGuide[selected].packages.length > 0) {
+      toggleBtn.classList.remove("hidden");
+      pricingTable.innerHTML = "";
+
+      // Build table
+      const headerRow = document.createElement("tr");
+      priceGuide[selected].packages.forEach(pkg => {
+        const th = document.createElement("th");
+        th.textContent = pkg.tier;
+        headerRow.appendChild(th);
+      });
+      pricingTable.appendChild(headerRow);
+
+      const priceRow = document.createElement("tr");
+      priceGuide[selected].packages.forEach(pkg => {
+        const td = document.createElement("td");
+        td.textContent = pkg.price;
+        td.classList.add("selectable");
+        td.addEventListener("click", function() {
+          selectedPackage.value = `${pkg.tier}: ${pkg.price} (${pkg.details})`;
+          detailsBox.value += `\nSelected Package: ${pkg.tier} - ${pkg.price} (${pkg.details})`;
+          alert(`✅ You selected: ${pkg.tier} - ${pkg.price}`);
+        });
+        priceRow.appendChild(td);
+      });
+      pricingTable.appendChild(priceRow);
+
+      const detailRow = document.createElement("tr");
+      priceGuide[selected].packages.forEach(pkg => {
+        const td = document.createElement("td");
+        td.textContent = pkg.details;
+        detailRow.appendChild(td);
+      });
+      pricingTable.appendChild(detailRow);
+    } else {
+      toggleBtn.classList.add("hidden");
+      detailedDiv.classList.add("hidden");
+    }
+  } else {
+    priceCard.classList.add("hidden");
+  }
+});
+
+toggleBtn.addEventListener("click", function() {
+  detailedDiv.classList.toggle("hidden");
+  this.textContent = detailedDiv.classList.contains("hidden") 
+    ? "View Detailed Pricing ▼" 
+    : "Hide Detailed Pricing ▲";
+});
+
 // Menu + Modal
 function toggleMenu(){document.getElementById("navMenu").classList.toggle("show");}
 function openModal(p){document.getElementById('supportModal').style.display='flex';document.getElementById('program').value=p;}
 function closeModal(){document.getElementById('supportModal').style.display='none';}
 window.onclick=e=>{if(e.target==document.getElementById('supportModal'))closeModal();}
+window.addEventListener("keydown",e=>{if(e.key==="Escape") closeModal();});
+// Show floating button when scrolling down
+const floatingBtn = document.getElementById("floatingSupportBtn");
+
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 400) {
+    floatingBtn.classList.add("show");
+  } else {
+    floatingBtn.classList.remove("show");
+  }
+});
 </script>
 </body>
 </html>

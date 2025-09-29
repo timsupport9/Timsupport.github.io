@@ -463,6 +463,248 @@ footer {
   .hero-content h1{font-size:1.6rem;}
   .hero-content p{font-size:1rem;}
 }
+
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #052e18;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.floating-btn.show {opacity: 1;}
+
+/* Modal */
+   
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Modal Content */
+.modal-content {
+  background: #fff;
+  padding: 25px 20px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Close Button */
+.close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.close:hover {
+  color: #e63946;
+}
+
+/* Form Inputs */
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.modal-content input:focus,
+.modal-content textarea:focus,
+.modal-content select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.4);
+  outline: none;
+}
+
+/* Responsive Nav (untouched logic, just polished) */
+@media (min-width: 768px) {
+  nav {
+    display: flex !important;
+    flex-direction: row;
+    position: static;
+    background: none;
+    box-shadow: none;
+  }
+  nav a {
+    color: white;
+  }
+  .menu-btn {
+    display: none;
+  }
+}
+
+/* Animation */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide-in with bounce */
+@keyframes slideInBounce {
+  0% {
+    opacity: 0;
+    transform: translateX(80px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-15px);
+  }
+  80% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6);
+  }
+  70% {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 15px rgba(37, 99, 235, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+}
+
+form {
+    max-width: 700px;
+    margin: auto;
+    padding: 15px;
+    font-family: Arial, sans-serif;
+  }
+  form input, form select, form textarea, form button {
+    width: 100%;
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  form h3 {
+    margin-top: 20px;
+    color: #333;
+  }
+  .btn {
+    background: #0a7;
+    color: white;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .btn:hover {
+    background: #086;
+  }
+  /* Price suggestion card */
+  .price-card {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f0fdf4;
+    border: 1px solid #34d399;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  .price-card h4 {
+    margin: 0 0 8px;
+    color: #065f46;
+  }
+  .price-card p {
+    margin: 0 0 10px;
+    font-size: 15px;
+    color: #064e3b;
+  }
+  .details-btn {
+    background: #34d399;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    margin-top: 5px;
+  }
+  .details-btn:hover {
+    background: #059669;
+  }
+  #detailedPricing {
+    margin-top: 15px;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  #pricingTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+  }
+  #pricingTable th, #pricingTable td {
+    border: 1px solid #a7f3d0;
+    padding: 12px;
+  }
+  #pricingTable th {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  #pricingTable td {
+    background: #ecfdf5;
+    color: #065f46;
+  }
+  #pricingTable td.selectable {
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  #pricingTable td.selectable:hover {
+    background: #bbf7d0;
+  }
+  .hidden {
+    display: none;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(5px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
 </style>
 </head>
 <body>
@@ -480,15 +722,14 @@ footer {
     <a href="resources.html">Resources</a>
     <a href="eventsorg.html">Events</a>
     <a href="Trainings.html">Trainings</a>
-    <a href="request.html">Services request</a>
-    <button onclick="openPopup()">RequestSupport</button> 
+     <button onclick="openPopup()"> Click to RequestSupport</button> 
       </div>
 </header>
 
   <div class="hero-content">
     <h1>Get All Expertise Based Solutions. </h1>
     <p>Connecting clients with dedicated specialists to meet their needs.</p>
-    <button onclick="openPopup()">RequestSupport Here.</button> 
+    <button onclick="openPopup()">Click To Explore All Services Categories Here.</button> 
       </div>
 
   
@@ -778,7 +1019,7 @@ footer {
   </div>
 </a>
 
-<a href="tech-innovation.html" class="service-card">
+<a href="Technology.html" class="service-card">
  <!-- Background Image -->
 <div class="card-image">
     <img src="tech.jpg" alt="Properties & Assets" />
@@ -1095,6 +1336,7 @@ footer {
       <li><a href="instSupport.html" >Institutions Support.</a></li>
       <li><a href="property.html">Properties Buying Support.</a></li>
       <li><a href="learnershub.html"> Comprehensive Learning Support.</a></li>
+      <li><a href="jobs.html"> jobs listing and hiring.</a></li>
       <li><a href="insurance.html">Insurance Support.</a></li>
       <li><a href="projectsupport.html"> All Areas Projects Support.</a></li>
       <li><a href="projectsupport.html"> Technology and innovation support.</a></li>
@@ -1114,6 +1356,66 @@ footer {
        </ul>
   </div>
 </div>
+
+<!-- Floating Support Button -->
+<button id="floatingSupportBtn" class="floating-btn" onclick="openModal('General Support')">
+  💬 Request Support
+</button>
+
+<!-- Modal -->
+<div id="supportModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3>Request Support</h3>
+
+    <!-- Client Request Form -->
+    <form id="supportForm" 
+          action="https://formsubmit.co/mutheenime@gmail.com" 
+          method="POST" 
+          onsubmit="return handleSubmit(event)">
+      
+      <!-- Hidden fields -->
+      <input type="hidden" id="program" name="program">
+      <input type="hidden" id="selected_package" name="selected_package">
+      <input type="text" name="_honey" style="display:none">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="thankyou.html">
+
+      <h3>Personal Information</h3>
+      <input type="text" name="first_name" placeholder="First Name" required>
+      <input type="text" name="last_name" placeholder="Last Name" required>
+      <input type="email" name="email" placeholder="Email Address" required>
+      <input type="tel" name="phone" placeholder="Phone Number" required>
+
+      <h3>Request Details</h3>
+      <label for="service_type">Select Service Type</label>
+      <select name="service_type" id="service_type" required>
+        <option value="">-- Choose Service --</option>
+        <option value="consulting">Consulting</option>
+        <option value="training">Training</option>
+        <option value="coaching">Coaching</option>
+        <option value="resources">Resources</option>
+        <option value="other">Other</option>
+      </select>
+
+      <!-- Price suggestion card -->
+      <div id="priceSuggestion" class="price-card hidden">
+        <h4>Estimated Price</h4>
+        <p id="priceText"></p>
+        <button type="button" id="toggleDetails" class="details-btn hidden">View Detailed Pricing ▼</button>
+        <div id="detailedPricing" class="hidden">
+          <table id="pricingTable"></table>
+        </div>
+      </div>
+
+      <input type="text" name="preferred_date" placeholder="Preferred Date (DD/MM/YYYY)">
+      <textarea name="details" id="detailsBox" rows="5" placeholder="Please provide full details of your request" required></textarea>
+
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+  </div>
+</div>
+
 
 <!-- Footer -->
 <footer>
@@ -1202,6 +1504,143 @@ footer {
     startX = 0;
     endX = 0;
   });
+</script>
+
+<!-- Script -->
+<script>
+// Price guide with package tiers
+const priceGuide = {
+  consulting: {
+    summary: "💼 Consulting: $200 – $500 per session",
+    packages: [
+      { tier: "Basic", price: "$200", details: "1 hr session" },
+      { tier: "Standard", price: "$350", details: "2 hr session + follow-up" },
+      { tier: "Premium", price: "$500", details: "Full-day strategy session" }
+    ]
+  },
+  training: {
+    summary: "📚 Training: $500 – $1,200 per workshop",
+    packages: [
+      { tier: "Basic", price: "$500", details: "half-day workshop" },
+      { tier: "Standard", price: "$800", details: "full-day workshop" },
+      { tier: "Premium", price: "$1,200", details: "2-day intensive training" }
+    ]
+  },
+  coaching: {
+    summary: "🎯 Coaching: $100 – $300 per session",
+    packages: [
+      { tier: "Basic", price: "$100", details: "introductory session" },
+      { tier: "Standard", price: "$200", details: "2 sessions + action plan" },
+      { tier: "Premium", price: "$300", details: "4 sessions + personalized strategy" }
+    ]
+  },
+  resources: {
+    summary: "📄 Resources: $20 – $100 depending on package",
+    packages: [
+      { tier: "Basic", price: "$20", details: "single resource" },
+      { tier: "Standard", price: "$50", details: "bundle of 5 resources" },
+      { tier: "Premium", price: "$100", details: "full resource library access" }
+    ]
+  },
+  other: {
+    summary: "💡 Other: Pricing will be discussed after request review",
+    packages: []
+  }
+};
+
+const serviceSelect = document.getElementById("service_type");
+const priceCard = document.getElementById("priceSuggestion");
+const priceText = document.getElementById("priceText");
+const toggleBtn = document.getElementById("toggleDetails");
+const detailedDiv = document.getElementById("detailedPricing");
+const pricingTable = document.getElementById("pricingTable");
+const detailsBox = document.getElementById("detailsBox");
+const selectedPackage = document.getElementById("selected_package");
+
+serviceSelect.addEventListener("change", function() {
+  const selected = this.value;
+  if (priceGuide[selected]) {
+    priceText.textContent = priceGuide[selected].summary;
+    priceCard.classList.remove("hidden");
+
+    if (priceGuide[selected].packages.length > 0) {
+      toggleBtn.classList.remove("hidden");
+      pricingTable.innerHTML = "";
+
+      // Build table
+      const headerRow = document.createElement("tr");
+      priceGuide[selected].packages.forEach(pkg => {
+        const th = document.createElement("th");
+        th.textContent = pkg.tier;
+        headerRow.appendChild(th);
+      });
+      pricingTable.appendChild(headerRow);
+
+      const priceRow = document.createElement("tr");
+      priceGuide[selected].packages.forEach(pkg => {
+        const td = document.createElement("td");
+        td.textContent = pkg.price;
+        td.classList.add("selectable");
+        td.addEventListener("click", function() {
+          selectedPackage.value = `${pkg.tier}: ${pkg.price} (${pkg.details})`;
+          detailsBox.value += `\nSelected Package: ${pkg.tier} - ${pkg.price} (${pkg.details})`;
+          alert(`✅ You selected: ${pkg.tier} - ${pkg.price}`);
+        });
+        priceRow.appendChild(td);
+      });
+      pricingTable.appendChild(priceRow);
+
+      const detailRow = document.createElement("tr");
+      priceGuide[selected].packages.forEach(pkg => {
+        const td = document.createElement("td");
+        td.textContent = pkg.details;
+        detailRow.appendChild(td);
+      });
+      pricingTable.appendChild(detailRow);
+    } else {
+      toggleBtn.classList.add("hidden");
+      detailedDiv.classList.add("hidden");
+    }
+  } else {
+    priceCard.classList.add("hidden");
+  }
+});
+
+toggleBtn.addEventListener("click", function() {
+  detailedDiv.classList.toggle("hidden");
+  this.textContent = detailedDiv.classList.contains("hidden") 
+    ? "View Detailed Pricing ▼" 
+    : "Hide Detailed Pricing ▲";
+});
+
+// Modal control with animation
+function openModal(p){
+  const modal = document.getElementById('supportModal');
+  modal.style.display = 'block';
+  setTimeout(()=> modal.classList.add("show"), 10); // trigger animation
+  document.getElementById('program').value=p;
+}
+function closeModal(){
+  const modal = document.getElementById('supportModal');
+  modal.classList.remove("show");
+  setTimeout(()=> modal.style.display='none', 300); // wait for animation
+}
+window.onclick=e=>{
+  if(e.target==document.getElementById('supportModal')) closeModal();
+}
+window.addEventListener("keydown",e=>{
+  if(e.key==="Escape") closeModal();
+});
+
+// Show floating button when scrolling down
+const floatingBtn = document.getElementById("floatingSupportBtn");
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 10) {
+    floatingBtn.classList.add("show");
+  } else {
+    floatingBtn.classList.remove("show");
+  }
+});
 </script>
 <script>
   function toggleMenu() {
