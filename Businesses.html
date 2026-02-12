@@ -13,8 +13,17 @@
     nav a:hover{background:#e5e7eb;}
     .menu-btn{font-size:1.8rem;cursor:pointer;}
     .show{display:flex;}
-    .hero{text-align:center;padding:80px 20px;background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('business-bg.jpg') no-repeat center/cover;color:white;}
-    .hero h1{font-size:2rem;margin-bottom:10px;}
+
+    /* HERO in requested format */
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+      background: linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+        url('business.jpg') no-repeat center/cover;
+      color: white;
+    }
+    .hero h1 {font-size: 2rem;margin-bottom: 10px;}
+
     .programs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;padding:30px;}
     .program-card{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);transition:.3s;}
     .program-card:hover{transform:translateY(-5px);box-shadow:0 8px 16px rgba(0,0,0,0.2);}
@@ -23,9 +32,7 @@
     .event-card{max-width:600px;margin:0 auto 20px;background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);text-align:left;}
     .btn{display:inline-block;margin-top:10px;padding:8px 14px;background:#7c2d12;color:white;border:none;border-radius:6px;cursor:pointer;transition:.3s;}
     .btn:hover{background:#9a3412;}
-    .team,.testimonials,.contact{padding:50px 20px;text-align:center;}
-    .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;max-width:1000px;margin:auto;}
-    .team-member{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+    .testimonials,.contact{padding:50px 20px;text-align:center;}
     .testimonial-box{background:white;padding:20px;border-radius:12px;box-shadow:0 4px 8px rgba(0,0,0,0.1);max-width:600px;margin:auto;}
     footer{background:#7c2d12;color:white;text-align:center;padding:15px;}
     /* Modal */
@@ -45,7 +52,6 @@
   <nav id="navMenu">
     <a href="#programs">Programs</a>
     <a href="#events">Events</a>
-    <a href="#team">Advisors</a>
     <a href="#testimonials">Testimonials</a>
     <a href="#contact">Contact</a>
   </nav>
@@ -72,31 +78,6 @@
     <h3>Investor Networking Forum</h3>
     <p>Connect with venture capitalists, angel investors, and business mentors.</p>
     <button class="btn" onclick="openModal('Investor Networking Forum')">Request Support</button>
-  </div>
-</section>
-
-<section id="team" class="team">
-  <h2 style="color:#7c2d12; text-align:center; margin-bottom:20px;">Our Investment Advisors</h2>
-  
-  <div class="team-grid">
-    <div class="team-member">
-      <img src="assets/advisor1.jpg" alt="Advisor 1" width="100%">
-      <h3>David Kimani</h3>
-      <p class="role">Financial Analyst</p>
-      <p class="bio">10+ years of helping SMEs secure funding and manage investments.</p>
-    </div>
-    <div class="team-member">
-      <img src="assets/advisor2.jpg" alt="Advisor 2" width="100%">
-      <h3>Sophia Wangari</h3>
-      <p class="role">Startup Mentor</p>
-      <p class="bio">Guides entrepreneurs from idea stage to sustainable businesses.</p>
-    </div>
-    <div class="team-member">
-      <img src="assets/advisor3.jpg" alt="Advisor 3" width="100%">
-      <h3>Michael Oduor</h3>
-      <p class="role">Venture Capital Consultant</p>
-      <p class="bio">Expert in connecting startups with investors across Africa.</p>
-    </div>
   </div>
 </section>
 
