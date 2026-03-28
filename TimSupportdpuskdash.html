@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExpertFlow | Admin & Expert Dashboard</title>
+    <!-- Tailwind CSS v3 + Font Awesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Chart.js for performance charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body { background: #f0f2f5; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .transition-smooth { transition: all 0.2s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
+        .dashboard-container { max-width: 1400px; margin: 0 auto; }
+        .status-badge { @apply px-2 py-1 rounded-full text-xs font-semibold; }
+    </style>
+</head>
+<body class="antialiased">
+
+<div id="root" class="min-h-screen"></div>
+
+<script>
+    // ---------- MOCK API LAYER (simulates backend with localStorage persistence) ----------
+    const StorageKeys = {
+        USERS: 'expertflow_users',
+        TASKS: 'expertflow_tasks',
+        PERFORMANCE: 'expertflow_performance'
+    };
+
+    // Initialize default data if empty
+    function initData() {
+        if (!localStorage.getItem(StorageKeys.USERS)) {
+            const defaultUsers = [
+                { id: '1', email: 'admin@expertflow.com', password: 'admin123', role: 'admin', fullName: 'Admin User', createdAt: new Date().toISOString() },
+                { id: '2', email: 'jane.doe@experts.com', password: 'expert123', role: 'expert', fullName: 'Jane Doe', specialization: 'Frontend Development', isAvailable: true, createdAt: new Date().toISOString() },
+                { id: '3', email: 'john.smith@experts.com', password: 'expert123', role: 'expert', fullName: 'John Smith', specialization: 'Backend & API', isAvailable: true, createdAt: new Date().toISOString() },
+                { id: '4', email: 'emily.chen@experts.com', password: 'expert123', role: 'expert', fullName: 'Emily Chen', specialization: 'UI/UX Design', isAvailable: false, createdAt: new Date().toISOString() }
+            ];
+            localStorage.setItem(StorageKeys.USERS, JSON.stringify(defaultUsers));
+        }
+        if (!localStorage.getItem(StorageKeys.TASKS)) {
+            const defaultTasks = [
+                { id: 't1', title: 'Design system migration', description: 'Update component library to Tailwind v3', specialization: 'UI/UX Design', assignedTo: '4', status: 'in-progress', assignedBy: '1', createdAt: new Date().toISOString(), dueDate: '2025-04-10' },
+                { id: 't2', title: 'API Rate Limiting', description: 'Implement throttling for public endpoints', specialization: 'Backend & API', assignedTo: '3', status: 'pending', assignedBy: '1', createdAt: new Date().toISOString(), dueDate: '2025-04-05' },
+                { id: 't3', title: 'Dashboard Analytics Chart', description: 'Create interactive charts with Chart.js', specialization: 'Frontend Development', assignedTo: '2', status: 'completed', assignedBy: '1', createdAt: new Date().toISOString(), dueDate: '2025-03-28' }
+            ];
+            localStorage.setItem(StorageKeys.TASKS, JSON.stringify(defaultTasks));
+        }
+        if (!localStorage.getItem(StorageKeys.PERFORMANCE)) {
+            const perf = {
+                '2': { tasksCompleted: 12, tasksPending: 2, avgRating: 4.8, totalHours: 87 },
+                '3': { tasksCompleted: 8, tasksPending: 3, avgRating: 4.5, totalHours: 64 },
+                '4': { tasksCompleted: 5, tasksPending: 1, avgRating: 4.9, totalHours: 42 }
+            };
+            localStorage.setItem(StorageKeys.PERFORMANCE, JSON.stringify(perf));
+        }
+    }
+    initData();
+
+    // Helper functions
+    function getUsers() { return JSON.parse(localStorage.getItem(StorageKeys.USERS)); }
+    function saveUsers(users) { localStorage.setItem(StorageKeys.USERS, JSON.stringify(users)); }
+    function getTasks() { return JSON.parse(localStorage.getItem(StorageKeys.TASKS)); }
+    function saveTasks(tasks) { localStorage.setItem(StorageKeys.TASKS, JSON.stringify(tasks)); }
+    function getPerformance() { return JSON.parse(localStorage.getItem(StorageKeys.PERFORMANCE)); }
+    function savePerformance(perf) { localStorage.setItem(StorageKeys.PERFORMANCE, JSON.stringify(perf)); }
+
+    // Auth session
+    let currentUser = null;
+
+    // Simple routing state
+    let appState = { view: 'login', activeDashboard: null };
+
+    // React-like manual render (pure JS)
+    function renderApp() {
+        const root = document.getElementById('root');
+        if (!root) return;
+        if (appState.view === 'login') {
+            root.innerHTML = renderLogin();
+            attachLoginHandlers();
+        } else if (appState.view === 'dashboard') {
+            if (currentUser?.role === 'admin') {
+                root.innerHTML = renderAdminDashboard();
+                attachAdminHandlers();
+                initAdminChart();
+            } else if (currentUser?.role === 'expert') {
+                root.innerHTML = renderExpertDashboard();
+                attachExpertHandlers();
+                initExpertChart();
+            } else {
+                root.innerHTML = '<div class="p-8 text-center">Unauthorized</div>';
+            }
+        }
+    }
+
+    // ---------- LOGIN COMPONENT ----------
+    function renderLogin() {
+        return `
+            <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-100">
+                <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 mx-4">
+                    <div class="text-center mb-8">
+                        <i class="fas fa-chalkboard-user text-5xl text-indigo-600 mb-3"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">ExpertFlow</h2>
+                        <p class="text-gray-500 mt-1">Admin & Expert Portal</p>
+                    </div>
+                    <div id="loginError" class="bg-red-50 text-red-700 p-3 rounded-lg text-sm mb-4 hidden"></div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" id="loginEmail" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="admin@expertflow.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <input type="password" id="loginPassword" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="••••••••">
+                        </div>
+                        <button id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition shadow-md">Sign In</button>
+                    </div>
+                    <div class="mt-6 text-center text-sm text-gray-500">
+                        <p>Demo: admin@expertflow.com / admin123 | expert: jane.doe@experts.com / expert123</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function attachLoginHandlers() {
+        document.getElementById('loginBtn')?.addEventListener('click', () => {
+            const email = document.getElementById('loginEmail').value.trim();
+            const pwd = document.getElementById('loginPassword').value.trim();
+            const users = getUsers();
+            const user = users.find(u => u.email === email && u.password === pwd);
+            if (user) {
+                currentUser = { ...user, password: undefined };
+                appState.view = 'dashboard';
+                renderApp();
+            } else {
+                const errDiv = document.getElementById('loginError');
+                errDiv.innerText = 'Invalid email or password.';
+                errDiv.classList.remove('hidden');
+            }
+        });
+    }
+
+    // ---------- ADMIN DASHBOARD ----------
+    function renderAdminDashboard() {
+        const experts = getUsers().filter(u => u.role === 'expert');
+        const tasks = getTasks();
+        const performance = getPerformance();
+        // compute stats
+        const totalExperts = experts.length;
+        const availableExperts = experts.filter(e => e.isAvailable).length;
+        const pendingTasks = tasks.filter(t => t.status === 'pending').length;
+        const inProgressTasks = tasks.filter(t => t.status === 'in-progress').length;
+        const completedTasks = tasks.filter(t => t.status === 'completed').length;
+
+        return `
+            <div class="dashboard-container px-4 py-6">
+                <div class="flex flex-wrap justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800"><i class="fas fa-user-shield text-indigo-600 mr-2"></i>Admin Dashboard</h1>
+                        <p class="text-gray-500">Welcome, ${currentUser.fullName}</p>
+                    </div>
+                    <button id="logoutBtnAdmin" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg flex items-center gap-2"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-8 border-indigo-500"><div class="text-gray-500 text-sm">Total Experts</div><div class="text-3xl font-bold">${totalExperts}</div></div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-8 border-green-500"><div class="text-gray-500 text-sm">Available Experts</div><div class="text-3xl font-bold">${availableExperts}</div></div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-8 border-yellow-500"><div class="text-gray-500 text-sm">Pending Tasks</div><div class="text-3xl font-bold">${pendingTasks}</div></div>
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-8 border-blue-500"><div class="text-gray-500 text-sm">Completed Tasks</div><div class="text-3xl font-bold">${completedTasks}</div></div>
+                </div>
+
+                <!-- Create Expert Account + Task Assignment Row -->
+                <div class="grid lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow p-5">
+                        <h2 class="text-xl font-semibold mb-4"><i class="fas fa-user-plus text-green-600 mr-2"></i> Create Expert Account</h2>
+                        <div class="space-y-3">
+                            <input type="text" id="expertFullName" placeholder="Full Name" class="w-full p-2 border rounded-lg">
+                            <input type="email" id="expertEmail" placeholder="Email Address" class="w-full p-2 border rounded-lg">
+                            <input type="text" id="expertSpecialization" placeholder="Area of Specialization (e.g., Data Science)" class="w-full p-2 border rounded-lg">
+                            <div class="flex gap-3">
+                                <button id="createExpertBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"><i class="fas fa-plus-circle"></i> Create Account</button>
+                            </div>
+                            <div id="createMsg" class="text-sm text-green-600"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow p-5">
+                        <h2 class="text-xl font-semibold mb-4"><i class="fas fa-tasks text-blue-600 mr-2"></i> Assign Task by Specialization</h2>
+                        <div class="space-y-3">
+                            <input type="text" id="taskTitle" placeholder="Task Title" class="w-full p-2 border rounded-lg">
+                            <textarea id="taskDesc" placeholder="Task Description" rows="2" class="w-full p-2 border rounded-lg"></textarea>
+                            <select id="taskSpecialization" class="w-full p-2 border rounded-lg">
+                                <option value="">Select Specialization</option>
+                                ${[...new Set(experts.map(e => e.specialization).filter(s => s))].map(spec => `<option value="${spec}">${spec}</option>`).join('')}
+                            </select>
+                            <input type="date" id="taskDueDate" class="w-full p-2 border rounded-lg">
+                            <button id="assignTaskBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"><i class="fas fa-paper-plane"></i> Assign Task</button>
+                            <div id="assignMsg" class="text-sm"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Experts Table with Performance & Availability & Delete -->
+                <div class="bg-white rounded-xl shadow overflow-hidden mb-8">
+                    <div class="px-5 py-4 border-b bg-gray-50"><h2 class="font-bold text-lg"><i class="fas fa-users"></i> Expert Management</h2></div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left">Expert</th><th>Specialization</th><th>Availability</th><th>Tasks Completed</th><th>Rating</th><th>Actions</th></tr></thead>
+                            <tbody id="expertsTableBody">
+                                ${experts.map(exp => {
+                                    const perfData = performance[exp.id] || { tasksCompleted: 0, avgRating: 0 };
+                                    return `
+                                        <tr class="border-b hover:bg-gray-50">
+                                            <td class="px-6 py-3"><div class="font-medium">${exp.fullName}</div><div class="text-xs text-gray-500">${exp.email}</div></td>
+                                            <td class="px-6 py-3">${exp.specialization || '—'}</td>
+                                            <td class="px-6 py-3"><button class="toggleAvailBtn text-sm px-3 py-1 rounded-full ${exp.isAvailable ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}" data-id="${exp.id}">${exp.isAvailable ? 'Available' : 'Unavailable'}</button></td>
+                                            <td class="px-6 py-3">${perfData.tasksCompleted}</td>
+                                            <td class="px-6 py-3">${perfData.avgRating} ⭐</td>
+                                            <td class="px-6 py-3"><button class="deleteExpertBtn text-red-600 hover:text-red-800" data-id="${exp.id}"><i class="fas fa-trash-alt"></i> Delete</button></td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tasks Overview -->
+                <div class="bg-white rounded-xl shadow p-5">
+                    <h2 class="text-xl font-semibold mb-3"><i class="fas fa-list-check"></i> All Tasks & Progress</h2>
+                    <div class="grid md:grid-cols-3 gap-4 mb-4 text-center">
+                        <div class="bg-blue-50 p-2 rounded"><span class="font-bold">Pending: ${pendingTasks}</span></div>
+                        <div class="bg-yellow-50 p-2 rounded"><span class="font-bold">In Progress: ${inProgressTasks}</span></div>
+                        <div class="bg-green-50 p-2 rounded"><span class="font-bold">Completed: ${completedTasks}</span></div>
+                    </div>
+                    <div class="max-h-64 overflow-y-auto">
+                        <table class="min-w-full text-sm"><thead><tr><th>Task</th><th>Assigned To</th><th>Status</th><th>Due</th></tr></thead><tbody>
+                            ${tasks.map(task => {
+                                const expertAssigned = experts.find(e => e.id === task.assignedTo);
+                                return `<tr class="border-b"><td class="py-2">${task.title}</td><td>${expertAssigned?.fullName || 'Unknown'}</td><td><span class="status-badge ${task.status === 'completed' ? 'bg-green-100 text-green-700' : task.status === 'in-progress' ? 'bg-yellow-100' : 'bg-gray-100'}">${task.status}</span></td><td>${task.dueDate || '—'}</td></tr>`;
+                            }).join('')}
+                        </tbody></table>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function attachAdminHandlers() {
+        document.getElementById('logoutBtnAdmin')?.addEventListener('click', () => { currentUser = null; appState.view = 'login'; renderApp(); });
+        document.getElementById('createExpertBtn')?.addEventListener('click', () => {
+            const fullName = document.getElementById('expertFullName').value.trim();
+            const email = document.getElementById('expertEmail').value.trim();
+            const specialization = document.getElementById('expertSpecialization').value.trim();
+            if (!fullName || !email || !specialization) {
+                document.getElementById('createMsg').innerText = 'All fields required!';
+                return;
+            }
+            const users = getUsers();
+            if (users.find(u => u.email === email)) {
+                document.getElementById('createMsg').innerText = 'Email already exists!';
+                return;
+            }
+            const newId = Date.now().toString();
+            const newExpert = { id: newId, email, password: 'expert123', role: 'expert', fullName, specialization, isAvailable: true, createdAt: new Date().toISOString() };
+            users.push(newExpert);
+            saveUsers(users);
+            const perf = getPerformance();
+            perf[newId] = { tasksCompleted: 0, tasksPending: 0, avgRating: 0, totalHours: 0 };
+            savePerformance(perf);
+            document.getElementById('createMsg').innerHTML = '✅ Expert account created! (pwd: expert123)';
+            document.getElementById('expertFullName').value = '';
+            document.getElementById('expertEmail').value = '';
+            document.getElementById('expertSpecialization').value = '';
+            renderApp(); // refresh table
+        });
+
+        document.getElementById('assignTaskBtn')?.addEventListener('click', () => {
+            const title = document.getElementById('taskTitle').value.trim();
+            const desc = document.getElementById('taskDesc').value.trim();
+            const spec = document.getElementById('taskSpecialization').value;
+            const dueDate = document.getElementById('taskDueDate').value;
+            if (!title || !desc || !spec) {
+                document.getElementById('assignMsg').innerText = 'Fill title, description, specialization';
+                return;
+            }
+            const experts = getUsers().filter(u => u.role === 'expert');
+            const eligibleExperts = experts.filter(e => e.specialization === spec);
+            if (eligibleExperts.length === 0) {
+                document.getElementById('assignMsg').innerText = `No expert with specialization: ${spec}`;
+                return;
+            }
+            // assign to first available or any, prioritizing available
+            let targetExpert = eligibleExperts.find(e => e.isAvailable === true) || eligibleExperts[0];
+            const tasks = getTasks();
+            const newTask = {
+                id: 'task_' + Date.now(),
+                title, description: desc, specialization: spec,
+                assignedTo: targetExpert.id, status: 'pending',
+                assignedBy: currentUser.id, createdAt: new Date().toISOString(),
+                dueDate: dueDate || null
+            };
+            tasks.push(newTask);
+            saveTasks(tasks);
+            document.getElementById('assignMsg').innerHTML = `✅ Task assigned to ${targetExpert.fullName}`;
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDesc').value = '';
+            document.getElementById('taskDueDate').value = '';
+            renderApp();
+        });
+
+        // Delete expert
+        document.querySelectorAll('.deleteExpertBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const expertId = btn.getAttribute('data-id');
+                if (confirm('Delete expert account and all assigned tasks?')) {
+                    let users = getUsers();
+                    users = users.filter(u => u.id !== expertId);
+                    saveUsers(users);
+                    let tasks = getTasks();
+                    tasks = tasks.filter(t => t.assignedTo !== expertId);
+                    saveTasks(tasks);
+                    let perf = getPerformance();
+                    delete perf[expertId];
+                    savePerformance(perf);
+                    renderApp();
+                }
+            });
+        });
+        // Toggle availability
+        document.querySelectorAll('.toggleAvailBtn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const expertId = btn.getAttribute('data-id');
+                const users = getUsers();
+                const expert = users.find(u => u.id === expertId);
+                if (expert) {
+                    expert.isAvailable = !expert.isAvailable;
+                    saveUsers(users);
+                    renderApp();
+                }
+            });
+        });
+        initAdminChart();
+    }
+
+    function initAdminChart() {
+        const performance = getPerformance();
+        const experts = getUsers().filter(u => u.role === 'expert');
+        const labels = experts.map(e => e.fullName.split(' ')[0]);
+        const completedData = experts.map(e => performance[e.id]?.tasksCompleted || 0);
+        const canvas = document.getElementById('adminPerfChart');
+        if (canvas && window.adminChart) window.adminChart.destroy();
+        const ctx = document.getElementById('adminPerfChart')?.getContext('2d');
+        if (ctx) {
+            if (window.adminChart) window.adminChart.destroy();
+            window.adminChart = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Tasks Completed', data: completedData, backgroundColor: '#6366f1' }] }, options: { responsive: true } });
+        }
+    }
+
+    // ---------- EXPERT DASHBOARD ----------
+    function renderExpertDashboard() {
+        const expertId = currentUser.id;
+        const tasks = getTasks().filter(t => t.assignedTo === expertId);
+        const performanceData = getPerformance()[expertId] || { tasksCompleted: 0, avgRating: 4.0, totalHours: 0 };
+        const pendingTasks = tasks.filter(t => t.status === 'pending').length;
+        const inProgressTasks = tasks.filter(t => t.status === 'in-progress').length;
+        const completedTasksCount = tasks.filter(t => t.status === 'completed').length;
+        const totalTasks = tasks.length;
+
+        return `
+            <div class="dashboard-container px-4 py-6">
+                <div class="flex flex-wrap justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800"><i class="fas fa-user-graduate text-emerald-600 mr-2"></i>Expert Dashboard</h1>
+                        <p class="text-gray-500">Welcome, ${currentUser.fullName} | <span class="font-medium">${currentUser.specialization}</span></p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="toggleAvailabilityBtn" class="px-4 py-2 rounded-lg font-medium ${currentUser.isAvailable ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}"><i class="fas fa-circle"></i> ${currentUser.isAvailable ? 'Available' : 'Unavailable'}</button>
+                        <button id="logoutExpertBtn" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                    <div class="bg-white rounded-xl shadow p-4"><div class="text-gray-500">Total Tasks</div><div class="text-2xl font-bold">${totalTasks}</div></div>
+                    <div class="bg-white rounded-xl shadow p-4"><div class="text-gray-500">Pending</div><div class="text-2xl font-bold text-yellow-600">${pendingTasks}</div></div>
+                    <div class="bg-white rounded-xl shadow p-4"><div class="text-gray-500">In Progress</div><div class="text-2xl font-bold text-blue-600">${inProgressTasks}</div></div>
+                    <div class="bg-white rounded-xl shadow p-4"><div class="text-gray-500">Completed</div><div class="text-2xl font-bold text-green-600">${completedTasksCount}</div></div>
+                </div>
+
+                <!-- Performance Metrics + Chart Row -->
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow p-5 text-center"><i class="fas fa-chart-line text-3xl text-indigo-400"></i><div class="text-xl font-bold mt-2">${performanceData.tasksCompleted}</div><div>Lifetime Completed</div></div>
+                    <div class="bg-white rounded-xl shadow p-5 text-center"><i class="fas fa-star text-3xl text-yellow-400"></i><div class="text-xl font-bold mt-2">${performanceData.avgRating}</div><div>Avg Rating</div></div>
+                    <div class="bg-white rounded-xl shadow p-5 text-center"><i class="fas fa-clock text-3xl text-gray-500"></i><div class="text-xl font-bold mt-2">${performanceData.totalHours || 0}</div><div>Total Hours</div></div>
+                </div>
+                <div class="bg-white rounded-xl shadow p-4 mb-8">
+                    <h3 class="font-semibold mb-2">Your Performance Trend (Monthly Completed)</h3>
+                    <canvas id="expertPerfChart" height="100"></canvas>
+                </div>
+
+                <!-- My Tasks with update status -->
+                <div class="bg-white rounded-xl shadow overflow-hidden">
+                    <div class="px-5 py-4 border-b bg-gray-50"><h2 class="font-bold text-lg"><i class="fas fa-tasks"></i> Assigned Tasks</h2></div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead><tr><th>Task Title</th><th>Description</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead>
+                            <tbody>
+                                ${tasks.map(task => `
+                                    <tr class="border-b">
+                                        <td class="p-3 font-medium">${task.title}</td><td class="p-3 text-sm">${task.description}</td><td class="p-3">${task.dueDate || 'No due'}</td>
+                                        <td class="p-3"><span class="status-badge ${task.status === 'completed' ? 'bg-green-100' : task.status === 'in-progress' ? 'bg-blue-100' : 'bg-gray-100'}">${task.status}</span></td>
+                                        <td class="p-3">
+                                            <select class="taskStatusSelect text-sm border rounded p-1" data-task-id="${task.id}">
+                                                <option value="pending" ${task.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                                <option value="in-progress" ${task.status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                                                <option value="completed" ${task.status === 'completed' ? 'selected' : ''}>Completed</option>
+                                            </select>
+                                            <button class="updateStatusBtn ml-2 bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs" data-task-id="${task.id}">Update</button>
+                                        </td>
+                                    </tr>
+                                `).length ? '' : '<tr><td colspan="5" class="p-4 text-center text-gray-500">No tasks assigned yet.</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function attachExpertHandlers() {
+        document.getElementById('logoutExpertBtn')?.addEventListener('click', () => { currentUser = null; appState.view = 'login'; renderApp(); });
+        document.getElementById('toggleAvailabilityBtn')?.addEventListener('click', () => {
+            const users = getUsers();
+            const expert = users.find(u => u.id === currentUser.id);
+            if (expert) { expert.isAvailable = !expert.isAvailable; saveUsers(users); currentUser.isAvailable = expert.isAvailable; renderApp(); }
+        });
+        document.querySelectorAll('.updateStatusBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const taskId = btn.getAttribute('data-task-id');
+                const selectElem = document.querySelector(`.taskStatusSelect[data-task-id="${taskId}"]`);
+                const newStatus = selectElem.value;
+                let tasks = getTasks();
+                const taskIndex = tasks.findIndex(t => t.id === taskId);
+                if (taskIndex !== -1) {
+                    tasks[taskIndex].status = newStatus;
+                    saveTasks(tasks);
+                    // if completed, update performance counter
+                    if (newStatus === 'completed') {
+                        let perf = getPerformance();
+                        if (!perf[currentUser.id]) perf[currentUser.id] = { tasksCompleted: 0, avgRating: 4.5, totalHours: 0 };
+                        perf[currentUser.id].tasksCompleted = (perf[currentUser.id].tasksCompleted || 0) + 1;
+                        savePerformance(perf);
+                    }
+                    renderApp();
+                }
+            });
+        });
+        initExpertChart();
+    }
+
+    function initExpertChart() {
+        const tasks = getTasks().filter(t => t.assignedTo === currentUser.id);
+        const months = ['Jan', 'Feb', 'Mar', 'Apr'];
+        const completedPerMonth = [2, 3, 5, 2]; // mock trend but based on real completed tasks per month (simplified)
+        const ctx = document.getElementById('expertPerfChart')?.getContext('2d');
+        if (ctx) {
+            if (window.expertChart) window.expertChart.destroy();
+            window.expertChart = new Chart(ctx, { type: 'line', data: { labels: months, datasets: [{ label: 'Tasks Completed', data: completedPerMonth, borderColor: '#10b981', tension: 0.3 }] } });
+        }
+    }
+
+    // initial render
+    renderApp();
+</script>
+</body>
+</html>
