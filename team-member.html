@@ -2,344 +2,642 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Team — Support Leaders</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Meet our expert support leaders across institutions, property, learning, projects, and more — guiding excellence in every category.">
+  <title>Our Team — Support Leaders | Excellence Across Every Field</title>
   <style>
-    body {font-family: Arial, sans-serif; margin: 0; background: #f9fafb; color: #333;}
-    header {background: #1e40af; padding: 20px; text-align: center; color: white;}
-    section.team {padding: 40px 20px;}
-    section.team h2 {text-align: center; font-size: 2rem; margin-bottom: 40px; color:#1e40af;}
-    .category {margin-bottom: 50px;}
-    .category h3 {color:#0b5ed7; margin-bottom: 20px; text-align:center;}
-    .team-grid {display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 20px;}
-    .team-member {background:white; border-radius: 12px; padding:20px; box-shadow:0 4px 8px rgba(0,0,0,0.1); text-align:center; transition: .3s;}
-    .team-member:hover {transform: translateY(-5px); box-shadow:0 8px 16px rgba(0,0,0,0.15);}
-    .team-member img {width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:15px;}
-    .team-member h4 {margin: 10px 0 5px; color:#1e40af;}
-    .team-member .role {font-weight:bold; color:#555;}
-    .team-member .bio {font-size:0.9rem; margin-top:8px; color:#666;}
-    footer {background:#1e40af; color:white; text-align:center; padding:15px; margin-top:40px;}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-dark: #0f2b6d;
+      --primary: #1e40af;
+      --primary-light: #3b82f6;
+      --primary-soft: #eef2ff;
+      --gray-bg: #f9fafb;
+      --card-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+      --transition-default: all 0.25s ease;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--gray-bg);
+      color: #1e293b;
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    /* improved typography */
+    h1, h2, h3, h4 {
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    /* skip link for accessibility */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--primary);
+      color: white;
+      padding: 8px 16px;
+      text-decoration: none;
+      border-radius: 0 0 8px 0;
+      z-index: 100;
+      transition: top 0.2s;
+    }
+    .skip-link:focus {
+      top: 0;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      padding: 3rem 1.5rem;
+      text-align: center;
+      color: white;
+      border-bottom: 4px solid rgba(255,255,255,0.2);
+    }
+    header h1 {
+      font-size: 2.4rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+    header p {
+      font-size: 1.2rem;
+      opacity: 0.92;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    /* main container */
+    main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* search & filter section */
+    .search-section {
+      background: white;
+      border-radius: 2rem;
+      padding: 1.25rem 1.8rem;
+      margin-bottom: 2.8rem;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .search-wrapper {
+      flex: 2;
+      min-width: 200px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .search-input-group {
+      flex: 3;
+      position: relative;
+    }
+    .search-input-group i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-style: normal;
+      font-weight: 400;
+      color: #94a3b8;
+      pointer-events: none;
+    }
+    #searchInput {
+      width: 100%;
+      padding: 0.9rem 1rem 0.9rem 2.8rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 2rem;
+      font-size: 1rem;
+      background: #ffffff;
+      transition: var(--transition-default);
+      font-family: inherit;
+    }
+    #searchInput:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    }
+    .clear-btn {
+      background: #f1f5f9;
+      border: none;
+      padding: 0.6rem 1.3rem;
+      border-radius: 2rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition-default);
+      font-family: inherit;
+      color: #334155;
+    }
+    .clear-btn:hover {
+      background: #e2e8f0;
+      transform: scale(0.97);
+    }
+    .result-stats {
+      font-size: 0.9rem;
+      background: var(--primary-soft);
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
+      color: var(--primary-dark);
+      font-weight: 500;
+    }
+
+    /* category styling */
+    .category {
+      margin-bottom: 3rem;
+      animation: fadeUp 0.4s ease-out;
+    }
+    .category h3 {
+      font-size: 1.7rem;
+      color: var(--primary-dark);
+      border-left: 5px solid var(--primary-light);
+      padding-left: 1rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    /* team grid */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .team-member {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.8rem 1.2rem 1.5rem;
+      box-shadow: var(--card-shadow);
+      text-align: center;
+      transition: var(--transition-default);
+      border: 1px solid rgba(0,0,0,0.03);
+      backdrop-filter: blur(0px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .team-member:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 28px -12px rgba(0, 0, 0, 0.15);
+      border-color: rgba(59,130,246,0.2);
+    }
+
+    /* avatar styling */
+    .avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      border: 3px solid white;
+      outline: 1px solid #e2e8f0;
+      transition: transform 0.2s;
+      background: #f1f5f9;
+    }
+    .team-member:hover .avatar {
+      transform: scale(1.02);
+    }
+
+    .team-member h4 {
+      margin: 1rem 0 0.3rem;
+      font-size: 1.35rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .team-member .role {
+      font-weight: 600;
+      color: #475569;
+      background: #f1f5f9;
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      margin: 0.5rem 0;
+    }
+    .team-member .bio {
+      font-size: 0.9rem;
+      color: #475569;
+      margin-top: 0.6rem;
+      line-height: 1.4;
+      max-width: 90%;
+    }
+
+    /* empty state */
+    .no-results {
+      text-align: center;
+      background: white;
+      border-radius: 2rem;
+      padding: 3rem;
+      margin-top: 2rem;
+      box-shadow: var(--card-shadow);
+    }
+    .no-results p {
+      font-size: 1.2rem;
+      color: #475569;
+    }
+
+    /* back to top button */
+    .back-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 46px;
+      height: 46px;
+      border-radius: 60px;
+      cursor: pointer;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: var(--transition-default);
+      opacity: 0;
+      visibility: hidden;
+      z-index: 99;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    .back-to-top:hover {
+      background: var(--primary-dark);
+      transform: translateY(-3px);
+    }
+
+    footer {
+      background: var(--primary-dark);
+      color: #e2e8f0;
+      text-align: center;
+      padding: 1.8rem;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 640px) {
+      header h1 { font-size: 1.8rem; }
+      .category h3 { font-size: 1.4rem; }
+      .team-grid { gap: 1rem; }
+      .search-section { flex-direction: column; align-items: stretch; }
+    }
+
+    /* focus visible for accessibility */
+    button:focus-visible, a:focus-visible, input:focus-visible {
+      outline: 2px solid var(--primary-light);
+      outline-offset: 2px;
+    }
   </style>
 </head>
 <body>
 
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
 <header>
   <h1>Meet Our Support Leaders</h1>
-  <p>Guiding excellence across all categories of growth and support</p>
+  <p>Guiding excellence across all categories of growth and support — real people, real expertise.</p>
 </header>
 
-<section id="team" class="team">
-  <h2>Our Expert Team Leaders</h2>
-
-  <!-- All Institutions Support -->
-  <div class="category">
-    <h3>All Institutions Support</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor1.jpg" alt="Leader">
-        <h4>Dr. Faith Wanjiku</h4>
-        <p class="role">Education Consultant</p>
-        <p class="bio">Supports institutions with academic excellence and strategic growth.</p>
+<main id="main-content">
+  <div class="search-section">
+    <div class="search-wrapper">
+      <div class="search-input-group">
+        <i>🔍</i>
+        <input type="text" id="searchInput" placeholder="Search by name, role, category, or expertise..." aria-label="Filter team members">
       </div>
-      <div class="team-member">
-        <img src="assets/mentor2.jpg" alt="Leader">
-        <h4>Michael Otieno</h4>
-        <p class="role">Institutional Planner</p>
-        <p class="bio">Helps schools and universities implement sustainable growth systems.</p>
-      </div>
+      <button class="clear-btn" id="clearSearchBtn" aria-label="Clear search">Clear</button>
     </div>
+    <div class="result-stats" id="resultStats">Showing all team members</div>
   </div>
 
-  <!-- Properties Buying Support -->
-  <div class="category">
-    <h3>Properties Buying Support</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor3.jpg" alt="Leader">
-        <h4>Susan Nduta</h4>
-        <p class="role">Real Estate Advisor</p>
-        <p class="bio">Guides clients in property acquisition and safe investment strategies.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor4.jpg" alt="Leader">
-        <h4>James Kariuki</h4>
-        <p class="role">Legal Property Expert</p>
-        <p class="bio">Ensures compliance and smooth transactions in real estate deals.</p>
-      </div>
-    </div>
+  <div id="teamContainer">
+    <!-- dynamic team content will be injected here -->
+    <div style="text-align: center; padding: 2rem;">Loading leadership team...</div>
   </div>
+</main>
 
-  <!-- Comprehensive Learning Support -->
-  <div class="category">
-    <h3>Comprehensive Learning Support</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor5.jpg" alt="Leader">
-        <h4>Anne Mwangi</h4>
-        <p class="role">Learning Specialist</p>
-        <p class="bio">Creates innovative learning strategies for diverse learners.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor6.jpg" alt="Leader">
-        <h4>Peter Kamau</h4>
-        <p class="role">Curriculum Developer</p>
-        <p class="bio">Designs educational content aligned with modern standards.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- All Areas Projects -->
-  <div class="category">
-    <h3>All Areas Projects</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor7.jpg" alt="Leader">
-        <h4>Lucy Achieng</h4>
-        <p class="role">Project Manager</p>
-        <p class="bio">Specialist in executing multi-sector projects with excellence.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor8.jpg" alt="Leader">
-        <h4>Daniel Kiprotich</h4>
-        <p class="role">Community Developer</p>
-        <p class="bio">Drives growth initiatives in education, health, and local projects.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- All Machines Support -->
-  <div class="category">
-    <h3>All Machines Support</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor9.jpg" alt="Leader">
-        <h4>George Mworia</h4>
-        <p class="role">Mechanical Engineer</p>
-        <p class="bio">Expert in machine operations, installations, and maintenance.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor10.jpg" alt="Leader">
-        <h4>Elizabeth Njeri</h4>
-        <p class="role">Industrial Technician</p>
-        <p class="bio">Supports industries with modern automation and machinery systems.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Talents Support -->
-  <div class="category">
-    <h3>Talents Support</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor11.jpg" alt="Leader">
-        <h4>Mary Atieno</h4>
-        <p class="role">Talent Coach</p>
-        <p class="bio">Helps individuals discover and refine unique talents.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor12.jpg" alt="Leader">
-        <h4>Kelvin Mwangi</h4>
-        <p class="role">Creative Arts Mentor</p>
-        <p class="bio">Specializes in nurturing performing and visual arts talents.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Inventory Incubation -->
-  <div class="category">
-    <h3>Inventory Incubation</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor13.jpg" alt="Leader">
-        <h4>Joseph Ndungu</h4>
-        <p class="role">Business Incubator</p>
-        <p class="bio">Supports startups with inventory and resource management.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor14.jpg" alt="Leader">
-        <h4>Caroline Waweru</h4>
-        <p class="role">SME Growth Expert</p>
-        <p class="bio">Provides guidance for small businesses to scale sustainably.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Events Planning Support -->
-  <div class="category">
-    <h3>Events Planning Support</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor15.jpg" alt="Leader">
-        <h4>Ruth Nyambura</h4>
-        <p class="role">Event Strategist</p>
-        <p class="bio">Specializes in organizing large-scale conferences and events.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor16.jpg" alt="Leader">
-        <h4>David Maina</h4>
-        <p class="role">Event Manager</p>
-        <p class="bio">Coordinates logistics and ensures successful event delivery.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Health Support -->
-  <div class="category">
-    <h3>Health Support</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor17.jpg" alt="Leader">
-        <h4>Dr. Grace Muthoni</h4>
-        <p class="role">Medical Advisor</p>
-        <p class="bio">Provides professional health support and preventive care programs.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor18.jpg" alt="Leader">
-        <h4>Samuel Ochieng</h4>
-        <p class="role">Wellness Coach</p>
-        <p class="bio">Focuses on holistic health and lifestyle management.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Importation & Logistics Support -->
-  <div class="category">
-    <h3>Importation & Logistics Support</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor19.jpg" alt="Leader">
-        <h4>Paul Mworia</h4>
-        <p class="role">Logistics Specialist</p>
-        <p class="bio">Expert in supply chain and importation processes.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor20.jpg" alt="Leader">
-        <h4>Jane Wambui</h4>
-        <p class="role">Procurement Expert</p>
-        <p class="bio">Manages sourcing and vendor partnerships effectively.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Marketing Support -->
-  <div class="category">
-    <h3>Marketing Support</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor21.jpg" alt="Leader">
-        <h4>Brian Mwenda</h4>
-        <p class="role">Digital Marketer</p>
-        <p class="bio">Specializes in online marketing strategies and growth hacking.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor22.jpg" alt="Leader">
-        <h4>Joyce Ndunge</h4>
-        <p class="role">Brand Strategist</p>
-        <p class="bio">Builds strong brands through innovative marketing campaigns.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Environment & Fuel Power -->
-  <div class="category">
-    <h3>Environment & Fuel Power</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor23.jpg" alt="Leader">
-        <h4>Prof. John Muriithi</h4>
-        <p class="role">Environmental Scientist</p>
-        <p class="bio">Advocates for clean energy and sustainable practices.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor24.jpg" alt="Leader">
-        <h4>Emily Chebet</h4>
-        <p class="role">Energy Consultant</p>
-        <p class="bio">Provides solutions in renewable energy and fuel efficiency.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tourism & Procurement -->
-  <div class="category">
-    <h3>Tourism & Procurement</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor25.jpg" alt="Leader">
-        <h4>Daniel Mwangi</h4>
-        <p class="role">Tourism Expert</p>
-        <p class="bio">Promotes sustainable tourism and local cultural experiences.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor26.jpg" alt="Leader">
-        <h4>Stella Naliaka</h4>
-        <p class="role">Procurement Officer</p>
-        <p class="bio">Ensures transparent and effective procurement practices.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Professional Growth Support -->
-  <div class="category">
-    <h3>Professional Growth Support</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor27.jpg" alt="Leader">
-        <h4>Beatrice Mugo</h4>
-        <p class="role">Career Coach</p>
-        <p class="bio">Empowers professionals to achieve their career aspirations.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor28.jpg" alt="Leader">
-        <h4>Francis Okello</h4>
-        <p class="role">Corporate Trainer</p>
-        <p class="bio">Delivers skills training for leadership and workplace growth.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Personal Growth Programmes -->
-  <div class="category">
-    <h3>Personal Growth Programmes</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor29.jpg" alt="Leader">
-        <h4>Naomi Wairimu</h4>
-        <p class="role">Life Coach</p>
-        <p class="bio">Helps individuals achieve balance, clarity, and resilience.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor30.jpg" alt="Leader">
-        <h4>Anthony Mutua</h4>
-        <p class="role">Motivational Speaker</p>
-        <p class="bio">Inspires personal transformation and growth journeys.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Family & Prenatal Support -->
-  <div class="category">
-    <h3>Family & Prenatal Support</h3>
-    <div class="team-grid">
-      <div class="team-member">
-        <img src="assets/mentor31.jpg" alt="Leader">
-        <h4>Dr. Irene Njoki</h4>
-        <p class="role">Prenatal Specialist</p>
-        <p class="bio">Provides expert guidance in prenatal care and maternal wellness.</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/mentor32.jpg" alt="Leader">
-        <h4>Patrick Muli</h4>
-        <p class="role">Family Counselor</p>
-        <p class="bio">Supports families with emotional and relational well-being.</p>
-      </div>
-    </div>
-  </div>
-
-</section>
+<button class="back-to-top" id="backToTopBtn" aria-label="Back to top">↑</button>
 
 <footer>
-  <p>&copy; 2025 Support Leaders Network. All Rights Reserved.</p>
+  <p>&copy; <span id="currentYear"></span> Support Leaders Network. Empowering growth across every sector.</p>
 </footer>
 
+<script>
+  // --------------------------------------------------------------
+  // COMPLETE TEAM DATA (based on original content, fully preserved)
+  // --------------------------------------------------------------
+  const teamCategories = [
+    {
+      name: "All Institutions Support",
+      members: [
+        { name: "Dr. Faith Wanjiku", role: "Education Consultant", bio: "Supports institutions with academic excellence and strategic growth.", titlePrefix: "Dr." },
+        { name: "Michael Otieno", role: "Institutional Planner", bio: "Helps schools and universities implement sustainable growth systems.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Properties Buying Support",
+      members: [
+        { name: "Susan Nduta", role: "Real Estate Advisor", bio: "Guides clients in property acquisition and safe investment strategies.", titlePrefix: "" },
+        { name: "James Kariuki", role: "Legal Property Expert", bio: "Ensures compliance and smooth transactions in real estate deals.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Comprehensive Learning Support",
+      members: [
+        { name: "Anne Mwangi", role: "Learning Specialist", bio: "Creates innovative learning strategies for diverse learners.", titlePrefix: "" },
+        { name: "Peter Kamau", role: "Curriculum Developer", bio: "Designs educational content aligned with modern standards.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "All Areas Projects",
+      members: [
+        { name: "Lucy Achieng", role: "Project Manager", bio: "Specialist in executing multi-sector projects with excellence.", titlePrefix: "" },
+        { name: "Daniel Kiprotich", role: "Community Developer", bio: "Drives growth initiatives in education, health, and local projects.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "All Machines Support",
+      members: [
+        { name: "George Mworia", role: "Mechanical Engineer", bio: "Expert in machine operations, installations, and maintenance.", titlePrefix: "" },
+        { name: "Elizabeth Njeri", role: "Industrial Technician", bio: "Supports industries with modern automation and machinery systems.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Talents Support",
+      members: [
+        { name: "Mary Atieno", role: "Talent Coach", bio: "Helps individuals discover and refine unique talents.", titlePrefix: "" },
+        { name: "Kelvin Mwangi", role: "Creative Arts Mentor", bio: "Specializes in nurturing performing and visual arts talents.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Inventory Incubation",
+      members: [
+        { name: "Joseph Ndungu", role: "Business Incubator", bio: "Supports startups with inventory and resource management.", titlePrefix: "" },
+        { name: "Caroline Waweru", role: "SME Growth Expert", bio: "Provides guidance for small businesses to scale sustainably.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Events Planning Support",
+      members: [
+        { name: "Ruth Nyambura", role: "Event Strategist", bio: "Specializes in organizing large-scale conferences and events.", titlePrefix: "" },
+        { name: "David Maina", role: "Event Manager", bio: "Coordinates logistics and ensures successful event delivery.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Health Support",
+      members: [
+        { name: "Dr. Grace Muthoni", role: "Medical Advisor", bio: "Provides professional health support and preventive care programs.", titlePrefix: "Dr." },
+        { name: "Samuel Ochieng", role: "Wellness Coach", bio: "Focuses on holistic health and lifestyle management.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Importation & Logistics Support",
+      members: [
+        { name: "Paul Mworia", role: "Logistics Specialist", bio: "Expert in supply chain and importation processes.", titlePrefix: "" },
+        { name: "Jane Wambui", role: "Procurement Expert", bio: "Manages sourcing and vendor partnerships effectively.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Marketing Support",
+      members: [
+        { name: "Brian Mwenda", role: "Digital Marketer", bio: "Specializes in online marketing strategies and growth hacking.", titlePrefix: "" },
+        { name: "Joyce Ndunge", role: "Brand Strategist", bio: "Builds strong brands through innovative marketing campaigns.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Environment & Fuel Power",
+      members: [
+        { name: "Prof. John Muriithi", role: "Environmental Scientist", bio: "Advocates for clean energy and sustainable practices.", titlePrefix: "Prof." },
+        { name: "Emily Chebet", role: "Energy Consultant", bio: "Provides solutions in renewable energy and fuel efficiency.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Tourism & Procurement",
+      members: [
+        { name: "Daniel Mwangi", role: "Tourism Expert", bio: "Promotes sustainable tourism and local cultural experiences.", titlePrefix: "" },
+        { name: "Stella Naliaka", role: "Procurement Officer", bio: "Ensures transparent and effective procurement practices.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Professional Growth Support",
+      members: [
+        { name: "Beatrice Mugo", role: "Career Coach", bio: "Empowers professionals to achieve their career aspirations.", titlePrefix: "" },
+        { name: "Francis Okello", role: "Corporate Trainer", bio: "Delivers skills training for leadership and workplace growth.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Personal Growth Programmes",
+      members: [
+        { name: "Naomi Wairimu", role: "Life Coach", bio: "Helps individuals achieve balance, clarity, and resilience.", titlePrefix: "" },
+        { name: "Anthony Mutua", role: "Motivational Speaker", bio: "Inspires personal transformation and growth journeys.", titlePrefix: "" }
+      ]
+    },
+    {
+      name: "Family & Prenatal Support",
+      members: [
+        { name: "Dr. Irene Njoki", role: "Prenatal Specialist", bio: "Provides expert guidance in prenatal care and maternal wellness.", titlePrefix: "Dr." },
+        { name: "Patrick Muli", role: "Family Counselor", bio: "Supports families with emotional and relational well-being.", titlePrefix: "" }
+      ]
+    }
+  ];
+
+  // Helper: generate clean avatar name (remove title prefixes for nicer avatar initials)
+  function getCleanAvatarName(fullName) {
+    return fullName.replace(/^(Dr\.|Prof\.|Mr\.|Mrs\.|Ms\.)\s*/i, '').trim();
+  }
+
+  // Helper: generate avatar URL using ui-avatars (reliable, beautiful placeholder, no broken images)
+  function getAvatarUrl(name, idx) {
+    const clean = getCleanAvatarName(name);
+    const encoded = encodeURIComponent(clean);
+    // generate soft but professional background colors based on category index (stable)
+    const bgColors = ["1e40af", "0f2b6d", "2563eb", "3b82f6", "2c5f8a", "1e4a76", "0f3b5c", "2c3e66"];
+    const color = bgColors[idx % bgColors.length];
+    return `https://ui-avatars.com/api/?background=${color}&color=fff&rounded=true&size=110&bold=true&name=${encoded}&length=2&fontsize=0.45`;
+  }
+
+  // render function with search filter
+  function renderTeam(searchTerm = "") {
+    const container = document.getElementById("teamContainer");
+    if (!container) return;
+    
+    const lowerSearch = searchTerm.trim().toLowerCase();
+    let visibleCategories = 0;
+    let totalVisibleMembers = 0;
+    let html = "";
+
+    for (let catIdx = 0; catIdx < teamCategories.length; catIdx++) {
+      const category = teamCategories[catIdx];
+      const categoryName = category.name;
+      const members = category.members;
+      
+      // filter members based on search
+      let filteredMembers = [];
+      for (let mIdx = 0; mIdx < members.length; mIdx++) {
+        const m = members[mIdx];
+        const fullName = m.name;
+        const role = m.role;
+        const bio = m.bio;
+        const searchableText = `${fullName} ${role} ${bio} ${categoryName}`.toLowerCase();
+        if (lowerSearch === "" || searchableText.includes(lowerSearch)) {
+          filteredMembers.push({ ...m, originalIndex: mIdx });
+        }
+      }
+      
+      if (filteredMembers.length === 0) continue;
+      
+      visibleCategories++;
+      totalVisibleMembers += filteredMembers.length;
+      
+      // category block
+      html += `<div class="category" data-category="${categoryName.replace(/[^a-z0-9]/gi, '')}">
+        <h3>${escapeHtml(categoryName)}</h3>
+        <div class="team-grid">`;
+      
+      for (let i = 0; i < filteredMembers.length; i++) {
+        const member = filteredMembers[i];
+        const displayName = member.name;
+        const role = member.role;
+        const bio = member.bio;
+        // deterministic avatar key for consistency (use global category + member name)
+        const avatarSeed = catIdx * 10 + i;
+        const avatarUrl = getAvatarUrl(displayName, catIdx + i);
+        
+        html += `
+          <div class="team-member">
+            <img class="avatar" src="${avatarUrl}" alt="Portrait of ${escapeHtml(displayName)}" loading="lazy" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?background=1e40af&color=fff&name=${encodeURIComponent(getCleanAvatarName(displayName))}&length=2';">
+            <h4>${escapeHtml(displayName)}</h4>
+            <div class="role">${escapeHtml(role)}</div>
+            <p class="bio">${escapeHtml(bio)}</p>
+          </div>
+        `;
+      }
+      html += `</div></div>`;
+    }
+    
+    // if no results show friendly message
+    if (visibleCategories === 0) {
+      html = `<div class="no-results">
+        <p>✨ No team members match your search. Try a different keyword or browse all our experts.</p>
+        <button class="clear-btn" id="inlineClearBtn" style="margin-top: 1rem;">Clear search</button>
+      </div>`;
+    }
+    
+    container.innerHTML = html;
+    
+    // update stats text
+    const statsSpan = document.getElementById("resultStats");
+    if (statsSpan) {
+      if (lowerSearch === "") {
+        statsSpan.textContent = `🎯 ${totalVisibleMembers} experts · ${visibleCategories} categories`;
+      } else {
+        statsSpan.textContent = `🔍 ${totalVisibleMembers} result${totalVisibleMembers !== 1 ? 's' : ''} found in ${visibleCategories} ${visibleCategories === 1 ? 'category' : 'categories'}`;
+      }
+    }
+    
+    // reattach clear event for inline button if exists
+    const inlineClear = document.getElementById("inlineClearBtn");
+    if (inlineClear) {
+      inlineClear.addEventListener("click", () => {
+        const searchInput = document.getElementById("searchInput");
+        if (searchInput) {
+          searchInput.value = "";
+          renderTeam("");
+        }
+      });
+    }
+  }
+  
+  // simple XSS escape
+  function escapeHtml(str) {
+    if (!str) return "";
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+      return c;
+    });
+  }
+  
+  // debounce for search performance
+  function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+  
+  // initial load & event binding
+  document.addEventListener("DOMContentLoaded", () => {
+    // set current year in footer
+    document.getElementById("currentYear").innerText = new Date().getFullYear();
+    
+    // initial render
+    renderTeam("");
+    
+    const searchInput = document.getElementById("searchInput");
+    const clearBtn = document.getElementById("clearSearchBtn");
+    
+    if (searchInput) {
+      const handleSearch = () => {
+        renderTeam(searchInput.value);
+      };
+      searchInput.addEventListener("input", debounce(handleSearch, 220));
+    }
+    
+    if (clearBtn) {
+      clearBtn.addEventListener("click", () => {
+        if (searchInput) {
+          searchInput.value = "";
+          renderTeam("");
+          searchInput.focus();
+        }
+      });
+    }
+    
+    // back to top button logic
+    const backBtn = document.getElementById("backToTopBtn");
+    if (backBtn) {
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 400) {
+          backBtn.classList.add("show");
+        } else {
+          backBtn.classList.remove("show");
+        }
+      });
+      backBtn.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    }
+  });
+</script>
 </body>
 </html>

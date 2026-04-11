@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIMS Support Portal | Real-Time Operations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        * { transition: all 0.2s ease; }
+        body { background: #f0f4f8; }
+        .dashboard-card:hover { transform: translateY(-3px); box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15); }
+        .status-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .toast-notify { position: fixed; bottom: 24px; right: 24px; background: #1e293b; color: white; padding: 12px 24px; border-radius: 48px; z-index: 9999; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
+        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+        .spinner { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid #6366f1; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .real-time-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #10b981; animation: pulse 2s infinite; margin-right: 8px; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+<div id="app-root"></div>
+<div id="toast-container"></div>
+
+<script>
+    // ======================== CONFIGURATION ========================
+    const BACKEND_URL = 'https://tims-backend-cr8l.onrender.com';  // ✅ Deployed backend
+    
+    // ======================== GLOBAL STATE ========================
+    let socket = null;
+    let authToken = null;
+    let currentUser = null;
+    let currentUserRole = null;
+    let expertsData = [];
+    let tasksData = [];
+    let appPhase = 'login'; // login, dashboard
+
+    // ======================== UTILITIES ========================
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast-notify';
+        const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : '🔔';
+        toast.innerHTML = `${icon} ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    function showLoading(show) {
+        let loader = document.getElementById('globalLoader');
+        if (show) {
+            if (!loader) {
+                loader = document.createElement('div');
+                loader.id = 'globalLoader';
+                loader.className = 'loading-overlay';
+                loader.innerHTML = '<div class="spinner"></div>';
+                document.body.appendChild(loader);
+            }
+        } else {
+            if (loader) loader.remove();
+        }
+    }
+
+    async function apiCall(endpoint, method = 'GET', body = null) {
+        const headers = { 'Content-Type': 'application/json' };
+        if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+        const options = { method, headers };
+        if (body) options.body = JSON.stringify(body);
+        const res = await fetch(`${BACKEND_URL}${endpoint}`, options);
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+    }
+
+    // ======================== BACKEND ACTIONS ========================
+    async function login(email, password) {
+        const res = await fetch(`${BACKEND_URL}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        if (!res.ok) throw new Error('Invalid credentials');
+        const data = await res.json();
+        authToken = data.token;
+        currentUser = data.user;
+        currentUserRole = data.user.role;
+        localStorage.setItem('token', authToken);
+        localStorage.setItem('user', JSON.stringify(currentUser));
+        // Connect socket to deployed backend
+        if (socket) socket.disconnect();
+        socket = io(BACKEND_URL, { auth: { token: authToken } });
+        socket.on('data-update', (data) => {
+            expertsData = data.experts;
+            tasksData = data.tasks;
+            if (appPhase === 'dashboard') renderDashboard();
+        });
+        await fetchInitialData();
+        appPhase = 'dashboard';
+        renderDashboard();
+    }
+
+    async function fetchInitialData() {
+        const data = await apiCall('/api/data');
+        expertsData = data.experts;
+        tasksData = data.tasks;
+    }
+
+    async function createExpert(fullName, email, specialization) {
+        showLoading(true);
+        try {
+            await apiCall('/api/experts', 'POST', { fullName, email, specialization });
+            showToast(`Expert ${fullName} created`, 'success');
+        } catch (err) { showToast(err.message, 'error'); }
+        showLoading(false);
+    }
+
+    async function createTask(title, description, specialization, dueDate) {
+        showLoading(true);
+        try {
+            await apiCall('/api/tasks', 'POST', { title, description, specialization, dueDate });
+            showToast(`Task "${title}" created`, 'success');
+        } catch (err) { showToast(err.message, 'error'); }
+        showLoading(false);
+    }
+
+    async function updateTaskStatus(taskId, status) {
+        try {
+            await apiCall(`/api/tasks/${taskId}/status`, 'PATCH', { status });
+            showToast(`Status updated to ${status}`, 'success');
+        } catch (err) { showToast(err.message, 'error'); }
+    }
+
+    async function deleteTask(taskId) {
+        if (!confirm('Delete this task?')) return;
+        showLoading(true);
+        try {
+            await apiCall(`/api/tasks/${taskId}`, 'DELETE');
+            showToast('Task deleted', 'success');
+        } catch (err) { showToast(err.message, 'error'); }
+        showLoading(false);
+    }
+
+    async function toggleExpertAvailability(userId) {
+        try {
+            await apiCall(`/api/experts/${userId}/toggle`, 'PATCH');
+            showToast('Availability toggled', 'success');
+        } catch (err) { showToast(err.message, 'error'); }
+    }
+
+    async function assignTask(taskId, expertId, expertName) {
+        try {
+            await apiCall(`/api/tasks/${taskId}/assign`, 'PATCH', { expertId, expertName });
+            showToast(`Assigned to ${expertName}`, 'success');
+        } catch (err) { showToast(err.message, 'error'); }
+    }
+
+    async function claimTask(taskId) {
+        try {
+            await apiCall(`/api/tasks/${taskId}/claim`, 'PATCH');
+            showToast('Task claimed!', 'success');
+        } catch (err) { showToast(err.message, 'error'); }
+    }
+
+    async function logout() {
+        if (socket) socket.disconnect();
+        authToken = null;
+        currentUser = null;
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        appPhase = 'login';
+        renderLogin();
+    }
+
+    // ======================== FRONTEND RENDERERS ========================
+    function renderLogin() {
+        document.getElementById('app-root').innerHTML = `
+            <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800">
+                <div class="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl w-full max-w-md p-8 mx-4">
+                    <div class="text-center mb-8">
+                        <div class="inline-block p-3 bg-blue-100 rounded-full mb-4"><i class="fas fa-headset text-4xl text-blue-700"></i></div>
+                        <h1 class="text-3xl font-bold text-gray-800">TIMS <span class="text-blue-700">Support</span></h1>
+                        <p class="text-gray-500">Real‑Time Operations Portal</p>
+                        <div class="mt-3"><span class="real-time-indicator"></span><span class="text-xs text-green-700">Secure Connection</span></div>
+                    </div>
+                    <div id="loginError" class="bg-red-50 text-red-700 p-3 rounded-xl text-sm mb-4 hidden"></div>
+                    <div class="space-y-4">
+                        <input type="email" id="loginEmail" placeholder="Email" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
+                        <input type="password" id="loginPassword" placeholder="Password" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
+                        <button id="loginBtn" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-xl transition shadow-md">Sign In</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.getElementById('loginBtn').onclick = async () => {
+            const email = document.getElementById('loginEmail').value;
+            const pwd = document.getElementById('loginPassword').value;
+            try {
+                showLoading(true);
+                await login(email, pwd);
+                showLoading(false);
+            } catch (err) {
+                showLoading(false);
+                const errDiv = document.getElementById('loginError');
+                errDiv.innerText = err.message;
+                errDiv.classList.remove('hidden');
+                setTimeout(() => errDiv.classList.add('hidden'), 3000);
+            }
+        };
+    }
+
+    function renderDashboard() {
+        const root = document.getElementById('app-root');
+        if (currentUserRole === 'admin') {
+            root.innerHTML = renderAdminDashboard();
+            attachAdminEvents();
+        } else {
+            root.innerHTML = renderExpertDashboard();
+            attachExpertEvents();
+        }
+    }
+
+    function renderAdminDashboard() {
+        const experts = expertsData;
+        const pending = tasksData.filter(t => t.status === 'pending').length;
+        const inProgress = tasksData.filter(t => t.status === 'in-progress').length;
+        const completed = tasksData.filter(t => t.status === 'completed').length;
+        const availableExperts = experts.filter(e => e.isAvailable).length;
+        return `
+            <div class="min-h-screen bg-gray-100">
+                <div class="bg-white shadow-md sticky top-0 z-10 p-4 flex justify-between items-center border-b">
+                    <div><i class="fas fa-headset text-blue-600 text-2xl mr-2"></i><span class="font-bold text-gray-800">TIMS Support Admin</span><span class="real-time-indicator ml-3"></span></div>
+                    <button id="logoutBtn" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg transition">Logout</button>
+                </div>
+                <div class="max-w-7xl mx-auto px-4 py-8">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-xl p-6 shadow">🧠 Support Agents: ${experts.length}</div>
+                        <div class="bg-white rounded-xl p-6 shadow">🟢 Available: ${availableExperts}</div>
+                        <div class="bg-white rounded-xl p-6 shadow">⏳ Open Tickets: ${pending}</div>
+                        <div class="bg-white rounded-xl p-6 shadow">✅ Resolved: ${completed}</div>
+                    </div>
+                    <div class="grid lg:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-white rounded-xl p-6"><h2 class="font-bold mb-3">➕ Add Support Agent</h2><input id="expertName" placeholder="Full Name" class="w-full border p-2 rounded mb-2"><input id="expertEmail" placeholder="Email" class="w-full border p-2 rounded mb-2"><input id="expertSpecialization" placeholder="Specialization / Skill" class="w-full border p-2 rounded mb-2"><button id="createExpertBtn" class="bg-indigo-600 text-white w-full py-2 rounded hover:bg-indigo-700">Create Agent</button></div>
+                        <div class="bg-white rounded-xl p-6"><h2 class="font-bold mb-3">📌 Create Support Ticket</h2><input id="taskTitle" placeholder="Ticket Title" class="w-full border p-2 rounded mb-2"><textarea id="taskDescription" placeholder="Issue Description" class="w-full border p-2 rounded mb-2"></textarea><select id="taskSpecialization" class="w-full border p-2 rounded mb-2"><option value="">Skill Required</option>${[...new Set(experts.map(e => e.specialization))].map(s => `<option value="${s}">${s}</option>`).join('')}</select><input id="taskDueDate" type="date" class="w-full border p-2 rounded mb-2"><button id="createTaskBtn" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Create Ticket</button></div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow overflow-hidden mb-8"><div class="p-4 border-b font-bold">👥 Support Agents</div><table class="w-full"><thead class="bg-gray-50"><tr><th class="p-3 text-left">Agent</th><th>Skill</th><th>Status</th><th>Tickets Closed</th><th>Rating</th><th></th></tr></thead><tbody>${experts.map(exp => `<tr><td class="p-3">${exp.fullName}<br><span class="text-xs">${exp.email}</span></td><td>${exp.specialization}</td><td><button class="toggleAvailBtn px-3 py-1 rounded-full text-sm ${exp.isAvailable ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}" data-id="${exp.id}">${exp.isAvailable ? 'Available' : 'Busy'}</button></td><td>${exp.tasksCompleted}</td><td>${exp.rating}⭐</td><td><i class="fas fa-user-cog text-gray-400"></i></td></tr>`).join('')}</tbody>}</table></div>
+                    <div class="bg-white rounded-xl shadow overflow-hidden"><div class="p-4 border-b font-bold">🎫 All Support Tickets</div><table class="w-full"><thead class="bg-gray-50"><tr><th class="p-3">Ticket</th><th>Skill Required</th><th>Status</th><th>Due</th><th>Assign To</th><th>Actions</th></tr></thead><tbody>${tasksData.map(task => {
+                        const matchExperts = experts.filter(e => e.specialization === task.specialization && e.isAvailable);
+                        return `<tr><td class="p-3">${task.title}<br><span class="text-xs">${task.description?.slice(0,50)}</span></td><td>${task.specialization}</td><td><span class="status-badge px-2 py-1 rounded ${task.status === 'completed' ? 'bg-green-100' : task.status === 'in-progress' ? 'bg-blue-100' : 'bg-yellow-100'}">${task.status}</span></td><td>${task.dueDate || '—'}</td><td><select class="assignSelect" data-task-id="${task.id}"><option value="">Select agent</option>${matchExperts.map(e => `<option value="${e.id}">${e.fullName}</option>`).join('')}</select></td><td><button class="assignBtn bg-indigo-100 px-3 py-1 rounded text-xs" data-task-id="${task.id}">Assign</button> <button class="deleteTaskBtn text-red-500" data-task-id="${task.id}"><i class="fas fa-trash"></i></button></td></tr>`;
+                    }).join('')}</tbody>}</table></div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderExpertDashboard() {
+        const myTasks = tasksData.filter(t => t.assignedTo === currentUser.id);
+        const availableTasks = tasksData.filter(t => !t.assignedTo && t.status !== 'completed');
+        const completedCount = myTasks.filter(t => t.status === 'completed').length;
+        return `
+            <div class="min-h-screen bg-gray-100">
+                <div class="bg-white shadow-md p-4 flex justify-between items-center border-b"><div><i class="fas fa-headset text-blue-600 text-xl mr-2"></i><span class="font-bold">TIMS Support Agent</span><span class="real-time-indicator ml-3"></span></div><button id="logoutBtn" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded transition">Logout</button></div>
+                <div class="max-w-7xl mx-auto px-4 py-8">
+                    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 rounded-2xl mb-8"><h2 class="text-2xl">Welcome, ${currentUser.fullName}</h2><p>Skill: ${currentUser.specialization}</p><div class="text-right text-3xl font-bold">${completedCount} tickets resolved</div></div>
+                    <div class="grid grid-cols-3 gap-5 mb-8"><div class="bg-white p-5 rounded-xl shadow">Assigned: ${myTasks.length}</div><div class="bg-white p-5 rounded-xl shadow">In Progress: ${myTasks.filter(t => t.status === 'in-progress').length}</div><div class="bg-white p-5 rounded-xl shadow">Resolved: ${completedCount}</div></div>
+                    <div class="bg-white rounded-xl shadow mb-8"><div class="p-4 border-b font-bold">📋 My Active Tickets</div>${myTasks.length === 0 ? '<div class="p-6 text-gray-400">No tickets assigned.</div>' : myTasks.map(task => `<div class="p-4 border-b flex justify-between items-center"><div><b>${task.title}</b><p class="text-sm text-gray-600">${task.description}</p><span class="text-xs text-gray-400">Due: ${task.dueDate || 'flexible'}</span></div><div><select class="statusSelect border rounded px-2 py-1 text-sm" data-task-id="${task.id}"><option ${task.status === 'pending' ? 'selected' : ''}>pending</option><option ${task.status === 'in-progress' ? 'selected' : ''}>in-progress</option><option ${task.status === 'completed' ? 'selected' : ''}>completed</option></select><button class="updateStatusBtn bg-blue-600 text-white px-3 py-1 rounded ml-2 text-sm" data-task-id="${task.id}">Update</button></div></div>`).join('')}</div>
+                    <div class="bg-white rounded-xl shadow"><div class="p-4 border-b font-bold">🆓 Unassigned Tickets (Claim to help)</div>${availableTasks.length === 0 ? '<div class="p-6 text-gray-400">No open tickets at the moment.</div>' : availableTasks.map(task => `<div class="p-4 border-b flex justify-between items-center"><div><b>${task.title}</b><p class="text-sm text-gray-600">${task.specialization}</p></div><button class="claimBtn bg-emerald-600 text-white px-4 py-2 rounded text-sm hover:bg-emerald-700" data-task-id="${task.id}">Claim Ticket</button></div>`).join('')}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    function attachAdminEvents() {
+        document.getElementById('logoutBtn').onclick = logout;
+        document.getElementById('createExpertBtn').onclick = async () => {
+            const name = document.getElementById('expertName').value;
+            const email = document.getElementById('expertEmail').value;
+            const spec = document.getElementById('expertSpecialization').value;
+            if (name && email && spec) await createExpert(name, email, spec);
+            else showToast('Please fill all fields', 'error');
+        };
+        document.getElementById('createTaskBtn').onclick = async () => {
+            const title = document.getElementById('taskTitle').value;
+            const desc = document.getElementById('taskDescription').value;
+            const spec = document.getElementById('taskSpecialization').value;
+            const due = document.getElementById('taskDueDate').value;
+            if (title && desc && spec) await createTask(title, desc, spec, due);
+            else showToast('Please fill all fields', 'error');
+        };
+        document.querySelectorAll('.toggleAvailBtn').forEach(btn => {
+            btn.onclick = () => toggleExpertAvailability(btn.dataset.id);
+        });
+        document.querySelectorAll('.assignBtn').forEach(btn => {
+            btn.onclick = () => {
+                const taskId = btn.dataset.taskId;
+                const select = document.querySelector(`.assignSelect[data-task-id="${taskId}"]`);
+                const expertId = select.value;
+                if (expertId) {
+                    const expert = expertsData.find(e => e.id === expertId);
+                    assignTask(taskId, expertId, expert.fullName);
+                } else showToast('Select an agent', 'error');
+            };
+        });
+        document.querySelectorAll('.deleteTaskBtn').forEach(btn => {
+            btn.onclick = () => deleteTask(btn.dataset.taskId);
+        });
+    }
+
+    function attachExpertEvents() {
+        document.getElementById('logoutBtn').onclick = logout;
+        document.querySelectorAll('.updateStatusBtn').forEach(btn => {
+            btn.onclick = () => {
+                const taskId = btn.dataset.taskId;
+                const select = document.querySelector(`.statusSelect[data-task-id="${taskId}"]`);
+                updateTaskStatus(taskId, select.value);
+            };
+        });
+        document.querySelectorAll('.claimBtn').forEach(btn => {
+            btn.onclick = () => claimTask(btn.dataset.taskId);
+        });
+    }
+
+    // ======================== BOOTSTRAP ========================
+    (function init() {
+        const savedToken = localStorage.getItem('token');
+        const savedUser = localStorage.getItem('user');
+        if (savedToken && savedUser) {
+            authToken = savedToken;
+            currentUser = JSON.parse(savedUser);
+            currentUserRole = currentUser.role;
+            socket = io(BACKEND_URL, { auth: { token: authToken } });
+            socket.on('data-update', (data) => {
+                expertsData = data.experts;
+                tasksData = data.tasks;
+                if (appPhase === 'dashboard') renderDashboard();
+            });
+            fetchInitialData().then(() => {
+                appPhase = 'dashboard';
+                renderDashboard();
+            }).catch(() => { renderLogin(); });
+        } else {
+            renderLogin();
+        }
+    })();
+</script>
+</body>
+</html>
