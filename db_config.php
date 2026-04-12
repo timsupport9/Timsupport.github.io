@@ -2,10 +2,10 @@
 // db_config.php
 // Database configuration file
 
-$db_host = 'localhost';
-$db_user = 'root';      // Change to your database username
-$db_pass = '';          // Change to your database password
-$db_name = 'dashboard_db';
+$db_host = 'MYSQL5045.site4now.net';   // Remote MySQL server
+$db_user = 'ac7ecf_timsup';            // Database username
+$db_pass = 'YOUR_DB_PASSWORD';         // <-- Replace with actual password
+$db_name = 'db_ac7ecf_timsup';         // Database name
 
 // Create connection
 $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
