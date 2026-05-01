@@ -3,347 +3,816 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIMS Support Portal | Real-Time Operations</title>
+    <title>Expert Platform | Complete Consultation & Training System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
-        * { transition: all 0.2s ease; }
-        body { background: #f0f4f8; }
-        .dashboard-card:hover { transform: translateY(-3px); box-shadow: 0 20px 25px -12px rgba(0,0,0,0.15); }
-        .status-badge { padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
-        .toast-notify { position: fixed; bottom: 24px; right: 24px; background: #1e293b; color: white; padding: 12px 24px; border-radius: 48px; z-index: 9999; animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
-        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 10000; }
-        .spinner { border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 3px solid #6366f1; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .real-time-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #10b981; animation: pulse 2s infinite; margin-right: 8px; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        * { transition: all 0.25s ease; }
+        body { background: #f1f5f9; font-family: 'Inter', system-ui, sans-serif; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .card:hover { box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .status-badge { padding: 4px 12px; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; }
+        .pulse-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; margin-right: 6px; }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 9999; animation: fadeIn 0.2s; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        .slide-up { animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(30px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px; z-index: 10000; animation: slideInRight 0.3s; font-size: 14px; }
+        @keyframes slideInRight { from { transform: translateX(120px); opacity:0; } to { transform: translateX(0); opacity:1; } }
+        .chat-bubble { max-width: 75%; padding: 10px 16px; border-radius: 18px; margin: 6px 0; word-wrap: break-word; }
+        .chat-bubble.sent { background: #6366f1; color: white; margin-left: auto; border-bottom-right-radius: 4px; }
+        .chat-bubble.received { background: #e2e8f0; color: #1e293b; margin-right: auto; border-bottom-left-radius: 4px; }
+        .sidebar-link { display: flex; align-items: center; padding: 10px 16px; border-radius: 10px; margin: 2px 8px; cursor: pointer; font-weight: 500; color: #64748b; }
+        .sidebar-link:hover, .sidebar-link.active { background: #6366f1; color: white; }
+        .sidebar-link i { width: 20px; margin-right: 10px; }
+        .tab-active { border-bottom: 3px solid #6366f1; color: #6366f1; font-weight: 600; }
+        .file-upload-zone { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; }
+        .file-upload-zone:hover { border-color: #6366f1; background: #eef2ff; }
     </style>
 </head>
-<body>
+<body class="text-gray-800">
 <div id="app-root"></div>
 <div id="toast-container"></div>
+<div id="modal-container"></div>
 
 <script>
-    // ======================== CONFIGURATION ========================
-    const BACKEND_URL = 'https://tims-backend-w6gy.onrender.com';  // ✅ Deployed backendhttps://tims-backend-w6gy.onrender.com
-    
-    // ======================== GLOBAL STATE ========================
-    let socket = null;
-    let authToken = null;
-    let currentUser = null;
-    let currentUserRole = null;
-    let expertsData = [];
-    let tasksData = [];
-    let appPhase = 'login'; // login, dashboard
+// ==================== CONFIGURATION ====================
+const API_URL = 'http://localhost:5000/api';
+let socket = null;
+let authToken = null;
+let currentUser = null;
+let state = {
+    users: [], experts: [], consultations: [], events: [],
+    bootcamps: [], courses: [], tuitionSessions: [], examPreps: [],
+    withdrawals: [], claims: [], notifications: [], messages: [],
+    earnings: null, stats: {}, pricingTiers: [], services: [],
+    availability: [], bookingSlots: [], enrollments: []
+};
+let activeChat = null;
+let currentPanel = 'dashboard';
 
-    // ======================== UTILITIES ========================
-    function showToast(message, type = 'info') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = 'toast-notify';
-        const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : '🔔';
-        toast.innerHTML = `${icon} ${message}`;
-        container.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-    }
+// ==================== UTILITIES ====================
+function $_(sel) { return document.querySelector(sel); }
+function $$_(sel) { return document.querySelectorAll(sel); }
+function toast(msg, type='info') {
+    const container = $_('#toast-container') || (()=>{ const d=document.createElement('div'); d.id='toast-container'; document.body.appendChild(d); return d; })();
+    const t = document.createElement('div'); t.className = 'toast';
+    t.innerHTML = `${type==='success'?'✅':type==='error'?'❌':'🔔'} ${msg}`;
+    container.appendChild(t); setTimeout(()=>t.remove(), 3500);
+}
+function showModal(title, content, onConfirm=null, confirmText='Confirm') {
+    const container = $_('#modal-container');
+    container.innerHTML = `
+        <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+            <div class="bg-white rounded-2xl w-full max-w-lg mx-4 slide-up max-h-[85vh] overflow-y-auto">
+                <div class="flex justify-between items-center p-5 border-b"><h3 class="text-lg font-bold">${title}</h3><button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 text-xl">&times;</button></div>
+                <div class="p-5">${content}</div>
+                ${onConfirm ? `<div class="flex justify-end gap-3 p-5 border-t"><button onclick="closeModal()" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Cancel</button><button id="modalConfirmBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">${confirmText}</button></div>` : ''}
+            </div>
+        </div>
+    `;
+    if (onConfirm) setTimeout(()=>{ const btn=$_('#modalConfirmBtn'); if(btn) btn.onclick=()=>{ onConfirm(); closeModal(); }; },100);
+}
+function closeModal() { $_('#modal-container').innerHTML = ''; }
 
-    function showLoading(show) {
-        let loader = document.getElementById('globalLoader');
-        if (show) {
-            if (!loader) {
-                loader = document.createElement('div');
-                loader.id = 'globalLoader';
-                loader.className = 'loading-overlay';
-                loader.innerHTML = '<div class="spinner"></div>';
-                document.body.appendChild(loader);
-            }
-        } else {
-            if (loader) loader.remove();
+async function api(endpoint, method='GET', body=null, isFormData=false) {
+    const headers = {};
+    if (!isFormData) headers['Content-Type'] = 'application/json';
+    if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+    const opts = { method, headers };
+    if (body) opts.body = isFormData ? body : JSON.stringify(body);
+    const res = await fetch(`${API_URL}${endpoint}`, opts);
+    if (res.status === 401) { logout(); throw new Error('Session expired'); }
+    if (!res.ok) { const err = await res.text(); throw new Error(err || 'Request failed'); }
+    return res.json();
+}
+
+// ==================== AUTH ====================
+async function login(email, password) {
+    const res = await fetch(`${API_URL}/auth/login`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({email,password})
+    });
+    if(!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    authToken = data.token; currentUser = data.user;
+    localStorage.setItem('token', authToken);
+    localStorage.setItem('user', JSON.stringify(currentUser));
+    initSocket();
+    await loadAllData();
+    renderApp();
+}
+
+function logout() {
+    if(socket) socket.disconnect();
+    authToken=null; currentUser=null;
+    localStorage.removeItem('token'); localStorage.removeItem('user');
+    renderLogin();
+}
+
+function initSocket() {
+    if(socket) socket.disconnect();
+    socket = io('http://localhost:5000', { auth: { token: authToken } });
+    socket.on('new_message', (msg) => {
+        if(activeChat === msg.consultation_id) {
+            state.messages.push(msg);
+            renderChatMessages();
         }
-    }
+        toast('New message received', 'info');
+    });
+    socket.on('notification', (notif) => {
+        state.notifications.unshift(notif);
+        toast(notif.title, 'info');
+        updateNotificationBadge();
+    });
+}
 
-    async function apiCall(endpoint, method = 'GET', body = null) {
-        const headers = { 'Content-Type': 'application/json' };
-        if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
-        const options = { method, headers };
-        if (body) options.body = JSON.stringify(body);
-        const res = await fetch(`${BACKEND_URL}${endpoint}`, options);
-        if (!res.ok) throw new Error(await res.text());
-        return res.json();
-    }
+async function loadAllData() {
+    try {
+        if(currentUser.role === 'admin') {
+            const [users, experts, stats] = await Promise.all([
+                api('/admin/users'), api('/admin/experts'), api('/admin/analytics')
+            ]);
+            state.users = users.users || []; state.experts = experts.experts || []; state.stats = stats.stats || {};
+            const [consultations, events, withdrawals, claims] = await Promise.all([
+                api('/admin/consultations'), api('/admin/events'),
+                api('/admin/withdrawals'), api('/admin/claims')
+            ]);
+            state.consultations = consultations.consultations || []; state.events = events.events || [];
+            state.withdrawals = withdrawals.withdrawals || []; state.claims = claims.claims || [];
+        } else if(currentUser.role === 'expert') {
+            const [consultations, events, earnings, services] = await Promise.all([
+                api('/expert/consultations'), api('/expert/events'),
+                api('/expert/earnings'), api('/expert/services')
+            ]);
+            state.consultations = consultations.consultations || []; state.events = events.events || [];
+            state.earnings = earnings.summary || {}; state.services = services.services || [];
+        } else {
+            const [consultations, events, enrollments] = await Promise.all([
+                api('/user/consultations'), api('/user/events'),
+                api('/user/enrollments')
+            ]);
+            state.consultations = consultations.consultations || []; state.events = events.events || [];
+            state.enrollments = enrollments.enrollments || [];
+        }
+        const notifs = await api('/notifications');
+        state.notifications = notifs.notifications || [];
+    } catch(e) { console.error('Load error:', e); }
+}
 
-    // ======================== BACKEND ACTIONS ========================
-    async function login(email, password) {
-        const res = await fetch(`${BACKEND_URL}/api/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
-        if (!res.ok) throw new Error('Invalid credentials');
-        const data = await res.json();
-        authToken = data.token;
-        currentUser = data.user;
-        currentUserRole = data.user.role;
-        localStorage.setItem('token', authToken);
-        localStorage.setItem('user', JSON.stringify(currentUser));
-        // Connect socket to deployed backend
-        if (socket) socket.disconnect();
-        socket = io(BACKEND_URL, { auth: { token: authToken } });
-        socket.on('data-update', (data) => {
-            expertsData = data.experts;
-            tasksData = data.tasks;
-            if (appPhase === 'dashboard') renderDashboard();
-        });
-        await fetchInitialData();
-        appPhase = 'dashboard';
-        renderDashboard();
-    }
+// ==================== RENDER ENGINE ====================
+function renderApp() {
+    if(!currentUser) { renderLogin(); return; }
+    const role = currentUser.role;
+    const root = $_('#app-root');
+    root.innerHTML = `
+        <div class="flex h-screen overflow-hidden">
+            ${renderSidebar(role)}
+            <div class="flex-1 flex flex-col overflow-hidden">
+                ${renderHeader()}
+                <main class="flex-1 overflow-y-auto p-6" id="main-content"></main>
+            </div>
+        </div>
+    `;
+    navigatePanel(currentPanel || 'dashboard');
+}
 
-    async function fetchInitialData() {
-        const data = await apiCall('/api/data');
-        expertsData = data.experts;
-        tasksData = data.tasks;
-    }
+function renderSidebar(role) {
+    const adminLinks = [
+        {icon:'fa-chart-pie', label:'Dashboard', panel:'dashboard'},
+        {icon:'fa-users', label:'Users', panel:'users'},
+        {icon:'fa-user-tie', label:'Experts', panel:'experts'},
+        {icon:'fa-calendar-check', label:'Events', panel:'events'},
+        {icon:'fa-comments', label:'Consultations', panel:'consultations'},
+        {icon:'fa-money-bill-wave', label:'Earnings', panel:'earnings'},
+        {icon:'fa-percentage', label:'Commissions', panel:'commissions'},
+        {icon:'fa-landmark', label:'Financial', panel:'financial'},
+        {icon:'fa-gavel', label:'Claims', panel:'claims'},
+        {icon:'fa-headset', label:'Support', panel:'support'},
+        {icon:'fa-school', label:'eSchool', panel:'eschool'},
+        {icon:'fa-chart-bar', label:'Analytics', panel:'analytics'},
+    ];
+    const expertLinks = [
+        {icon:'fa-chart-pie', label:'Dashboard', panel:'dashboard'},
+        {icon:'fa-clock', label:'Availability', panel:'availability'},
+        {icon:'fa-tags', label:'Services & Pricing', panel:'services'},
+        {icon:'fa-calendar', label:'Events', panel:'events'},
+        {icon:'fa-comments', label:'Consultations', panel:'consultations'},
+        {icon:'fa-wallet', label:'Financial', panel:'financial'},
+        {icon:'fa-chart-line', label:'Earnings', panel:'earnings'},
+        {icon:'fa-user-circle', label:'Profile', panel:'profile'},
+    ];
+    const userLinks = [
+        {icon:'fa-chart-pie', label:'Dashboard', panel:'dashboard'},
+        {icon:'fa-school', label:'eSchool Hub', panel:'eschool'},
+        {icon:'fa-calendar', label:'Events', panel:'events'},
+        {icon:'fa-bookmark', label:'My Enrollments', panel:'enrollments'},
+        {icon:'fa-handshake', label:'Request Consultation', panel:'request-consultation'},
+        {icon:'fa-comments', label:'My Consultations', panel:'consultations'},
+        {icon:'fa-headset', label:'Support', panel:'support'},
+        {icon:'fa-user-graduate', label:'Apply as Expert', panel:'apply-expert'},
+    ];
+    const links = role==='admin' ? adminLinks : role==='expert' ? expertLinks : userLinks;
+    return `
+        <aside class="w-64 bg-white border-r shadow-sm flex flex-col">
+            <div class="p-5 border-b text-center">
+                <i class="fas fa-brain text-3xl text-indigo-600"></i>
+                <h2 class="font-bold text-lg mt-1">ExpertPlatform</h2>
+                <span class="text-xs text-gray-500 capitalize">${role} Panel</span>
+            </div>
+            <nav class="flex-1 py-4 overflow-y-auto">
+                ${links.map(l=>`
+                    <div class="sidebar-link ${currentPanel===l.panel?'active':''}" onclick="navigatePanel('${l.panel}')">
+                        <i class="fas ${l.icon}"></i> ${l.label}
+                    </div>
+                `).join('')}
+            </nav>
+            <div class="p-4 border-t">
+                <div class="text-xs text-gray-500"><span class="pulse-dot"></span> Real-time connected</div>
+            </div>
+        </aside>
+    `;
+}
 
-    async function createExpert(fullName, email, specialization) {
-        showLoading(true);
-        try {
-            await apiCall('/api/experts', 'POST', { fullName, email, specialization });
-            showToast(`Expert ${fullName} created`, 'success');
-        } catch (err) { showToast(err.message, 'error'); }
-        showLoading(false);
-    }
+function renderHeader() {
+    const unread = state.notifications.filter(n=>!n.is_read).length;
+    return `
+        <header class="bg-white border-b px-6 py-3 flex justify-between items-center shadow-sm">
+            <div><h1 class="text-xl font-bold capitalize">${currentPanel.replace(/-/g,' ')}</h1></div>
+            <div class="flex items-center gap-4">
+                <div class="relative cursor-pointer" onclick="toggleNotifications()">
+                    <i class="fas fa-bell text-gray-500 text-xl"></i>
+                    ${unread>0?`<span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">${unread}</span>`:''}
+                </div>
+                <div class="flex items-center gap-2 cursor-pointer" onclick="logout()">
+                    <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold">${currentUser.name?.charAt(0)}</div>
+                    <span class="text-sm">${currentUser.name}</span>
+                    <i class="fas fa-sign-out-alt text-gray-400"></i>
+                </div>
+            </div>
+        </header>
+    `;
+}
 
-    async function createTask(title, description, specialization, dueDate) {
-        showLoading(true);
-        try {
-            await apiCall('/api/tasks', 'POST', { title, description, specialization, dueDate });
-            showToast(`Task "${title}" created`, 'success');
-        } catch (err) { showToast(err.message, 'error'); }
-        showLoading(false);
-    }
+function navigatePanel(panel) {
+    currentPanel = panel;
+    const main = $_('#main-content');
+    if(!main) return;
+    const role = currentUser.role;
+    
+    if(role==='admin') renderAdminPanel(panel, main);
+    else if(role==='expert') renderExpertPanel(panel, main);
+    else renderUserPanel(panel, main);
+    
+    // Update active sidebar
+    $$_('.sidebar-link').forEach(l=>l.classList.remove('active'));
+    const activeLink = Array.from($$_('.sidebar-link')).find(l=>l.textContent.toLowerCase().includes(panel.replace(/-/g,' ')));
+    if(activeLink) activeLink.classList.add('active');
+}
 
-    async function updateTaskStatus(taskId, status) {
-        try {
-            await apiCall(`/api/tasks/${taskId}/status`, 'PATCH', { status });
-            showToast(`Status updated to ${status}`, 'success');
-        } catch (err) { showToast(err.message, 'error'); }
+// ==================== ADMIN PANELS ====================
+function renderAdminPanel(panel, container) {
+    switch(panel) {
+        case 'dashboard': renderAdminDashboard(container); break;
+        case 'users': renderUserManagement(container); break;
+        case 'experts': renderExpertManagement(container); break;
+        case 'events': renderEventManagement(container); break;
+        case 'consultations': renderConsultationOversight(container); break;
+        case 'earnings': renderEarningsManagement(container); break;
+        case 'commissions': renderCommissionPanel(container); break;
+        case 'financial': renderFinancialPanel(container); break;
+        case 'claims': renderClaimsPanel(container); break;
+        case 'support': renderSupportPanel(container); break;
+        case 'eschool': renderAdminESchool(container); break;
+        case 'analytics': renderAnalyticsPanel(container); break;
+        default: container.innerHTML = '<p class="text-gray-500 p-10">Panel not found</p>';
     }
+}
 
-    async function deleteTask(taskId) {
-        if (!confirm('Delete this task?')) return;
-        showLoading(true);
-        try {
-            await apiCall(`/api/tasks/${taskId}`, 'DELETE');
-            showToast('Task deleted', 'success');
-        } catch (err) { showToast(err.message, 'error'); }
-        showLoading(false);
+function renderAdminDashboard(container) {
+    const s = state.stats;
+    container.innerHTML = `
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="card p-5"><div class="text-2xl font-bold">${s.total_users||0}</div><div class="text-sm text-gray-500">Total Users</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold">${s.total_experts||0}</div><div class="text-sm text-gray-500">Experts</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold text-indigo-600">$${(s.total_revenue||0).toFixed(0)}</div><div class="text-sm text-gray-500">Revenue</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold text-orange-500">${s.active_claims||0}</div><div class="text-sm text-gray-500">Active Claims</div></div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="card p-5">
+                <h3 class="font-bold mb-3">Quick Actions</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="navigatePanel('users')" class="p-3 bg-blue-50 rounded-xl text-blue-700 hover:bg-blue-100"><i class="fas fa-user-check mr-2"></i>Approve Users</button>
+                    <button onclick="navigatePanel('experts')" class="p-3 bg-green-50 rounded-xl text-green-700 hover:bg-green-100"><i class="fas fa-user-plus mr-2"></i>Create Expert</button>
+                    <button onclick="navigatePanel('events')" class="p-3 bg-purple-50 rounded-xl text-purple-700 hover:bg-purple-100"><i class="fas fa-calendar-plus mr-2"></i>Create Event</button>
+                    <button onclick="navigatePanel('claims')" class="p-3 bg-red-50 rounded-xl text-red-700 hover:bg-red-100"><i class="fas fa-gavel mr-2"></i>Review Claims</button>
+                </div>
+            </div>
+            <div class="card p-5">
+                <h3 class="font-bold mb-3">Recent Notifications</h3>
+                ${state.notifications.slice(0,5).map(n=>`
+                    <div class="p-2 border-b text-sm"><strong>${n.title}</strong><br><span class="text-gray-500">${n.message?.slice(0,60)}</span></div>
+                `).join('')||'<p class="text-gray-400 text-sm">No notifications</p>'}
+            </div>
+        </div>
+    `;
+}
+
+function renderExpertManagement(container) {
+    container.innerHTML = `
+        <div class="flex justify-between mb-4">
+            <h2 class="text-xl font-bold">Expert Management</h2>
+            <button onclick="openCreateExpertModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"><i class="fas fa-plus mr-2"></i>Create Expert</button>
+        </div>
+        <div class="card overflow-hidden">
+            <table class="w-full">
+                <thead class="bg-gray-50"><tr><th class="p-3 text-left">Expert</th><th class="p-3">Skills</th><th class="p-3">Rating</th><th class="p-3">Status</th><th class="p-3">Actions</th></tr></thead>
+                <tbody>
+                    ${state.experts.map(e=>`
+                        <tr class="border-t">
+                            <td class="p-3"><b>${e.name}</b><br><span class="text-xs text-gray-500">${e.email}</span></td>
+                            <td class="p-3">${(e.expertise||[]).slice(0,2).join(', ')}</td>
+                            <td class="p-3">⭐ ${e.average_rating||'N/A'}</td>
+                            <td class="p-3"><span class="status-badge ${e.status==='active'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${e.status}</span></td>
+                            <td class="p-3">
+                                ${e.status==='active'
+                                    ?`<button onclick="suspendExpert('${e.id}')" class="text-orange-500 hover:text-orange-700 mr-2"><i class="fas fa-pause"></i> Suspend</button>
+                                      <button onclick="deleteExpert('${e.id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i> Delete</button>`
+                                    :e.status==='suspended'
+                                    ?`<button onclick="reactivateExpert('${e.id}')" class="text-green-500 hover:text-green-700"><i class="fas fa-check"></i> Reactivate</button>`
+                                    :''}
+                            </td>
+                        </tr>
+                    `).join('')||'<tr><td colspan="5" class="p-6 text-center text-gray-400">No experts found</td></tr>'}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function renderConsultationOversight(container) {
+    container.innerHTML = `
+        <h2 class="text-xl font-bold mb-4">Consultation Oversight</h2>
+        <div class="card overflow-hidden">
+            <table class="w-full">
+                <thead class="bg-gray-50"><tr><th class="p-3">Client</th><th class="p-3">Title</th><th class="p-3">Expert</th><th class="p-3">Status</th><th class="p-3">Payment</th><th class="p-3">Actions</th></tr></thead>
+                <tbody>
+                    ${state.consultations.map(c=>`
+                        <tr class="border-t">
+                            <td class="p-3 text-sm">${c.client_name||'User'}</td>
+                            <td class="p-3">${c.title}</td>
+                            <td class="p-3 text-sm">${c.expert_name||'Unassigned'}</td>
+                            <td class="p-3"><span class="status-badge ${c.status==='in_progress'?'bg-blue-100 text-blue-700':c.status==='closed'?'bg-green-100 text-green-700':'bg-yellow-100 text-yellow-700'}">${c.status}</span></td>
+                            <td class="p-3"><span class="status-badge ${c.payment_status==='paid'?'bg-green-100 text-green-700':'bg-gray-100 text-gray-700'}">${c.payment_status||'pending'}</span></td>
+                            <td class="p-3">
+                                <button onclick="openChat('${c.id}')" class="text-indigo-500 hover:text-indigo-700"><i class="fas fa-eye"></i> View</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function renderFinancialPanel(container) {
+    container.innerHTML = `
+        <h2 class="text-xl font-bold mb-4">Financial Management</h2>
+        <div class="grid md:grid-cols-3 gap-4 mb-6">
+            <div class="card p-5"><div class="text-2xl font-bold text-orange-500">${state.withdrawals.filter(w=>w.status==='pending').length}</div><div class="text-sm">Pending Withdrawals</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold text-green-600">$${state.withdrawals.filter(w=>w.status==='completed').reduce((s,w)=>s+(w.amount||0),0).toFixed(0)}</div><div class="text-sm">Total Paid Out</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold text-red-500">${state.claims.filter(c=>c.status!=='dismissed'&&c.status!=='resolved_client_favor'&&c.status!=='resolved_expert_favor').length}</div><div class="text-sm">Active Claims</div></div>
+        </div>
+        <div class="card overflow-hidden">
+            <h3 class="p-4 font-bold border-b">Withdrawal Requests</h3>
+            <table class="w-full">
+                <thead class="bg-gray-50"><tr><th class="p-3">Expert</th><th class="p-3">Amount</th><th class="p-3">Method</th><th class="p-3">Status</th><th class="p-3">Actions</th></tr></thead>
+                <tbody>
+                    ${state.withdrawals.map(w=>`
+                        <tr class="border-t">
+                            <td class="p-3">${w.expert_name||'Unknown'}</td>
+                            <td class="p-3 font-bold">$${w.amount?.toFixed(2)}</td>
+                            <td class="p-3 text-sm">${w.withdrawal_method}</td>
+                            <td class="p-3"><span class="status-badge ${w.status==='completed'?'bg-green-100 text-green-700':w.status==='approved'?'bg-blue-100 text-blue-700':'bg-yellow-100 text-yellow-700'}">${w.status}</span></td>
+                            <td class="p-3">
+                                ${w.status==='pending'?`<button onclick="approveWithdrawal('${w.id}')" class="text-green-500 mr-2">Approve</button>`:''}
+                                ${w.status==='approved'?`<button onclick="processWithdrawal('${w.id}')" class="text-indigo-500">Process Payment</button>`:''}
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// ==================== EXPERT PANELS ====================
+function renderExpertPanel(panel, container) {
+    switch(panel) {
+        case 'dashboard': renderExpertDashboard(container); break;
+        case 'availability': renderAvailabilityManager(container); break;
+        case 'services': renderServicePricing(container); break;
+        case 'events': renderExpertEvents(container); break;
+        case 'consultations': renderExpertConsultations(container); break;
+        case 'financial': renderExpertFinancial(container); break;
+        case 'earnings': renderExpertEarnings(container); break;
+        case 'profile': renderExpertProfile(container); break;
+        default: container.innerHTML = '<p class="p-10 text-gray-500">Panel not found</p>';
     }
+}
 
-    async function toggleExpertAvailability(userId) {
-        try {
-            await apiCall(`/api/experts/${userId}/toggle`, 'PATCH');
-            showToast('Availability toggled', 'success');
-        } catch (err) { showToast(err.message, 'error'); }
+function renderExpertDashboard(container) {
+    const earnings = state.earnings || {};
+    container.innerHTML = `
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="card p-5"><div class="text-2xl font-bold">${state.consultations.length}</div><div class="text-sm">Active Consultations</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold">${state.events.length}</div><div class="text-sm">Assigned Events</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold text-green-600">$${(earnings.total_earned||0).toFixed(0)}</div><div class="text-sm">Total Earned</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold text-indigo-600">$${(earnings.available_balance||0).toFixed(0)}</div><div class="text-sm">Available</div></div>
+        </div>
+        <div class="card p-5">
+            <h3 class="font-bold mb-3">Recent Consultations</h3>
+            ${state.consultations.slice(0,5).map(c=>`
+                <div class="flex justify-between items-center p-3 border-b">
+                    <div><b>${c.title}</b><br><span class="text-sm text-gray-500">Client: ${c.client_name}</span></div>
+                    <div><span class="status-badge ${c.status==='in_progress'?'bg-blue-100 text-blue-700':'bg-green-100 text-green-700'}">${c.status}</span></div>
+                    <button onclick="openChat('${c.id}')" class="text-indigo-500"><i class="fas fa-comments"></i> Chat</button>
+                </div>
+            `).join('')||'<p class="text-gray-400">No consultations</p>'}
+        </div>
+    `;
+}
+
+function renderAvailabilityManager(container) {
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    container.innerHTML = `
+        <h2 class="text-xl font-bold mb-4">Availability Schedule</h2>
+        <div class="card p-5">
+            <div class="grid gap-3">
+                ${days.map((day,i)=>`
+                    <div class="flex items-center gap-4 p-3 border rounded-lg">
+                        <span class="w-24 font-medium">${day}</span>
+                        <input type="time" class="border rounded px-3 py-2" value="09:00" id="start_${i}">
+                        <span>to</span>
+                        <input type="time" class="border rounded px-3 py-2" value="17:00" id="end_${i}">
+                        <label class="flex items-center gap-2"><input type="checkbox" checked id="avail_${i}"> Available</label>
+                    </div>
+                `).join('')}
+            </div>
+            <button onclick="saveAvailability()" class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Save Schedule</button>
+        </div>
+        <div class="card p-5 mt-4">
+            <h3 class="font-bold mb-3">Request Time Off</h3>
+            <div class="grid grid-cols-3 gap-3">
+                <input type="date" id="timeoff_start" class="border rounded px-3 py-2">
+                <input type="date" id="timeoff_end" class="border rounded px-3 py-2">
+                <input type="text" id="timeoff_reason" placeholder="Reason" class="border rounded px-3 py-2">
+            </div>
+            <button onclick="requestTimeOff()" class="mt-3 bg-orange-500 text-white px-4 py-2 rounded-lg">Request Time Off</button>
+        </div>
+    `;
+}
+
+function renderServicePricing(container) {
+    container.innerHTML = `
+        <div class="flex justify-between mb-4">
+            <h2 class="text-xl font-bold">Services & Pricing</h2>
+            <button onclick="openAddServiceModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg"><i class="fas fa-plus mr-2"></i>Add Service</button>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+            ${(state.services||[]).map(s=>`
+                <div class="card p-5">
+                    <h3 class="font-bold text-lg">${s.service_name}</h3>
+                    <p class="text-sm text-gray-500">${s.service_type} | ${s.duration_minutes}min</p>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="text-2xl font-bold text-indigo-600">$${s.base_price}</span>
+                        <span class="text-sm text-gray-400">Commission: ${s.commission_percentage}%</span>
+                    </div>
+                    <div class="mt-2 text-sm">You earn: <b>$${s.expert_earnings}</b></div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+function renderExpertFinancial(container) {
+    const earnings = state.earnings || {};
+    container.innerHTML = `
+        <h2 class="text-xl font-bold mb-4">Financial Center</h2>
+        <div class="grid md:grid-cols-3 gap-4 mb-6">
+            <div class="card p-5"><div class="text-2xl font-bold">$${(earnings.total_earned||0).toFixed(2)}</div><div class="text-sm">Total Earned</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold text-green-600">$${(earnings.available_balance||0).toFixed(2)}</div><div class="text-sm">Available</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold text-orange-500">$${(earnings.pending_payout||0).toFixed(2)}</div><div class="text-sm">Pending</div></div>
+        </div>
+        <div class="card p-5">
+            <h3 class="font-bold mb-3">Request Withdrawal</h3>
+            <p class="text-sm text-gray-500 mb-3">Withdrawals are processed after a 7-day holding period.</p>
+            <div class="flex gap-3">
+                <input type="number" id="withdrawAmount" placeholder="Amount" class="border rounded px-3 py-2 flex-1" max="${earnings.available_balance||0}">
+                <select id="withdrawMethod" class="border rounded px-3 py-2">
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="mobile_money">Mobile Money</option>
+                    <option value="paypal">PayPal</option>
+                </select>
+                <button onclick="requestWithdrawal()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg">Request</button>
+            </div>
+        </div>
+    `;
+}
+
+// ==================== USER PANELS ====================
+function renderUserPanel(panel, container) {
+    switch(panel) {
+        case 'dashboard': renderUserDashboard(container); break;
+        case 'eschool': renderUserESchool(container); break;
+        case 'events': renderUserEvents(container); break;
+        case 'enrollments': renderUserEnrollments(container); break;
+        case 'request-consultation': renderRequestConsultation(container); break;
+        case 'consultations': renderUserConsultations(container); break;
+        case 'support': renderUserSupport(container); break;
+        case 'apply-expert': renderApplyExpert(container); break;
+        default: container.innerHTML = '<p class="p-10 text-gray-500">Panel not found</p>';
     }
+}
 
-    async function assignTask(taskId, expertId, expertName) {
-        try {
-            await apiCall(`/api/tasks/${taskId}/assign`, 'PATCH', { expertId, expertName });
-            showToast(`Assigned to ${expertName}`, 'success');
-        } catch (err) { showToast(err.message, 'error'); }
+function renderUserDashboard(container) {
+    container.innerHTML = `
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="card p-5"><div class="text-2xl font-bold">${state.enrollments.length}</div><div class="text-sm">Enrollments</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold">${state.consultations.length}</div><div class="text-sm">Consultations</div></div>
+            <div class="card p-5"><div class="text-2xl font-bold">${state.events.filter(e=>e.status==='active').length}</div><div class="text-sm">Available Events</div></div>
+            <div class="card p-5 cursor-pointer hover:bg-indigo-50" onclick="navigatePanel('request-consultation')"><i class="fas fa-plus-circle text-indigo-600 text-2xl"></i><div class="text-sm mt-1">New Consultation</div></div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="card p-5">
+                <h3 class="font-bold mb-3"><i class="fas fa-school mr-2"></i>eSchool Programs</h3>
+                <button onclick="navigatePanel('eschool')" class="w-full bg-indigo-50 text-indigo-700 p-3 rounded-lg hover:bg-indigo-100">Browse Bootcamps & Courses</button>
+            </div>
+            <div class="card p-5">
+                <h3 class="font-bold mb-3">Quick Support</h3>
+                <button onclick="navigatePanel('support')" class="w-full bg-orange-50 text-orange-700 p-3 rounded-lg hover:bg-orange-100">Open Support Ticket</button>
+            </div>
+        </div>
+    `;
+}
+
+function renderRequestConsultation(container) {
+    container.innerHTML = `
+        <h2 class="text-xl font-bold mb-4">Request Consultation</h2>
+        <div class="card p-6 max-w-lg">
+            <div class="space-y-4">
+                <input type="text" id="consultTitle" placeholder="Consultation Title" class="w-full border rounded-lg px-4 py-3">
+                <textarea id="consultDesc" placeholder="Describe what you need help with..." rows="3" class="w-full border rounded-lg px-4 py-3"></textarea>
+                <select id="consultType" class="w-full border rounded-lg px-4 py-3">
+                    <option value="chat">Chat Consultation</option>
+                    <option value="video">Video Call</option>
+                    <option value="call">Phone Call</option>
+                </select>
+                <div class="file-upload-zone" onclick="document.getElementById('consultFiles').click()">
+                    <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                    <p>Upload documents or images (optional)</p>
+                    <input type="file" id="consultFiles" multiple class="hidden" accept="image/*,.pdf,.doc,.docx">
+                </div>
+                <button onclick="submitConsultation()" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700">Submit Request</button>
+            </div>
+        </div>
+    `;
+}
+
+function renderUserESchool(container) {
+    container.innerHTML = `
+        <h2 class="text-xl font-bold mb-4">🎓 eSchool Learning Hub</h2>
+        <div class="flex gap-3 mb-6 flex-wrap">
+            <button class="px-4 py-2 rounded-full bg-indigo-600 text-white" onclick="filterESchool('all')">All</button>
+            <button class="px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300" onclick="filterESchool('bootcamp')">🔥 Bootcamps</button>
+            <button class="px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300" onclick="filterESchool('course')">📚 Courses</button>
+            <button class="px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300" onclick="filterESchool('tuition')">👨‍🏫 Tuition</button>
+            <button class="px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300" onclick="filterESchool('exam')">📝 Exam Prep</button>
+            <button class="px-4 py-2 rounded-full bg-gray-200 hover:bg-gray-300" onclick="filterESchool('career')">💼 Career Guidance</button>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4" id="eschool-programs">
+            <div class="card p-5"><h3 class="font-bold">Web Dev Bootcamp</h3><p class="text-sm text-gray-500">Full-time | 12 weeks</p><div class="flex justify-between items-center mt-3"><span class="text-xl font-bold">$999</span><button class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm">Enroll</button></div></div>
+            <div class="card p-5"><h3 class="font-bold">Python Short Course</h3><p class="text-sm text-gray-500">Beginner | 20 hours</p><div class="flex justify-between items-center mt-3"><span class="text-xl font-bold">$199</span><button class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm">Enroll</button></div></div>
+            <div class="card p-5"><h3 class="font-bold">KCSE Math Prep</h3><p class="text-sm text-gray-500">Senior Secondary | 2024</p><div class="flex justify-between items-center mt-3"><span class="text-xl font-bold">$49</span><button class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm">Enroll</button></div></div>
+        </div>
+    `;
+}
+
+// ==================== CHAT SYSTEM ====================
+async function openChat(consultationId) {
+    activeChat = consultationId;
+    try {
+        const data = await api(`/consultations/${consultationId}/messages`);
+        state.messages = data.messages || [];
+        if(socket) socket.emit('join_consultation', consultationId);
+        
+        const modalContent = `
+            <div class="flex flex-col h-[500px]">
+                <div class="flex-1 overflow-y-auto p-3 space-y-2" id="chatMessages">
+                    ${state.messages.map(m=>`
+                        <div class="chat-bubble ${m.sender_id===currentUser.id?'sent':'received'}">
+                            <div class="text-xs opacity-75 mb-1">${m.sender_name}</div>
+                            ${m.message}
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="flex gap-3 p-3 border-t">
+                    <input type="text" id="chatInput" placeholder="Type your message..." class="flex-1 border rounded-lg px-4 py-2" onkeypress="if(event.key==='Enter')sendChatMessage()">
+                    <button onclick="sendChatMessage()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        `;
+        showModal('Consultation Chat', modalContent, null);
+    } catch(e) { toast('Failed to load chat', 'error'); }
+}
+
+async function sendChatMessage() {
+    const input = $_('#chatInput');
+    if(!input || !input.value.trim() || !activeChat) return;
+    const message = input.value.trim();
+    input.value = '';
+    try {
+        await api(`/consultations/${activeChat}/messages`, 'POST', { message });
+    } catch(e) { toast('Failed to send', 'error'); }
+}
+
+function renderChatMessages() {
+    const container = $_('#chatMessages');
+    if(!container) return;
+    container.innerHTML = state.messages.map(m=>`
+        <div class="chat-bubble ${m.sender_id===currentUser.id?'sent':'received'}">
+            <div class="text-xs opacity-75 mb-1">${m.sender_name}</div>
+            ${m.message}
+        </div>
+    `).join('');
+    container.scrollTop = container.scrollHeight;
+}
+
+// ==================== ACTION FUNCTIONS ====================
+async function suspendExpert(id) {
+    const reason = prompt('Reason for suspension:');
+    if(!reason) return;
+    try { await api(`/admin/experts/${id}/suspend`, 'POST', {suspension_type:'temporary', reason, duration_days:7}); toast('Expert suspended'); await loadAllData(); renderApp(); }
+    catch(e) { toast(e.message, 'error'); }
+}
+async function deleteExpert(id) {
+    if(!confirm('Delete this expert?')) return;
+    try { await api(`/admin/experts/${id}`, 'DELETE', {reason:'Admin removal'}); toast('Expert deleted'); await loadAllData(); renderApp(); }
+    catch(e) { toast(e.message, 'error'); }
+}
+async function reactivateExpert(id) {
+    try { await api(`/admin/experts/${id}/reactivate`, 'POST', {reason:'Admin reactivation'}); toast('Expert reactivated'); await loadAllData(); renderApp(); }
+    catch(e) { toast(e.message, 'error'); }
+}
+async function approveWithdrawal(id) {
+    try { await api(`/admin/withdrawals/${id}/approve`, 'PUT'); toast('Withdrawal approved'); await loadAllData(); renderApp(); }
+    catch(e) { toast(e.message, 'error'); }
+}
+async function processWithdrawal(id) {
+    const ref = prompt('Transaction reference:');
+    if(!ref) return;
+    try { await api(`/admin/withdrawals/${id}/process`, 'PUT', {transaction_reference:ref}); toast('Payment processed'); await loadAllData(); renderApp(); }
+    catch(e) { toast(e.message, 'error'); }
+}
+async function requestWithdrawal() {
+    const amount = $_('#withdrawAmount')?.value;
+    const method = $_('#withdrawMethod')?.value;
+    if(!amount || amount<=0) { toast('Enter valid amount', 'error'); return; }
+    try { await api('/financial/expert/withdrawals', 'POST', {amount:parseFloat(amount), withdrawal_method:method, account_details:{}}); toast('Withdrawal requested'); await loadAllData(); renderApp(); }
+    catch(e) { toast(e.message, 'error'); }
+}
+async function submitConsultation() {
+    const title = $_('#consultTitle')?.value;
+    const desc = $_('#consultDesc')?.value;
+    const type = $_('#consultType')?.value;
+    if(!title||!desc) { toast('Fill all fields', 'error'); return; }
+    try { await api('/user/consultations', 'POST', {title, description:desc, consultation_type:type}); toast('Consultation submitted!'); navigatePanel('consultations'); }
+    catch(e) { toast(e.message, 'error'); }
+}
+async function saveAvailability() {
+    const schedule = [];
+    for(let i=0;i<7;i++) {
+        const start = $_(`#start_${i}`)?.value;
+        const end = $_(`#end_${i}`)?.value;
+        const avail = $_(`#avail_${i}`)?.checked;
+        if(avail && start && end) schedule.push({day:i, start, end, recurrence:'weekly'});
     }
+    try { await api('/expert/availability', 'PUT', {schedule}); toast('Availability saved'); }
+    catch(e) { toast(e.message, 'error'); }
+}
+function openCreateExpertModal() {
+    const content = `
+        <div class="space-y-3">
+            <input id="newExpertName" placeholder="Full Name" class="w-full border rounded-lg px-4 py-3">
+            <input id="newExpertEmail" type="email" placeholder="Email" class="w-full border rounded-lg px-4 py-3">
+            <input id="newExpertPhone" placeholder="Phone" class="w-full border rounded-lg px-4 py-3">
+            <input id="newExpertRate" type="number" placeholder="Hourly Rate ($)" class="w-full border rounded-lg px-4 py-3">
+            <textarea id="newExpertBio" placeholder="Bio" rows="2" class="w-full border rounded-lg px-4 py-3"></textarea>
+        </div>
+    `;
+    showModal('Create Expert', content, async () => {
+        const name=$_('#newExpertName').value, email=$_('#newExpertEmail').value, phone=$_('#newExpertPhone').value;
+        const rate=$_('#newExpertRate').value, bio=$_('#newExpertBio').value;
+        if(!name||!email) { toast('Name and email required', 'error'); return; }
+        try { await api('/admin/experts/create', 'POST', {name,email,phone,expertise:[],bio,hourly_rate:parseFloat(rate)||0}); toast('Expert created!'); await loadAllData(); renderApp(); }
+        catch(e) { toast(e.message, 'error'); }
+    }, 'Create Expert');
+}
+function openAddServiceModal() {
+    const content = `
+        <div class="space-y-3">
+            <input id="svcName" placeholder="Service Name" class="w-full border rounded-lg px-4 py-3">
+            <select id="svcType" class="w-full border rounded-lg px-4 py-3">
+                <option value="consultation">Consultation</option><option value="mentoring">Mentoring</option><option value="coaching">Coaching</option>
+            </select>
+            <input id="svcPrice" type="number" placeholder="Price ($)" class="w-full border rounded-lg px-4 py-3">
+            <input id="svcDuration" type="number" placeholder="Duration (minutes)" class="w-full border rounded-lg px-4 py-3" value="60">
+            <textarea id="svcDesc" placeholder="Description" rows="2" class="w-full border rounded-lg px-4 py-3"></textarea>
+        </div>
+    `;
+    showModal('Add Service', content, async () => {
+        const name=$_('#svcName').value, type=$_('#svcType').value, price=$_('#svcPrice').value;
+        const duration=$_('#svcDuration').value, desc=$_('#svcDesc').value;
+        if(!name||!price) { toast('Name and price required', 'error'); return; }
+        try { await api('/expert/services', 'POST', {service_name:name,service_type:type,base_price:parseFloat(price),duration_minutes:parseInt(duration),description:desc}); toast('Service added!'); await loadAllData(); renderApp(); }
+        catch(e) { toast(e.message, 'error'); }
+    }, 'Add Service');
+}
+function toggleNotifications() {
+    const panel = state.notifications.slice(0,10).map(n=>`
+        <div class="p-3 border-b text-sm ${n.is_read?'':'bg-blue-50'}">
+            <strong>${n.title}</strong><br>${n.message?.slice(0,80)}
+        </div>
+    `).join('');
+    showModal('Notifications', panel||'<p class="text-gray-400 p-4">No notifications</p>');
+}
 
-    async function claimTask(taskId) {
-        try {
-            await apiCall(`/api/tasks/${taskId}/claim`, 'PATCH');
-            showToast('Task claimed!', 'success');
-        } catch (err) { showToast(err.message, 'error'); }
-    }
+// ==================== INITIALIZATION ====================
+function renderLogin() {
+    $_('#app-root').innerHTML = `
+        <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-900 to-blue-900">
+            <div class="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl w-full max-w-md p-8 mx-4">
+                <div class="text-center mb-8">
+                    <div class="inline-block p-4 bg-indigo-100 rounded-full mb-4"><i class="fas fa-brain text-4xl text-indigo-600"></i></div>
+                    <h1 class="text-3xl font-bold">Expert<span class="text-indigo-600">Platform</span></h1>
+                    <p class="text-gray-500 mt-2">Consultations • Training • eSchool</p>
+                    <div class="mt-3"><span class="pulse-dot"></span>Secure Connection</div>
+                </div>
+                <div id="loginError" class="bg-red-50 text-red-700 p-3 rounded-xl text-sm mb-4 hidden"></div>
+                <div class="space-y-4">
+                    <div class="relative"><i class="fas fa-envelope absolute left-3 top-3.5 text-gray-400"></i><input type="email" id="loginEmail" placeholder="Email" class="w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500"></div>
+                    <div class="relative"><i class="fas fa-lock absolute left-3 top-3.5 text-gray-400"></i><input type="password" id="loginPassword" placeholder="Password" class="w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500"></div>
+                    <button id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md">Sign In</button>
+                </div>
+                <p class="text-center text-sm text-gray-500 mt-6">Demo: admin@platform.com / admin123</p>
+            </div>
+        </div>
+    `;
+    $_('#loginBtn').onclick = async () => {
+        const email = $_('#loginEmail').value, pwd = $_('#loginPassword').value;
+        try { await login(email, pwd); }
+        catch(err) {
+            const errDiv = $_('#loginError');
+            errDiv.innerText = err.message; errDiv.classList.remove('hidden');
+            setTimeout(()=>errDiv.classList.add('hidden'), 4000);
+        }
+    };
+    $_('#loginPassword').onkeypress = (e) => { if(e.key==='Enter') $_('#loginBtn').click(); };
+}
 
-    async function logout() {
-        if (socket) socket.disconnect();
-        authToken = null;
-        currentUser = null;
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        appPhase = 'login';
+// Bootstrap
+(function init() {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    if(token && user) {
+        authToken = token; currentUser = JSON.parse(user);
+        initSocket();
+        loadAllData().then(()=>renderApp()).catch(()=>renderLogin());
+    } else {
         renderLogin();
     }
+})();
 
-    // ======================== FRONTEND RENDERERS ========================
-    function renderLogin() {
-        document.getElementById('app-root').innerHTML = `
-            <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-800">
-                <div class="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl w-full max-w-md p-8 mx-4">
-                    <div class="text-center mb-8">
-                        <div class="inline-block p-3 bg-blue-100 rounded-full mb-4"><i class="fas fa-headset text-4xl text-blue-700"></i></div>
-                        <h1 class="text-3xl font-bold text-gray-800">TIMS <span class="text-blue-700">Support</span></h1>
-                        <p class="text-gray-500">Real‑Time Operations Portal</p>
-                        <div class="mt-3"><span class="real-time-indicator"></span><span class="text-xs text-green-700">Secure Connection</span></div>
-                    </div>
-                    <div id="loginError" class="bg-red-50 text-red-700 p-3 rounded-xl text-sm mb-4 hidden"></div>
-                    <div class="space-y-4">
-                        <input type="email" id="loginEmail" placeholder="Email" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
-                        <input type="password" id="loginPassword" placeholder="Password" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500">
-                        <button id="loginBtn" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-3 rounded-xl transition shadow-md">Sign In</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        document.getElementById('loginBtn').onclick = async () => {
-            const email = document.getElementById('loginEmail').value;
-            const pwd = document.getElementById('loginPassword').value;
-            try {
-                showLoading(true);
-                await login(email, pwd);
-                showLoading(false);
-            } catch (err) {
-                showLoading(false);
-                const errDiv = document.getElementById('loginError');
-                errDiv.innerText = err.message;
-                errDiv.classList.remove('hidden');
-                setTimeout(() => errDiv.classList.add('hidden'), 3000);
-            }
-        };
-    }
-
-    function renderDashboard() {
-        const root = document.getElementById('app-root');
-        if (currentUserRole === 'admin') {
-            root.innerHTML = renderAdminDashboard();
-            attachAdminEvents();
-        } else {
-            root.innerHTML = renderExpertDashboard();
-            attachExpertEvents();
-        }
-    }
-
-    function renderAdminDashboard() {
-        const experts = expertsData;
-        const pending = tasksData.filter(t => t.status === 'pending').length;
-        const inProgress = tasksData.filter(t => t.status === 'in-progress').length;
-        const completed = tasksData.filter(t => t.status === 'completed').length;
-        const availableExperts = experts.filter(e => e.isAvailable).length;
-        return `
-            <div class="min-h-screen bg-gray-100">
-                <div class="bg-white shadow-md sticky top-0 z-10 p-4 flex justify-between items-center border-b">
-                    <div><i class="fas fa-headset text-blue-600 text-2xl mr-2"></i><span class="font-bold text-gray-800">TIMS Support Admin</span><span class="real-time-indicator ml-3"></span></div>
-                    <button id="logoutBtn" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg transition">Logout</button>
-                </div>
-                <div class="max-w-7xl mx-auto px-4 py-8">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                        <div class="bg-white rounded-xl p-6 shadow">🧠 Support Agents: ${experts.length}</div>
-                        <div class="bg-white rounded-xl p-6 shadow">🟢 Available: ${availableExperts}</div>
-                        <div class="bg-white rounded-xl p-6 shadow">⏳ Open Tickets: ${pending}</div>
-                        <div class="bg-white rounded-xl p-6 shadow">✅ Resolved: ${completed}</div>
-                    </div>
-                    <div class="grid lg:grid-cols-2 gap-6 mb-8">
-                        <div class="bg-white rounded-xl p-6"><h2 class="font-bold mb-3">➕ Add Support Agent</h2><input id="expertName" placeholder="Full Name" class="w-full border p-2 rounded mb-2"><input id="expertEmail" placeholder="Email" class="w-full border p-2 rounded mb-2"><input id="expertSpecialization" placeholder="Specialization / Skill" class="w-full border p-2 rounded mb-2"><button id="createExpertBtn" class="bg-indigo-600 text-white w-full py-2 rounded hover:bg-indigo-700">Create Agent</button></div>
-                        <div class="bg-white rounded-xl p-6"><h2 class="font-bold mb-3">📌 Create Support Ticket</h2><input id="taskTitle" placeholder="Ticket Title" class="w-full border p-2 rounded mb-2"><textarea id="taskDescription" placeholder="Issue Description" class="w-full border p-2 rounded mb-2"></textarea><select id="taskSpecialization" class="w-full border p-2 rounded mb-2"><option value="">Skill Required</option>${[...new Set(experts.map(e => e.specialization))].map(s => `<option value="${s}">${s}</option>`).join('')}</select><input id="taskDueDate" type="date" class="w-full border p-2 rounded mb-2"><button id="createTaskBtn" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Create Ticket</button></div>
-                    </div>
-                    <div class="bg-white rounded-xl shadow overflow-hidden mb-8"><div class="p-4 border-b font-bold">👥 Support Agents</div><table class="w-full"><thead class="bg-gray-50"><tr><th class="p-3 text-left">Agent</th><th>Skill</th><th>Status</th><th>Tickets Closed</th><th>Rating</th><th></th></tr></thead><tbody>${experts.map(exp => `<tr><td class="p-3">${exp.fullName}<br><span class="text-xs">${exp.email}</span></td><td>${exp.specialization}</td><td><button class="toggleAvailBtn px-3 py-1 rounded-full text-sm ${exp.isAvailable ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}" data-id="${exp.id}">${exp.isAvailable ? 'Available' : 'Busy'}</button></td><td>${exp.tasksCompleted}</td><td>${exp.rating}⭐</td><td><i class="fas fa-user-cog text-gray-400"></i></td></tr>`).join('')}</tbody>}</table></div>
-                    <div class="bg-white rounded-xl shadow overflow-hidden"><div class="p-4 border-b font-bold">🎫 All Support Tickets</div><table class="w-full"><thead class="bg-gray-50"><tr><th class="p-3">Ticket</th><th>Skill Required</th><th>Status</th><th>Due</th><th>Assign To</th><th>Actions</th></tr></thead><tbody>${tasksData.map(task => {
-                        const matchExperts = experts.filter(e => e.specialization === task.specialization && e.isAvailable);
-                        return `<tr><td class="p-3">${task.title}<br><span class="text-xs">${task.description?.slice(0,50)}</span></td><td>${task.specialization}</td><td><span class="status-badge px-2 py-1 rounded ${task.status === 'completed' ? 'bg-green-100' : task.status === 'in-progress' ? 'bg-blue-100' : 'bg-yellow-100'}">${task.status}</span></td><td>${task.dueDate || '—'}</td><td><select class="assignSelect" data-task-id="${task.id}"><option value="">Select agent</option>${matchExperts.map(e => `<option value="${e.id}">${e.fullName}</option>`).join('')}</select></td><td><button class="assignBtn bg-indigo-100 px-3 py-1 rounded text-xs" data-task-id="${task.id}">Assign</button> <button class="deleteTaskBtn text-red-500" data-task-id="${task.id}"><i class="fas fa-trash"></i></button></td></tr>`;
-                    }).join('')}</tbody>}</table></div>
-                </div>
-            </div>
-        `;
-    }
-
-    function renderExpertDashboard() {
-        const myTasks = tasksData.filter(t => t.assignedTo === currentUser.id);
-        const availableTasks = tasksData.filter(t => !t.assignedTo && t.status !== 'completed');
-        const completedCount = myTasks.filter(t => t.status === 'completed').length;
-        return `
-            <div class="min-h-screen bg-gray-100">
-                <div class="bg-white shadow-md p-4 flex justify-between items-center border-b"><div><i class="fas fa-headset text-blue-600 text-xl mr-2"></i><span class="font-bold">TIMS Support Agent</span><span class="real-time-indicator ml-3"></span></div><button id="logoutBtn" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded transition">Logout</button></div>
-                <div class="max-w-7xl mx-auto px-4 py-8">
-                    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-6 rounded-2xl mb-8"><h2 class="text-2xl">Welcome, ${currentUser.fullName}</h2><p>Skill: ${currentUser.specialization}</p><div class="text-right text-3xl font-bold">${completedCount} tickets resolved</div></div>
-                    <div class="grid grid-cols-3 gap-5 mb-8"><div class="bg-white p-5 rounded-xl shadow">Assigned: ${myTasks.length}</div><div class="bg-white p-5 rounded-xl shadow">In Progress: ${myTasks.filter(t => t.status === 'in-progress').length}</div><div class="bg-white p-5 rounded-xl shadow">Resolved: ${completedCount}</div></div>
-                    <div class="bg-white rounded-xl shadow mb-8"><div class="p-4 border-b font-bold">📋 My Active Tickets</div>${myTasks.length === 0 ? '<div class="p-6 text-gray-400">No tickets assigned.</div>' : myTasks.map(task => `<div class="p-4 border-b flex justify-between items-center"><div><b>${task.title}</b><p class="text-sm text-gray-600">${task.description}</p><span class="text-xs text-gray-400">Due: ${task.dueDate || 'flexible'}</span></div><div><select class="statusSelect border rounded px-2 py-1 text-sm" data-task-id="${task.id}"><option ${task.status === 'pending' ? 'selected' : ''}>pending</option><option ${task.status === 'in-progress' ? 'selected' : ''}>in-progress</option><option ${task.status === 'completed' ? 'selected' : ''}>completed</option></select><button class="updateStatusBtn bg-blue-600 text-white px-3 py-1 rounded ml-2 text-sm" data-task-id="${task.id}">Update</button></div></div>`).join('')}</div>
-                    <div class="bg-white rounded-xl shadow"><div class="p-4 border-b font-bold">🆓 Unassigned Tickets (Claim to help)</div>${availableTasks.length === 0 ? '<div class="p-6 text-gray-400">No open tickets at the moment.</div>' : availableTasks.map(task => `<div class="p-4 border-b flex justify-between items-center"><div><b>${task.title}</b><p class="text-sm text-gray-600">${task.specialization}</p></div><button class="claimBtn bg-emerald-600 text-white px-4 py-2 rounded text-sm hover:bg-emerald-700" data-task-id="${task.id}">Claim Ticket</button></div>`).join('')}</div>
-                </div>
-            </div>
-        `;
-    }
-
-    function attachAdminEvents() {
-        document.getElementById('logoutBtn').onclick = logout;
-        document.getElementById('createExpertBtn').onclick = async () => {
-            const name = document.getElementById('expertName').value;
-            const email = document.getElementById('expertEmail').value;
-            const spec = document.getElementById('expertSpecialization').value;
-            if (name && email && spec) await createExpert(name, email, spec);
-            else showToast('Please fill all fields', 'error');
-        };
-        document.getElementById('createTaskBtn').onclick = async () => {
-            const title = document.getElementById('taskTitle').value;
-            const desc = document.getElementById('taskDescription').value;
-            const spec = document.getElementById('taskSpecialization').value;
-            const due = document.getElementById('taskDueDate').value;
-            if (title && desc && spec) await createTask(title, desc, spec, due);
-            else showToast('Please fill all fields', 'error');
-        };
-        document.querySelectorAll('.toggleAvailBtn').forEach(btn => {
-            btn.onclick = () => toggleExpertAvailability(btn.dataset.id);
-        });
-        document.querySelectorAll('.assignBtn').forEach(btn => {
-            btn.onclick = () => {
-                const taskId = btn.dataset.taskId;
-                const select = document.querySelector(`.assignSelect[data-task-id="${taskId}"]`);
-                const expertId = select.value;
-                if (expertId) {
-                    const expert = expertsData.find(e => e.id === expertId);
-                    assignTask(taskId, expertId, expert.fullName);
-                } else showToast('Select an agent', 'error');
-            };
-        });
-        document.querySelectorAll('.deleteTaskBtn').forEach(btn => {
-            btn.onclick = () => deleteTask(btn.dataset.taskId);
-        });
-    }
-
-    function attachExpertEvents() {
-        document.getElementById('logoutBtn').onclick = logout;
-        document.querySelectorAll('.updateStatusBtn').forEach(btn => {
-            btn.onclick = () => {
-                const taskId = btn.dataset.taskId;
-                const select = document.querySelector(`.statusSelect[data-task-id="${taskId}"]`);
-                updateTaskStatus(taskId, select.value);
-            };
-        });
-        document.querySelectorAll('.claimBtn').forEach(btn => {
-            btn.onclick = () => claimTask(btn.dataset.taskId);
-        });
-    }
-
-    // ======================== BOOTSTRAP ========================
-    (function init() {
-        const savedToken = localStorage.getItem('token');
-        const savedUser = localStorage.getItem('user');
-        if (savedToken && savedUser) {
-            authToken = savedToken;
-            currentUser = JSON.parse(savedUser);
-            currentUserRole = currentUser.role;
-            socket = io(BACKEND_URL, { auth: { token: authToken } });
-            socket.on('data-update', (data) => {
-                expertsData = data.experts;
-                tasksData = data.tasks;
-                if (appPhase === 'dashboard') renderDashboard();
-            });
-            fetchInitialData().then(() => {
-                appPhase = 'dashboard';
-                renderDashboard();
-            }).catch(() => { renderLogin(); });
-        } else {
-            renderLogin();
-        }
-    })();
+// Make functions globally accessible
+window.navigatePanel = navigatePanel;
+window.openChat = openChat;
+window.sendChatMessage = sendChatMessage;
+window.closeModal = closeModal;
+window.suspendExpert = suspendExpert;
+window.deleteExpert = deleteExpert;
+window.reactivateExpert = reactivateExpert;
+window.approveWithdrawal = approveWithdrawal;
+window.processWithdrawal = processWithdrawal;
+window.requestWithdrawal = requestWithdrawal;
+window.submitConsultation = submitConsultation;
+window.saveAvailability = saveAvailability;
+window.openCreateExpertModal = openCreateExpertModal;
+window.openAddServiceModal = openAddServiceModal;
+window.toggleNotifications = toggleNotifications;
+window.logout = logout;
 </script>
 </body>
-</html>
+    </html>
