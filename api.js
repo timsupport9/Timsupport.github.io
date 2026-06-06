@@ -1,5 +1,5 @@
 // api.js
-const API_BASE = 'https://management-dashboard-wj89.onrender.com';
+const API_BASE = 'https://management-dashboard-wj89.onrender.com/api';
 
 // Helper to include auth token
 function getHeaders() {
