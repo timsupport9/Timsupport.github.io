@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Public Events | TIM Support</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui; background: #f5f7fb; color: #1e293b; padding: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { color: #1e3a8a; margin-bottom: 0.5rem; }
+    .event-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 1.5rem; margin: 2rem 0; }
+    .event-card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s; }
+    .event-card:hover { transform: translateY(-4px); }
+    .event-header { background: #1e3a8a; color: white; padding: 1rem; }
+    .event-body { padding: 1rem; }
+    .event-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; background: #10b981; color: white; margin-bottom: 0.5rem; }
+    .register-btn { background: #2563eb; border: none; color: white; padding: 8px 16px; border-radius: 2rem; cursor: pointer; margin-top: 1rem; }
+    .form-panel { background: white; border-radius: 1rem; padding: 1.5rem; margin-top: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 0.5rem; }
+    button { background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 2rem; cursor: pointer; }
+    .loading { text-align: center; padding: 2rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>📅 Upcoming Events</h1>
+  <p>Join our trainings, workshops, and conferences. Register below.</p>
+  <div id="eventsList" class="event-grid">Loading events...</div>
+
+  <div class="form-panel" id="registrationForm" style="display:none;">
+    <h3>📝 Register for Event</h3>
+    <input type="hidden" id="regEventId">
+    <p><strong id="regEventName"></strong></p>
+    <input type="text" id="regName" placeholder="Full Name" required>
+    <input type="email" id="regEmail" placeholder="Email Address" required>
+    <input type="tel" id="regPhone" placeholder="Phone Number">
+    <button onclick="submitRegistration()">Submit Registration</button>
+    <div id="regMessage"></div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'http://localhost:5000/api'; // Change to your live backend URL
+
+  async function loadEvents() {
+    const res = await fetch(`${API_BASE}/events`);
+    const events = await res.json();
+    const upcoming = events.filter(e => e.status === 'Upcoming' || e.status === 'Ongoing');
+    const container = document.getElementById('eventsList');
+    if (upcoming.length === 0) {
+      container.innerHTML = '<p>No upcoming events at this time.</p>';
+      return;
+    }
+    container.innerHTML = upcoming.map(e => `
+      <div class="event-card">
+        <div class="event-header">
+          <h3>${escapeHtml(e.name)}</h3>
+        </div>
+        <div class="event-body">
+          <div class="event-status">${e.status}</div>
+          <p>📅 ${e.date || 'TBA'}</p>
+          <p>📍 ${e.location || 'Venue TBD'}</p>
+          <p>${e.desc || ''}</p>
+          <button class="register-btn" onclick="showRegistrationForm(${e.id}, '${escapeHtml(e.name)}')">Register</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function showRegistrationForm(eventId, eventName) {
+    document.getElementById('regEventId').value = eventId;
+    document.getElementById('regEventName').innerText = eventName;
+    document.getElementById('registrationForm').style.display = 'block';
+    window.scrollTo({ top: document.getElementById('registrationForm').offsetTop, behavior: 'smooth' });
+  }
+
+  async function submitRegistration() {
+    const eventId = parseInt(document.getElementById('regEventId').value);
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const phone = document.getElementById('regPhone').value;
+    if (!name || !email) {
+      alert('Name and email are required');
+      return;
+    }
+    const payload = { eventId, participantName: name, email, phone, attendance: 'Pending' };
+    const res = await fetch(`${API_BASE}/eventRegistrations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      document.getElementById('regMessage').innerHTML = '<p style="color:green;">✅ Registration successful! We will contact you.</p>';
+      document.getElementById('regName').value = '';
+      document.getElementById('regEmail').value = '';
+      document.getElementById('regPhone').value = '';
+    } else {
+      document.getElementById('regMessage').innerHTML = '<p style="color:red;">❌ Registration failed. Please try again.</p>';
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
+  }
+
+  loadEvents();
+</script>
+</body>
+</html>

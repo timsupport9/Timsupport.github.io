@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply | TIM Support</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui; background: #f5f7fb; color: #1e293b; padding: 20px; }
+    .container { max-width: 700px; margin: 0 auto; }
+    h1 { color: #1e3a8a; margin-bottom: 1rem; }
+    .form-panel { background: white; border-radius: 1rem; padding: 2rem; margin: 2rem 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    select, input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 0.5rem; }
+    button { background: #2563eb; color: white; border: none; padding: 12px; border-radius: 2rem; cursor: pointer; width: 100%; font-size: 1rem; }
+    .message { margin-top: 1rem; text-align: center; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>📋 Apply to Join Us</h1>
+  <p>Choose your application type and fill out the form below.</p>
+  <div class="form-panel">
+    <select id="appType" onchange="toggleFormFields()">
+      <option value="expert">Expert / Consultant</option>
+      <option value="corporate">Corporate / Organization</option>
+      <option value="membership">Individual Membership</option>
+    </select>
+
+    <div id="expertFields">
+      <input type="text" id="expertName" placeholder="Full Name">
+      <input type="email" id="expertEmail" placeholder="Email Address">
+      <input type="tel" id="expertPhone" placeholder="Phone">
+      <textarea id="expertDetails" rows="4" placeholder="Your expertise, qualifications, and why you want to join"></textarea>
+    </div>
+
+    <div id="corporateFields" style="display:none;">
+      <input type="text" id="corpName" placeholder="Organization Name">
+      <input type="text" id="corpContactPerson" placeholder="Contact Person">
+      <input type="email" id="corpEmail" placeholder="Email Address">
+      <input type="tel" id="corpPhone" placeholder="Phone">
+      <textarea id="corpDetails" rows="4" placeholder="Partnership scope, areas of collaboration"></textarea>
+    </div>
+
+    <div id="membershipFields" style="display:none;">
+      <input type="text" id="memName" placeholder="Full Name">
+      <input type="email" id="memEmail" placeholder="Email Address">
+      <input type="tel" id="memPhone" placeholder="Phone">
+      <textarea id="memDetails" rows="4" placeholder="Why do you want to become a member?"></textarea>
+    </div>
+
+    <button onclick="submitApplication()">Submit Application</button>
+    <div id="appMessage" class="message"></div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'http://localhost:5000/api';
+
+  function toggleFormFields() {
+    const type = document.getElementById('appType').value;
+    document.getElementById('expertFields').style.display = type === 'expert' ? 'block' : 'none';
+    document.getElementById('corporateFields').style.display = type === 'corporate' ? 'block' : 'none';
+    document.getElementById('membershipFields').style.display = type === 'membership' ? 'block' : 'none';
+  }
+
+  async function submitApplication() {
+    const type = document.getElementById('appType').value;
+    let payload = { status: 'Pending', date: new Date().toISOString() };
+    let endpoint = '';
+
+    if (type === 'expert') {
+      const name = document.getElementById('expertName').value.trim();
+      const email = document.getElementById('expertEmail').value.trim();
+      if (!name || !email) { alert('Name and email required'); return; }
+      payload.name = name;
+      payload.email = email;
+      payload.phone = document.getElementById('expertPhone').value;
+      payload.details = document.getElementById('expertDetails').value;
+      endpoint = 'applications/expert';
+    } 
+    else if (type === 'corporate') {
+      const org = document.getElementById('corpName').value.trim();
+      const email = document.getElementById('corpEmail').value.trim();
+      if (!org || !email) { alert('Organization name and email required'); return; }
+      payload.organization = org;
+      payload.contactPerson = document.getElementById('corpContactPerson').value;
+      payload.email = email;
+      payload.phone = document.getElementById('corpPhone').value;
+      payload.details = document.getElementById('corpDetails').value;
+      endpoint = 'applications/corporate';
+    }
+    else {
+      const name = document.getElementById('memName').value.trim();
+      const email = document.getElementById('memEmail').value.trim();
+      if (!name || !email) { alert('Name and email required'); return; }
+      payload.name = name;
+      payload.email = email;
+      payload.phone = document.getElementById('memPhone').value;
+      payload.details = document.getElementById('memDetails').value;
+      endpoint = 'applications/membership';
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        document.getElementById('appMessage').innerHTML = '<p style="color:green;">✅ Application submitted successfully! We will review and get back to you.</p>';
+        // Clear fields
+        document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+      } else {
+        document.getElementById('appMessage').innerHTML = '<p style="color:red;">❌ Submission failed. Please try again later.</p>';
+      }
+    } catch(err) {
+      document.getElementById('appMessage').innerHTML = '<p style="color:red;">Network error. Check your connection.</p>';
+    }
+  }
+
+  // initial call
+  toggleFormFields();
+</script>
+</body>
+</html>

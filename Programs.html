@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Programs | TIM Support</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui; background: #f5f7fb; color: #1e293b; padding: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 { color: #1e3a8a; }
+    .program-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 1.5rem; margin: 2rem 0; }
+    .program-card { background: white; border-radius: 1rem; padding: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .enroll-btn { background: #2563eb; color: white; border: none; padding: 6px 12px; border-radius: 2rem; cursor: pointer; margin-top: 1rem; }
+    .form-panel { background: white; border-radius: 1rem; padding: 1.5rem; margin-top: 2rem; }
+    input, select { width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 0.5rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>📚 Our Training Programs</h1>
+  <p>Enroll in our active programs to build your skills.</p>
+  <div id="programsList" class="program-grid">Loading programs...</div>
+
+  <div class="form-panel" id="enrollForm" style="display:none;">
+    <h3>✍️ Enroll in Program</h3>
+    <input type="hidden" id="enrollProgramId">
+    <p><strong id="enrollProgramName"></strong></p>
+    <input type="text" id="enrollName" placeholder="Full Name" required>
+    <input type="email" id="enrollEmail" placeholder="Email Address" required>
+    <input type="tel" id="enrollPhone" placeholder="Phone Number">
+    <button onclick="submitEnrollment()">Submit Enrollment</button>
+    <div id="enrollMessage"></div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'http://localhost:5000/api';
+
+  async function loadPrograms() {
+    const res = await fetch(`${API_BASE}/programs`);
+    const programs = await res.json();
+    const active = programs.filter(p => p.status === 'Active');
+    const container = document.getElementById('programsList');
+    if (active.length === 0) {
+      container.innerHTML = '<p>No active programs at the moment.</p>';
+      return;
+    }
+    container.innerHTML = active.map(p => `
+      <div class="program-card">
+        <h3>${escapeHtml(p.name)}</h3>
+        <p>⏱️ Duration: ${p.duration || 'N/A'}</p>
+        <p>${escapeHtml(p.description) || ''}</p>
+        <button class="enroll-btn" onclick="showEnrollForm(${p.id}, '${escapeHtml(p.name)}')">Enroll Now</button>
+      </div>
+    `).join('');
+  }
+
+  function showEnrollForm(programId, programName) {
+    document.getElementById('enrollProgramId').value = programId;
+    document.getElementById('enrollProgramName').innerText = programName;
+    document.getElementById('enrollForm').style.display = 'block';
+    window.scrollTo({ top: document.getElementById('enrollForm').offsetTop, behavior: 'smooth' });
+  }
+
+  async function submitEnrollment() {
+    const programId = parseInt(document.getElementById('enrollProgramId').value);
+    const name = document.getElementById('enrollName').value.trim();
+    const email = document.getElementById('enrollEmail').value.trim();
+    const phone = document.getElementById('enrollPhone').value;
+    if (!name || !email) {
+      alert('Name and email are required');
+      return;
+    }
+    const payload = { programId, participantName: name, email, phone, completed: false };
+    const res = await fetch(`${API_BASE}/programEnrollments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      document.getElementById('enrollMessage').innerHTML = '<p style="color:green;">✅ Enrollment submitted! We will contact you.</p>';
+      document.getElementById('enrollName').value = '';
+      document.getElementById('enrollEmail').value = '';
+      document.getElementById('enrollPhone').value = '';
+    } else {
+      document.getElementById('enrollMessage').innerHTML = '<p style="color:red;">❌ Enrollment failed. Try again later.</p>';
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
+  }
+
+  loadPrograms();
+</script>
+</body>
+</html>

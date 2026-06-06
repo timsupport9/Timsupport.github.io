@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Partners | TIM Support</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui; background: #f5f7fb; color: #1e293b; padding: 20px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    h1 { color: #1e3a8a; }
+    .partner-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 1.5rem; margin: 2rem 0; }
+    .partner-card { background: white; border-radius: 1rem; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>🤝 Our Partners & Collaborators</h1>
+  <p>We work with leading organizations to deliver impact.</p>
+  <div id="partnersList" class="partner-grid">Loading partners...</div>
+</div>
+
+<script>
+  const API_BASE = 'http://localhost:5000/api';
+
+  async function loadPartners() {
+    const res = await fetch(`${API_BASE}/partners`);
+    const partners = await res.json();
+    const container = document.getElementById('partnersList');
+    if (partners.length === 0) {
+      container.innerHTML = '<p>No partners listed yet.</p>';
+      return;
+    }
+    container.innerHTML = partners.map(p => `
+      <div class="partner-card">
+        <h3>${escapeHtml(p.name)}</h3>
+        <p><strong>Type:</strong> ${p.type || 'Partner'}</p>
+        <p><strong>Contact:</strong> ${escapeHtml(p.contactPerson) || 'N/A'}</p>
+        <p><strong>Email:</strong> <a href="mailto:${escapeHtml(p.email)}">${escapeHtml(p.email)}</a></p>
+        <p>${escapeHtml(p.description) || ''}</p>
+      </div>
+    `).join('');
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
+  }
+
+  loadPartners();
+</script>
+</body>
+</html>

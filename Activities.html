@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Activities | TIM Support</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui; background: #f5f7fb; color: #1e293b; padding: 20px; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    h1 { color: #1e3a8a; margin-bottom: 1rem; }
+    .activity-grid { display: flex; flex-direction: column; gap: 1rem; margin: 2rem 0; }
+    .activity-card { background: white; border-radius: 1rem; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .activity-title { font-size: 1.2rem; font-weight: bold; color: #1e3a8a; }
+    .activity-meta { font-size: 0.85rem; color: #64748b; margin: 0.5rem 0; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>⚡ Our Recent Activities</h1>
+  <p>See what we've been doing – trainings, workshops, outreach events.</p>
+  <div id="activitiesList" class="activity-grid">Loading activities...</div>
+</div>
+
+<script>
+  const API_BASE = 'http://localhost:5000/api';
+
+  async function loadActivities() {
+    const res = await fetch(`${API_BASE}/activities`);
+    const activities = await res.json();
+    const sorted = activities.sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 20);
+    const container = document.getElementById('activitiesList');
+    if (sorted.length === 0) {
+      container.innerHTML = '<p>No activities logged yet.</p>';
+      return;
+    }
+    container.innerHTML = sorted.map(a => `
+      <div class="activity-card">
+        <div class="activity-title">${escapeHtml(a.title)}</div>
+        <div class="activity-meta">📅 ${a.date || 'Date TBA'} | 👥 ${a.participants || 0} participants | 🏷️ ${a.type || 'Activity'}</div>
+        <p>${escapeHtml(a.report) || 'No report available.'}</p>
+      </div>
+    `).join('');
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
+  }
+
+  loadActivities();
+</script>
+</body>
+</html>

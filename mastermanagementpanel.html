@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Operations Suite | Server‑Backed</title>
+  <style>
+    /* (use the same CSS from the original file – I'll keep it compact) */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg-dark: #0a0f1c; --card-bg: #121826; --surface: #1a2235; --border: #2a3348;
+      --text-primary: #eef2ff; --text-secondary: #9ca3af; --primary: #3b82f6;
+      --primary-hover: #2563eb; --success: #10b981; --danger: #ef4444;
+    }
+    body { background: var(--bg-dark); font-family: 'Inter', system-ui; color: var(--text-primary); padding: 20px; }
+    .login-panel, .dashboard { max-width: 1600px; margin: 0 auto; }
+    .login-panel { background: var(--card-bg); max-width: 440px; margin: 12vh auto; padding: 2rem; border-radius: 1.75rem; text-align: center; }
+    .dashboard { display: none; }
+    .btn { background: var(--primary); border: none; padding: 10px 20px; border-radius: 2rem; color: white; cursor: pointer; }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
+    .tab-nav { display: flex; flex-wrap: wrap; gap: 4px; background: var(--surface); padding: 0.5rem; border-radius: 1rem; margin-bottom: 1.5rem; }
+    .tab-btn { background: transparent; border: none; padding: 10px 20px; border-radius: 0.8rem; color: var(--text-secondary); cursor: pointer; }
+    .tab-btn.active { background: var(--primary); color: white; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 1.5rem; margin-top: 1rem; }
+    .record-card { background: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border); padding: 1rem; }
+    .form-panel { background: var(--surface); border-radius: 1.5rem; padding: 1.5rem; margin-top: 1.5rem; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; }
+    input, select, textarea { background: var(--card-bg); border: 1px solid var(--border); padding: 10px; border-radius: 1rem; color: white; }
+    .search-bar { display: flex; background: var(--card-bg); padding: 8px 16px; border-radius: 2rem; margin-bottom: 1rem; }
+    .logs-container { max-height: 200px; overflow-y: auto; background: var(--card-bg); border-radius: 1rem; padding: 0.8rem; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+<div id="loginScreen" class="login-panel">
+  <h2 style="color: var(--primary);">Advanced Operations Suite</h2>
+  <input type="password" id="passwordInput" placeholder="Master password" onkeypress="if(event.key==='Enter') login()">
+  <button class="btn" onclick="login()">Access Platform</button>
+  <div id="loginError" style="color: var(--danger); display: none;">Access denied</div>
+</div>
+
+<div id="mainDashboard" class="dashboard">
+  <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <h1>⚡ Dynamic Operations Suite</h1>
+    <div>
+      <button class="btn btn-secondary" onclick="window.exportAllData?.()">📥 Export</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📂 Import</button>
+      <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="window.importAllData?.(event)">
+    </div>
+  </div>
+
+  <!-- Analytics summary (will be updated dynamically) -->
+  <div class="analytics-dashboard" style="background: var(--surface); padding: 1rem; border-radius: 1rem; margin-bottom: 1rem;">
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <div><strong>Total Revenue:</strong> <span id="totalRevenue">0</span> KES</div>
+      <div><strong>Completion Rate:</strong> <span id="completionRate">0</span>%</div>
+      <div><strong>Active Programs:</strong> <span id="activePrograms">0</span></div>
+      <div><strong>Upcoming Events:</strong> <span id="upcomingEvents">0</span></div>
+      <div><strong>Partners:</strong> <span id="partnerEngagement">0</span></div>
+    </div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="experts">👥 Experts</button>
+    <button class="tab-btn" data-tab="events">📅 Events</button>
+    <button class="tab-btn" data-tab="activities">⚡ Activities</button>
+    <button class="tab-btn" data-tab="programs">📚 Programs</button>
+    <button class="tab-btn" data-tab="partners">🤝 Partners</button>
+    <button class="tab-btn" data-tab="applications">📋 Applications</button>
+    <button class="tab-btn" data-tab="plans">🎯 Strategy</button>
+    <button class="tab-btn" data-tab="tracking">📜 Logs</button>
+  </div>
+
+  <!-- Each tab pane will be populated by separate JS modules -->
+  <div id="expertsTab" class="tab-pane active">Loading Experts...</div>
+  <div id="eventsTab" class="tab-pane">Loading Events...</div>
+  <div id="activitiesTab" class="tab-pane">Loading Activities...</div>
+  <div id="programsTab" class="tab-pane">Loading Programs...</div>
+  <div id="partnersTab" class="tab-pane">Loading Partners...</div>
+  <div id="applicationsTab" class="tab-pane">Loading Applications...</div>
+  <div id="plansTab" class="tab-pane">Loading Strategy...</div>
+  <div id="trackingTab" class="tab-pane">Loading Logs...</div>
+</div>
+
+<!-- Global modal for editing -->
+<div id="globalModal" class="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center;"><div class="modal-content" style="background: var(--card-bg); padding: 2rem; border-radius: 1rem; max-width: 500px;"></div></div>
+
+<script src="api.js"></script>
+<script src="app.js"></script>
+<script src="panels/experts.js"></script>
+<script src="panels/events.js"></script>
+<script src="panels/activities.js"></script>
+<script src="panels/programs.js"></script>
+<script src="panels/partners.js"></script>
+<script src="panels/applications.js"></script>
+<script src="panels/strategy.js"></script>
+<script src="panels/tracking.js"></script>
+</body>
+</html>
