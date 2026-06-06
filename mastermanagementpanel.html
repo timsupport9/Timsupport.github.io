@@ -1,101 +1,398 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Operations Suite | Server‑Backed</title>
-  <style>
-    /* (use the same CSS from the original file – I'll keep it compact) */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg-dark: #0a0f1c; --card-bg: #121826; --surface: #1a2235; --border: #2a3348;
-      --text-primary: #eef2ff; --text-secondary: #9ca3af; --primary: #3b82f6;
-      --primary-hover: #2563eb; --success: #10b981; --danger: #ef4444;
-    }
-    body { background: var(--bg-dark); font-family: 'Inter', system-ui; color: var(--text-primary); padding: 20px; }
-    .login-panel, .dashboard { max-width: 1600px; margin: 0 auto; }
-    .login-panel { background: var(--card-bg); max-width: 440px; margin: 12vh auto; padding: 2rem; border-radius: 1.75rem; text-align: center; }
-    .dashboard { display: none; }
-    .btn { background: var(--primary); border: none; padding: 10px 20px; border-radius: 2rem; color: white; cursor: pointer; }
-    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
-    .tab-nav { display: flex; flex-wrap: wrap; gap: 4px; background: var(--surface); padding: 0.5rem; border-radius: 1rem; margin-bottom: 1.5rem; }
-    .tab-btn { background: transparent; border: none; padding: 10px 20px; border-radius: 0.8rem; color: var(--text-secondary); cursor: pointer; }
-    .tab-btn.active { background: var(--primary); color: white; }
-    .tab-pane { display: none; }
-    .tab-pane.active { display: block; }
-    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 1.5rem; margin-top: 1rem; }
-    .record-card { background: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border); padding: 1rem; }
-    .form-panel { background: var(--surface); border-radius: 1.5rem; padding: 1.5rem; margin-top: 1.5rem; }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; }
-    input, select, textarea { background: var(--card-bg); border: 1px solid var(--border); padding: 10px; border-radius: 1rem; color: white; }
-    .search-bar { display: flex; background: var(--card-bg); padding: 8px 16px; border-radius: 2rem; margin-bottom: 1rem; }
-    .logs-container { max-height: 200px; overflow-y: auto; background: var(--card-bg); border-radius: 1rem; padding: 0.8rem; font-size: 0.75rem; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foundation Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.2/dist/axios.min.js"></script>
+    <style>body { background: #f1f5f9; font-family: 'Inter', sans-serif; }</style>
 </head>
 <body>
-<div id="loginScreen" class="login-panel">
-  <h2 style="color: var(--primary);">Advanced Operations Suite</h2>
-  <input type="password" id="passwordInput" placeholder="Master password" onkeypress="if(event.key==='Enter') login()">
-  <button class="btn" onclick="login()">Access Platform</button>
-  <div id="loginError" style="color: var(--danger); display: none;">Access denied</div>
-</div>
+<div id="root"></div>
 
-<div id="mainDashboard" class="dashboard">
-  <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-    <h1>⚡ Dynamic Operations Suite</h1>
-    <div>
-      <button class="btn btn-secondary" onclick="window.exportAllData?.()">📥 Export</button>
-      <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📂 Import</button>
-      <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
-      <input type="file" id="importFile" accept=".json" style="display:none" onchange="window.importAllData?.(event)">
-    </div>
-  </div>
+<script type="text/babel">
+    // ---------- Use your live backend ----------
+    const API_BASE = 'https://management-dashboard-wj89.onrender.com/api';
+    axios.defaults.baseURL = API_BASE;
 
-  <!-- Analytics summary (will be updated dynamically) -->
-  <div class="analytics-dashboard" style="background: var(--surface); padding: 1rem; border-radius: 1rem; margin-bottom: 1rem;">
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-      <div><strong>Total Revenue:</strong> <span id="totalRevenue">0</span> KES</div>
-      <div><strong>Completion Rate:</strong> <span id="completionRate">0</span>%</div>
-      <div><strong>Active Programs:</strong> <span id="activePrograms">0</span></div>
-      <div><strong>Upcoming Events:</strong> <span id="upcomingEvents">0</span></div>
-      <div><strong>Partners:</strong> <span id="partnerEngagement">0</span></div>
-    </div>
-  </div>
+    // ---------- Toast ----------
+    let globalToast = null;
+    const showToast = (msg, type = 'success') => {
+        if (globalToast) globalToast(msg, type);
+        else alert(`${type.toUpperCase()}: ${msg}`);
+    };
 
-  <div class="tab-nav">
-    <button class="tab-btn active" data-tab="experts">👥 Experts</button>
-    <button class="tab-btn" data-tab="events">📅 Events</button>
-    <button class="tab-btn" data-tab="activities">⚡ Activities</button>
-    <button class="tab-btn" data-tab="programs">📚 Programs</button>
-    <button class="tab-btn" data-tab="partners">🤝 Partners</button>
-    <button class="tab-btn" data-tab="applications">📋 Applications</button>
-    <button class="tab-btn" data-tab="plans">🎯 Strategy</button>
-    <button class="tab-btn" data-tab="tracking">📜 Logs</button>
-  </div>
+    // ---------- Generic CRUD (string IDs, no parseInt) ----------
+    function useCrud(endpoint) {
+        const [items, setItems] = React.useState([]);
+        const [loading, setLoading] = React.useState(true);
+        const fetchAll = React.useCallback(async () => {
+            try {
+                const res = await axios.get(`/${endpoint}`);
+                setItems(res.data);
+            } catch (err) {
+                showToast(`Failed to fetch ${endpoint}`, 'error');
+            } finally {
+                setLoading(false);
+            }
+        }, [endpoint]);
 
-  <!-- Each tab pane will be populated by separate JS modules -->
-  <div id="expertsTab" class="tab-pane active">Loading Experts...</div>
-  <div id="eventsTab" class="tab-pane">Loading Events...</div>
-  <div id="activitiesTab" class="tab-pane">Loading Activities...</div>
-  <div id="programsTab" class="tab-pane">Loading Programs...</div>
-  <div id="partnersTab" class="tab-pane">Loading Partners...</div>
-  <div id="applicationsTab" class="tab-pane">Loading Applications...</div>
-  <div id="plansTab" class="tab-pane">Loading Strategy...</div>
-  <div id="trackingTab" class="tab-pane">Loading Logs...</div>
-</div>
+        const createItem = async (data) => {
+            try {
+                await axios.post(`/${endpoint}`, data);
+                await fetchAll();
+                showToast('Created', 'success');
+            } catch (err) {
+                showToast('Create failed', 'error');
+            }
+        };
 
-<!-- Global modal for editing -->
-<div id="globalModal" class="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center;"><div class="modal-content" style="background: var(--card-bg); padding: 2rem; border-radius: 1rem; max-width: 500px;"></div></div>
+        const updateItem = async (id, data) => {
+            try {
+                // Note: if backend still uses parseInt, this will fail
+                await axios.put(`/${endpoint}/${id}`, data);
+                await fetchAll();
+                showToast('Updated', 'success');
+            } catch (err) {
+                showToast('Update failed (backend parseInt issue?)', 'error');
+            }
+        };
 
-<script src="api.js"></script>
-<script src="app.js"></script>
-<script src="panels/experts.js"></script>
-<script src="panels/events.js"></script>
-<script src="panels/activities.js"></script>
-<script src="panels/programs.js"></script>
-<script src="panels/partners.js"></script>
-<script src="panels/applications.js"></script>
-<script src="panels/strategy.js"></script>
-<script src="panels/tracking.js"></script>
+        const deleteItem = async (id) => {
+            if (!confirm('Permanently delete?')) return;
+            try {
+                await axios.delete(`/${endpoint}/${id}`);
+                await fetchAll();
+                showToast('Deleted', 'success');
+            } catch (err) {
+                showToast('Delete failed', 'error');
+            }
+        };
+
+        React.useEffect(() => { fetchAll(); }, [fetchAll]);
+        return { items, loading, fetchAll, createItem, updateItem, deleteItem };
+    }
+
+    // Modal component
+    const Modal = ({ isOpen, onClose, title, children }) => {
+        if (!isOpen) return null;
+        return (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
+                    <div className="flex justify-between p-5 border-b">
+                        <h3 className="text-xl font-bold">{title}</h3>
+                        <button onClick={onClose}><i className="fas fa-times text-slate-400"></i></button>
+                    </div>
+                    <div className="p-5">{children}</div>
+                </div>
+            </div>
+        );
+    };
+
+    // Generic manager factory
+    function createManager(displayName, endpoint, fields) {
+        return () => {
+            const { items, loading, createItem, updateItem, deleteItem } = useCrud(endpoint);
+            const [modalOpen, setModalOpen] = React.useState(false);
+            const [editing, setEditing] = React.useState(null);
+            const [form, setForm] = React.useState(Object.fromEntries(fields.map(f => [f.key, ''])));
+
+            const openCreate = () => {
+                setEditing(null);
+                setForm(Object.fromEntries(fields.map(f => [f.key, ''])));
+                setModalOpen(true);
+            };
+            const openEdit = (item) => {
+                setEditing(item);
+                setForm(Object.fromEntries(fields.map(f => [f.key, item[f.key] || ''])));
+                setModalOpen(true);
+            };
+            const handleSubmit = async () => {
+                if (editing) await updateItem(editing.id, form);
+                else await createItem(form);
+                setModalOpen(false);
+            };
+
+            if (loading) return <div className="animate-pulse">Loading {displayName}...</div>;
+
+            return (
+                <>
+                    <div className="flex justify-between mb-4">
+                        <h2 className="text-2xl font-bold">{displayName}</h2>
+                        <button onClick={openCreate} className="bg-indigo-600 text-white px-4 py-2 rounded-xl shadow"><i className="fas fa-plus mr-1"></i> Add</button>
+                    </div>
+                    <div className="overflow-x-auto rounded-xl border">
+                        <table className="min-w-full bg-white">
+                            <thead className="bg-slate-100">
+                                <tr>{fields.map(f => <th key={f.key} className="p-3 text-left">{f.label}</th>)}<th className="p-3">Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                {items.map(item => (
+                                    <tr key={item.id} className="border-t">
+                                        {fields.map(f => <td key={f.key} className="p-3">{item[f.key]}</td>)}
+                                        <td className="p-3 space-x-2">
+                                            <button onClick={() => openEdit(item)} className="text-indigo-600"><i className="fas fa-edit"></i></button>
+                                            <button onClick={() => deleteItem(item.id)} className="text-rose-500"><i className="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? `Edit ${displayName.slice(0,-1)}` : `New ${displayName.slice(0,-1)}`}>
+                        <div className="space-y-3">
+                            {fields.map(f => <input key={f.key} type="text" placeholder={f.label} value={form[f.key]} onChange={e => setForm({...form, [f.key]: e.target.value})} className="w-full border rounded-xl p-2" />)}
+                            <button onClick={handleSubmit} className="bg-indigo-600 text-white w-full py-2 rounded-xl">Save</button>
+                        </div>
+                    </Modal>
+                </>
+            );
+        };
+    }
+
+    // Standard managers
+    const ExpertManager = createManager('Experts', 'experts', [
+        { key: 'name', label: 'Name' }, { key: 'expertise', label: 'Expertise' }, { key: 'email', label: 'Email' }, { key: 'phone', label: 'Phone' }
+    ]);
+    const EventManager = createManager('Events', 'events', [
+        { key: 'title', label: 'Title' }, { key: 'date', label: 'Date' }, { key: 'location', label: 'Location' }, { key: 'capacity', label: 'Capacity' }
+    ]);
+    const ActivityManager = createManager('Activities', 'activities', [
+        { key: 'title', label: 'Title' }, { key: 'description', label: 'Description' }, { key: 'date', label: 'Date' }
+    ]);
+    const ProgramManager = createManager('Programs', 'programs', [
+        { key: 'title', label: 'Title' }, { key: 'description', label: 'Description' }, { key: 'startDate', label: 'Start Date' }, { key: 'endDate', label: 'End Date' }
+    ]);
+    const PartnerManager = createManager('Partners', 'partners', [
+        { key: 'name', label: 'Name' }, { key: 'type', label: 'Type' }, { key: 'contact', label: 'Contact' }
+    ]);
+    const GoalManager = createManager('Goals', 'goals', [
+        { key: 'title', label: 'Goal Title' }, { key: 'target', label: 'Target' }, { key: 'deadline', label: 'Deadline' }
+    ]);
+    const KPIManager = createManager('KPIs', 'kpis', [
+        { key: 'indicator', label: 'Indicator' }, { key: 'value', label: 'Value' }, { key: 'goalId', label: 'Goal ID' }
+    ]);
+    const ProjectManager = createManager('Projects', 'projects', [
+        { key: 'name', label: 'Project Name' }, { key: 'status', label: 'Status' }, { key: 'deadline', label: 'Deadline' }
+    ]);
+
+    // Allocations (special: auto date)
+    const AllocationManager = () => {
+        const { items, loading, fetchAll, deleteItem } = useCrud('allocations');
+        const [showForm, setShowForm] = React.useState(false);
+        const [form, setForm] = React.useState({ partnerId: '', amount: '', description: '' });
+        const createAllocation = async () => {
+            try {
+                await axios.post('/allocations', form);
+                await fetchAll();
+                showToast('Allocation created', 'success');
+                setShowForm(false);
+                setForm({ partnerId: '', amount: '', description: '' });
+            } catch (err) { showToast('Failed', 'error'); }
+        };
+        if (loading) return <div>Loading...</div>;
+        return (
+            <div>
+                <div className="flex justify-between mb-4"><h2 className="text-2xl font-bold">Allocations</h2><button onClick={() => setShowForm(true)} className="bg-indigo-600 text-white px-4 py-2 rounded-xl">+ Allocate</button></div>
+                {showForm && (
+                    <div className="bg-slate-50 p-4 rounded-xl mb-4 space-y-2">
+                        <input placeholder="Partner ID" value={form.partnerId} onChange={e => setForm({...form, partnerId: e.target.value})} className="w-full border p-2 rounded" />
+                        <input placeholder="Amount" value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} className="w-full border p-2 rounded" />
+                        <input placeholder="Description" value={form.description} onChange={e => setForm({...form, description: e.target.value})} className="w-full border p-2 rounded" />
+                        <button onClick={createAllocation} className="bg-emerald-600 text-white px-4 py-2 rounded">Submit</button>
+                    </div>
+                )}
+                <div className="overflow-x-auto rounded-xl border">
+                    <table className="min-w-full bg-white"><thead className="bg-slate-100"><tr><th className="p-3">Partner ID</th><th>Amount</th><th>Description</th><th>Date</th><th></th></tr></thead><tbody>
+                        {items.map(a => <tr key={a.id} className="border-t"><td className="p-3">{a.partnerId}</td><td>{a.amount}</td><td>{a.description}</td><td>{a.date || '-'}</td><td><button onClick={() => deleteItem(a.id)} className="text-rose-500"><i className="fas fa-trash"></i></button></td></tr>)}
+                    </tbody></table>
+                </div>
+            </div>
+        );
+    };
+
+    // Logs
+    const LogViewer = () => {
+        const [logs, setLogs] = React.useState([]);
+        React.useEffect(() => { axios.get('/logs').then(res => setLogs(res.data)).catch(() => showToast('Failed logs', 'error')); }, []);
+        return (
+            <div>
+                <h2 className="text-2xl font-bold mb-3">System Logs (latest 200)</h2>
+                <div className="bg-slate-900 text-green-300 p-4 rounded-xl h-96 overflow-y-auto font-mono text-sm">
+                    {logs.map(log => <div key={log.id} className="border-b border-slate-700 py-1">[{log.timestamp}] {log.action || log.message || JSON.stringify(log)}</div>)}
+                </div>
+            </div>
+        );
+    };
+
+    // Event Registrations
+    const EventRegistrationManager = () => {
+        const { items, loading, fetchAll, createItem, deleteItem } = useCrud('eventRegistrations');
+        const [showForm, setShowForm] = React.useState(false);
+        const [form, setForm] = React.useState({ eventId: '', attendeeName: '', email: '' });
+        const markAttended = async (id) => {
+            try { await axios.patch(`/eventRegistrations/${id}/attend`); await fetchAll(); showToast('Attended'); } catch(e) { showToast('Failed'); }
+        };
+        if (loading) return <div>Loading...</div>;
+        return (
+            <div>
+                <div className="flex justify-between mb-4"><h2 className="text-2xl font-bold">Event Registrations</h2><button onClick={() => setShowForm(true)} className="bg-indigo-600 text-white px-4 py-2 rounded-xl">+ Register</button></div>
+                {showForm && (<div className="bg-slate-50 p-4 mb-4 rounded"><input placeholder="Event ID" value={form.eventId} onChange={e=>setForm({...form,eventId:e.target.value})} className="w-full border p-2 mb-2 rounded"/><input placeholder="Attendee" value={form.attendeeName} onChange={e=>setForm({...form,attendeeName:e.target.value})} className="w-full border p-2 mb-2 rounded"/><input placeholder="Email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} className="w-full border p-2 mb-2 rounded"/><button onClick={()=>createItem(form).then(()=>setShowForm(false))} className="bg-emerald-600 text-white px-4 py-2 rounded">Save</button></div>)}
+                <div className="overflow-x-auto rounded-xl border"><table className="min-w-full"><thead className="bg-slate-100"><tr><th className="p-3">Event ID</th><th>Attendee</th><th>Email</th><th>Attendance</th><th></th></tr></thead><tbody>{items.map(r=><tr key={r.id} className="border-t"><td className="p-3">{r.eventId}</td><td>{r.attendeeName}</td><td>{r.email}</td><td>{r.attendance || 'Pending'}</td><td>{!r.attendance && <button onClick={()=>markAttended(r.id)} className="bg-green-100 text-green-700 px-2 py-1 rounded text-sm mr-2">Mark</button>}<button onClick={()=>deleteItem(r.id)} className="text-rose-500"><i className="fas fa-trash"></i></button></td></tr>)}</tbody></table></div>
+            </div>
+        );
+    };
+
+    // Program Enrollments
+    const ProgramEnrollmentManager = () => {
+        const { items, loading, fetchAll, createItem, deleteItem } = useCrud('programEnrollments');
+        const [showForm, setShowForm] = React.useState(false);
+        const [form, setForm] = React.useState({ programId: '', participantName: '', email: '' });
+        const markComplete = async (id) => {
+            try { await axios.patch(`/programEnrollments/${id}/complete`); await fetchAll(); showToast('Completed'); } catch(e) { showToast('Failed'); }
+        };
+        if (loading) return <div>Loading...</div>;
+        return (
+            <div>
+                <div className="flex justify-between mb-4"><h2 className="text-2xl font-bold">Program Enrollments</h2><button onClick={() => setShowForm(true)} className="bg-indigo-600 text-white px-4 py-2 rounded-xl">+ Enroll</button></div>
+                {showForm && (<div className="bg-slate-50 p-4 mb-4 rounded"><input placeholder="Program ID" value={form.programId} onChange={e=>setForm({...form,programId:e.target.value})} className="w-full border p-2 mb-2 rounded"/><input placeholder="Participant" value={form.participantName} onChange={e=>setForm({...form,participantName:e.target.value})} className="w-full border p-2 mb-2 rounded"/><input placeholder="Email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} className="w-full border p-2 mb-2 rounded"/><button onClick={()=>createItem(form).then(()=>setShowForm(false))} className="bg-emerald-600 text-white px-4 py-2 rounded">Save</button></div>)}
+                <div className="overflow-x-auto rounded-xl border"><table className="min-w-full"><thead className="bg-slate-100"><tr><th className="p-3">Program ID</th><th>Participant</th><th>Completed</th><th></th></tr></thead><tbody>{items.map(e=><tr key={e.id} className="border-t"><td className="p-3">{e.programId}</td><td>{e.participantName}</td><td>{e.completed ? '✅ Yes' : '❌ No'}</td><td>{!e.completed && <button onClick={()=>markComplete(e.id)} className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-sm mr-2">Complete</button>}<button onClick={()=>deleteItem(e.id)} className="text-rose-500"><i className="fas fa-trash"></i></button></td></tr>)}</tbody></table></div>
+            </div>
+        );
+    };
+
+    // Applications (expert, corporate, membership)
+    const ApplicationManager = ({ type }) => {
+        const baseEndpoint = `applications/${type}`;
+        const { items, loading, fetchAll } = useCrud(baseEndpoint);
+        const [modalOpen, setModalOpen] = React.useState(false);
+        const [editing, setEditing] = React.useState(null);
+        const [form, setForm] = React.useState({ name: '', email: '', organization: '', status: 'pending' });
+        const updateApp = async (id, data) => {
+            try { await axios.patch(`/${baseEndpoint}/${id}`, data); await fetchAll(); showToast('Updated'); } catch(e) { showToast('Failed'); }
+        };
+        const createApp = async (data) => {
+            try { await axios.post(`/${baseEndpoint}`, data); await fetchAll(); showToast('Created'); } catch(e) { showToast('Failed'); }
+        };
+        const openCreate = () => { setEditing(null); setForm({ name: '', email: '', organization: '', status: 'pending' }); setModalOpen(true); };
+        const openEdit = (app) => { setEditing(app); setForm({ name: app.name, email: app.email, organization: app.organization || '', status: app.status }); setModalOpen(true); };
+        const handleSubmit = async () => {
+            if (editing) await updateApp(editing.id, form);
+            else await createApp(form);
+            setModalOpen(false);
+        };
+        if (loading) return <div>Loading...</div>;
+        return (
+            <div>
+                <div className="flex justify-between mb-4"><h2 className="text-2xl font-bold capitalize">{type} Applications</h2><button onClick={openCreate} className="bg-indigo-600 text-white px-4 py-2 rounded-xl">+ New</button></div>
+                <div className="overflow-x-auto rounded-xl border"><table className="min-w-full"><thead className="bg-slate-100"><tr><th className="p-3">Name</th><th>Email</th><th>Organization</th><th>Status</th><th>Actions</th></tr></thead><tbody>{items.map(app => (<tr key={app.id} className="border-t"><td className="p-3">{app.name}</td><td>{app.email}</td><td>{app.organization}</td><td><span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${app.status === 'approved' ? 'bg-green-100 text-green-700' : app.status === 'rejected' ? 'bg-rose-100 text-rose-700' : 'bg-yellow-100 text-yellow-700'}`}>{app.status}</span></td><td><button onClick={() => openEdit(app)} className="text-indigo-600 mr-2"><i className="fas fa-edit"></i></button><button onClick={() => updateApp(app.id, { status: 'approved' })} className="text-green-600 text-xs bg-green-50 px-2 py-1 rounded mr-1">Approve</button><button onClick={() => updateApp(app.id, { status: 'rejected' })} className="text-rose-600 text-xs bg-rose-50 px-2 py-1 rounded">Reject</button></td></tr>))}</tbody></table></div>
+                <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "Edit Application" : "New Application"}><div className="space-y-3"><input placeholder="Name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} className="w-full border p-2 rounded"/><input placeholder="Email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} className="w-full border p-2 rounded"/><input placeholder="Organization" value={form.organization} onChange={e=>setForm({...form,organization:e.target.value})} className="w-full border p-2 rounded"/><select value={form.status} onChange={e=>setForm({...form,status:e.target.value})} className="w-full border p-2 rounded"><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select><button onClick={handleSubmit} className="bg-indigo-600 text-white w-full py-2 rounded">Save</button></div></Modal>
+            </div>
+        );
+    };
+
+    // Bulk Import
+    const BulkImport = () => {
+        const [jsonData, setJsonData] = React.useState('');
+        const [importing, setImporting] = React.useState(false);
+        const handleImport = async () => {
+            try {
+                const parsed = JSON.parse(jsonData);
+                setImporting(true);
+                await axios.post('/import', parsed);
+                showToast('Import successful', 'success');
+            } catch(e) { showToast('Invalid JSON', 'error'); } finally { setImporting(false); }
+        };
+        return (
+            <div>
+                <h2 className="text-2xl font-bold mb-3">Bulk Import</h2>
+                <p className="text-sm text-slate-500 mb-2">JSON with collections: experts, events, activities, programs, partners, allocations, systemLogs, eventRegistrations, programEnrollments, expertApplications, corporateApplications, membershipApplications, goals, kpis, projects.</p>
+                <textarea rows="10" value={jsonData} onChange={e=>setJsonData(e.target.value)} className="w-full border rounded-xl p-3 font-mono text-sm"></textarea>
+                <button onClick={handleImport} disabled={importing} className="mt-4 bg-indigo-700 text-white px-6 py-2 rounded-xl">{importing ? 'Importing...' : 'Execute Import'}</button>
+            </div>
+        );
+    };
+
+    // Login
+    const LoginScreen = ({ onLogin }) => {
+        const [password, setPassword] = React.useState('');
+        const [loading, setLoading] = React.useState(false);
+        const handleSubmit = (e) => {
+            e.preventDefault();
+            setLoading(true);
+            axios.post('/login', { password }).then(res => {
+                localStorage.setItem('admin_token', res.data.token);
+                onLogin(res.data.token);
+            }).catch(err => showToast(err.response?.data?.error || 'Invalid password', 'error')).finally(() => setLoading(false));
+        };
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-slate-100 flex items-center justify-center p-5">
+                <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8"><div className="text-center mb-8"><div className="bg-indigo-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto"><i className="fas fa-shield-alt text-white text-3xl"></i></div><h2 className="text-2xl font-bold mt-4">Foundation Admin</h2><p className="text-slate-500">Enter password</p></div><form onSubmit={handleSubmit}><input type="password" value={password} onChange={e=>setPassword(e.target.value)} className="w-full border rounded-xl p-3 mb-4" placeholder="Password" autoFocus required /><button type="submit" disabled={loading} className="w-full bg-indigo-600 text-white py-3 rounded-xl">{loading ? 'Verifying...' : 'Access Dashboard'}</button></form><p className="text-xs text-center text-slate-400 mt-6">Demo password: <span className="font-mono bg-slate-100 px-2 py-0.5 rounded">tim2024</span></p></div>
+            </div>
+        );
+    };
+
+    // Main App
+    const App = () => {
+        const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+        const [toast, setToast] = React.useState(null);
+        React.useEffect(() => {
+            const token = localStorage.getItem('admin_token');
+            if (token) setIsAuthenticated(true);
+            globalToast = (msg, type) => { setToast({ msg, type }); setTimeout(() => setToast(null), 3000); };
+            return () => { globalToast = null; };
+        }, []);
+        const handleLogin = () => setIsAuthenticated(true);
+        const handleLogout = () => { localStorage.removeItem('admin_token'); setIsAuthenticated(false); showToast('Logged out', 'info'); };
+        if (!isAuthenticated) return <LoginScreen onLogin={handleLogin} />;
+
+        const tabs = ['Experts', 'Events', 'Activities', 'Programs', 'Partners', 'Goals', 'KPIs', 'Projects', 'Allocations', 'Logs', 'EventRegistrations', 'ProgramEnrollments', 'Applications', 'Import'];
+        const [activeTab, setActiveTab] = React.useState('Experts');
+        const [appSubType, setAppSubType] = React.useState('expert');
+
+        const renderContent = () => {
+            switch(activeTab) {
+                case 'Experts': return <ExpertManager />;
+                case 'Events': return <EventManager />;
+                case 'Activities': return <ActivityManager />;
+                case 'Programs': return <ProgramManager />;
+                case 'Partners': return <PartnerManager />;
+                case 'Goals': return <GoalManager />;
+                case 'KPIs': return <KPIManager />;
+                case 'Projects': return <ProjectManager />;
+                case 'Allocations': return <AllocationManager />;
+                case 'Logs': return <LogViewer />;
+                case 'EventRegistrations': return <EventRegistrationManager />;
+                case 'ProgramEnrollments': return <ProgramEnrollmentManager />;
+                case 'Applications': return (
+                    <div><div className="flex gap-3 mb-6 border-b pb-2">{['expert','corporate','membership'].map(t => (<button key={t} onClick={()=>setAppSubType(t)} className={`px-5 py-2 rounded-full font-medium ${appSubType===t ? 'bg-indigo-600 text-white' : 'bg-white border'}`}>{t.charAt(0).toUpperCase()+t.slice(1)}</button>))}</div><ApplicationManager type={appSubType} /></div>
+                );
+                case 'Import': return <BulkImport />;
+                default: return <ExpertManager />;
+            }
+        };
+
+        return (
+            <div className="min-h-screen bg-slate-50">
+                <div className="bg-white shadow-sm border-b sticky top-0 z-40"><div className="max-w-7xl mx-auto px-4 py-4 flex justify-between"><div className="flex items-center gap-3"><div className="bg-indigo-600 p-2 rounded-xl"><i className="fas fa-hand-holding-heart text-white text-xl"></i></div><h1 className="text-xl font-bold">Foundation Admin</h1></div><button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-slate-100"><i className="fas fa-sign-out-alt"></i> Logout</button></div></div>
+                <div className="max-w-7xl mx-auto px-4 py-6">
+                    {toast && <div className={`fixed top-20 right-6 z-50 px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 ${toast.type==='success'?'bg-emerald-600 text-white':'bg-rose-600 text-white'}`}><i className={`fas ${toast.type==='success'?'fa-check-circle':'fa-exclamation-triangle'}`}></i><span>{toast.msg}</span></div>}
+                    <div className="flex flex-wrap gap-2 sticky top-16 bg-slate-50/90 backdrop-blur-sm py-3 z-30 overflow-x-auto">
+                        {tabs.map(tab => <button key={tab} onClick={()=>setActiveTab(tab)} className={`px-5 py-2.5 rounded-xl font-medium transition-all ${activeTab===tab ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-slate-600 hover:bg-indigo-50 border'}`}>{tab}</button>)}
+                    </div>
+                    <div className="mt-6 bg-white rounded-2xl shadow-sm border p-5">{renderContent()}</div>
+                </div>
+            </div>
+        );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
 </body>
 </html>
